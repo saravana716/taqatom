@@ -4,13 +4,12 @@ import includes from 'lodash/includes';
 import isString from 'lodash/isString';
 import noop from 'lodash/noop';
 import { Platform } from 'react-native';
-import { Navigation } from 'react-native-navigation';
 import packageJSON from '../package.json';
 import AuthService from './AuthService';
 
 const DEFAULT_TIMEOUT = 40000;
 const TYPE_JSON = 'application/json';
-const API_URL="https://api-test.hr-ms.com"
+const API_URL="https://api.hr-ms.com"
 export const getUrlForHeaders=async()=>{
   try{
 
@@ -33,43 +32,7 @@ const fnGetFileNameFromContentDispositionHeader = header => {
   return contentDisposition[1] || fileName;
 };
 
-const handleLogout = async () => {
-  try {
-    setIsLoading(true);
-    await AsyncStorage.removeItem('auth_token');
-    Navigation.setRoot({
-      root: {
-        stack: {
-          id: 'MainPage',
-          children: [
-            {
-              component: {
-                name: 'SignIn',
-                options: {
-                  animations: {
-                    push: {
-                      enabled: false,
-                    },
-                    pop: {
-                      enabled: false,
-                    },
-                  },
-                  topBar: {
-                    visible: false,
-                  },
-                },
-              },
-            },
-          ],
-        },
-      },
-    });
-    setIsLoading(false);
-  } catch (error) {
-    setIsLoading(false);
-    console.error('Error clearing authentication token:', error);
-  }
-};
+
 
 export default {
   _getJsonData(data) {
@@ -317,33 +280,7 @@ export default {
           console.error('Unauthorized access, logging out...');
           AuthService.logout()
             .then(() => {
-              Navigation.setRoot({
-                root: {
-                  stack: {
-                    id: 'MainPage',
-                    children: [
-                      {
-                        component: {
-                          name: 'SignIn',
-                          options: {
-                            animations: {
-                              push: {
-                                enabled: false,
-                              },
-                              pop: {
-                                enabled: false,
-                              },
-                            },
-                            topBar: {
-                              visible: false,
-                            },
-                          },
-                        },
-                      },
-                    ],
-                  },
-                },
-              });
+          Navigation.navigate("Login")
             })
             .catch(error => console.error('Logout error:', error));
 

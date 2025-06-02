@@ -1,5 +1,5 @@
 import APIService, { getUrlForHeaders } from '../APIService';
-let API_URL="https://api-test.hr-ms.com"
+let API_URL="https://api.hr-ms.com"
 const AuthServices = {
   sendSignUp(options) {
     return new Promise(async(resolve, reject) => {

@@ -70,12 +70,12 @@ const styles=StyleSheet.create({
     },
     imageContainer:{
         width:"100%",
-        height:"30%",
+        height:"20%",
         display:"flex"
     },
     Content:{
         width:'100%',
-        height:"70%",
+        height:"80%",
         display:"flex",
         textAlign:"center",
         justifyContent:"flex-start",
@@ -86,7 +86,7 @@ const styles=StyleSheet.create({
         fontSize:25,
         fontWeight:800,
         marginBottom:10,
-        marginTop:70
+        marginTop:150
     },
     contentView:{
         width:"100%",

@@ -1,4 +1,5 @@
 import AuthService from "@/Services/AuthService";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState } from "react";
 import {
   Image,
@@ -101,6 +102,8 @@ console.log("respone",response);
           };
         }
         await AuthService.setAuthToken(token);
+        await AsyncStorage.setItem("token",token)
+        await AsyncStorage.setItem("email",email)
         await AuthService.setSessionToken(sessionToken);
   
   } catch (err) {
@@ -178,12 +181,12 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     width: "100%",
-    height: "30%",
+    height: "20%",
     display: "flex",
   },
   Content: {
     width: "100%",
-    height: "70%",
+    height: "80%",
     display: "flex",
     textAlign: "center",
     justifyContent: "flex-start",
@@ -201,7 +204,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: 800,
     marginBottom: 10,
-    marginTop: 50,
+    marginTop: 100,
   },
   contentView: {
     width: "100%",
