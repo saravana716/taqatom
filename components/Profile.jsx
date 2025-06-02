@@ -1,6 +1,5 @@
 import { myreducers } from "@/Store/Store";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Image,
   Modal,
@@ -13,7 +12,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useDispatch, useSelector } from "react-redux";
 import ProfileServices from "../Services/API/ProfileServices";
+import { AuthContext } from "./AuthContext";
 const Profile = ({ navigation }) => {
+   const { logout } = useContext(AuthContext);
   const dispatch = useDispatch();
   console.log(token);
   const selector = useSelector(function (data) {
@@ -59,14 +60,7 @@ const Profile = ({ navigation }) => {
 
   async function Logout() {
     try {
-      console.log("sdfghjklkjhgfd");
-
-      await AsyncStorage.removeItem("auth_token");
-      await AsyncStorage.removeItem("email");
-      navigation.reset({
-        index: 0,
-        routes: [{ name: "Login" }],
-      });
+     await logout()
     } catch (err) {
       console.log("Logout Error:", err);
     }

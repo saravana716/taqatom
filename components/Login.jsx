@@ -1,6 +1,6 @@
 import AuthService from "@/Services/AuthService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Image,
   StyleSheet,
@@ -13,7 +13,9 @@ import { Toast } from "react-native-toast-message/lib/src/Toast";
 import AuthServices from "../Services/API/AuthServices";
 import { ROLE } from '../utils/auth/jwt/role';
 import { jwtDecode } from '../utils/auth/jwt/utils';
+import { AuthContext } from "./AuthContext";
 const Login = ({navigation}) => {
+  const { login } = useContext(AuthContext);
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
   const [domailnames, setdomailnames] = useState("")
@@ -78,34 +80,34 @@ console.log("jkbgjkdbfjkgbdjk")
 console.log("respone",response);
 
 
-    if (response?.access) {
-      Toast.show({
-        type: 'success',
-        text1: 'Login successful',
-        text2: 'Welcome back!',
-        position: 'bottom',
-      });
-    } 
-    setTimeout(() => {
-      navigation.navigate("Dashboard")
-    }, 1500);
+   
             const token = response.access;
         const sessionToken = response.session_token;
         const tokenPayload = jwtDecode(token);
-        if (tokenPayload?.role !== ROLE.EMPLOYEE) {
-          throw {
-            errors: [
-              {
-                message: 'Inavalid Credentials',
-              },
-            ],
-          };
-        }
-        await AuthService.setAuthToken(token);
-        await AsyncStorage.setItem("token",token)
-        await AsyncStorage.setItem("email",email)
-        await AuthService.setSessionToken(sessionToken);
-  
+         if (tokenPayload?.role !== ROLE.EMPLOYEE) {
+      throw new Error('Invalid role');
+    }
+
+    // Save token/session
+    await AuthService.setAuthToken(token);
+    await AuthService.setSessionToken(sessionToken);
+    await AsyncStorage.setItem("token", token);
+    await AsyncStorage.setItem("email", email);
+    await login(token); // update AuthContext state
+
+    // Show toast message
+    Toast.show({
+      type: 'success',
+      text1: 'Login successful',
+      text2: 'Welcome back!',
+      position: 'bottom',
+    });
+
+    // Wait 2 seconds after showing toast, then navigate
+    setTimeout(() => {
+      navigation.navigate("Dashboard");
+    }, 2000);
+
   } catch (err) {
     console.error(err);
     Toast.show({
