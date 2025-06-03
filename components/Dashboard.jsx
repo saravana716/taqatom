@@ -1,42 +1,74 @@
 import ProfileServices from "@/Services/API/ProfileServices";
 import AuthService from "@/Services/AuthService";
 import { myreducers } from "@/Store/Store";
+
 import AntDesign from "@expo/vector-icons/AntDesign";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import * as Location from 'expo-location';
+import moment from "moment";
 import { useEffect, useState } from "react";
 import {
   Image,
   Modal,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
+import MapView, { Marker } from 'react-native-maps';
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useDispatch } from "react-redux";
 const Dashboard = ({ navigation }) => {
   const dispatch = useDispatch();
+  const [workCode, setWorkCode] = useState();
+  const [punchStateError, setPunchStateError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [recent, setrecent] = useState([])
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible1, setModalVisible1] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
+  const [formatdate, setformatdate] = useState("")
+  const [formattime, setformattime] = useState("")
+const [isRefreshing, setIsRefreshing] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
+    const [currenLatLocation, setCurrenLatLocation] = useState(0);
+  const [currenLongLocation, setCurrenLongLocation] = useState(0);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [UserDetails, setUserDetails] = useState([]);
   const [currentField, setCurrentField] = useState(null); // "start" or "end"
-  const [selectvalue, setselectvalue] = useState("Punch state*");
-  const data = [
-    { label: "Item 1", value: "1" },
-    { label: "Item 2", value: "2" },
-    { label: "Item 3", value: "3" },
-    { label: "Item 4", value: "4" },
-    { label: "Item 5", value: "5" },
-    { label: "Item 6", value: "6" },
-    { label: "Item 7", value: "7" },
-    { label: "Item 8", value: "8" },
+const [empid, setempid] = useState("")
+const [recentactivity, setrecentactivity] = useState([])
+  const options = [
+    {
+      id: 0,
+      label: "Check In",
+    },
+    {
+      id: 1,
+      label: "Check Out",
+    },
+    {
+      id: 2,
+      label: "Break Out",
+    },
+    {
+      id: 3,
+      label: "Break In",
+    },
+    {
+      id: 4,
+      label: "Overtime In",
+    },
+    {
+      id: 5,
+      label: "Overtime Out",
+    },
   ];
   const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
@@ -50,7 +82,9 @@ const Dashboard = ({ navigation }) => {
     }
     return null;
   };
-
+ 
+  console.log(workCode);
+  
   const handleDateChange = (event, date) => {
     console.log("date selected", date);
 
@@ -73,62 +107,278 @@ const Dashboard = ({ navigation }) => {
     } catch (err) {}
   }
 
-  const parseAccessToken = async () => {
-    try {
-      const accessToken = await AuthService.getToken();
-      console.log("acesstoken", accessToken);
+  console.log("value",value);
 
-      const tokenParts = accessToken.split(".");
-      console.log("wwwwwwwwwwwwww", tokenParts);
 
-      if (tokenParts.length !== 3) {
-        throw new Error("Invalid token format");
-      }
 
-      const encodedPayload = tokenParts[1];
-      const decodedPayload = atob(encodedPayload);
-      const parsedPayload = JSON.parse(decodedPayload);
-      console.log("parese", parsedPayload);
-      dispatch(myreducers.senddetails(parsedPayload));
-      console.log("ppppppppppppppppppppp");
-      console.log(parsedPayload?.user_id);
+//
 
-      getUserDetails(parsedPayload?.user_id);
 
-      return parsedPayload;
-    } catch (error) {
-      throw error;
+useEffect(() => {
+  parseAccessToken();
+}, []);
+
+const parseAccessToken = async () => {
+  try {
+    const accessToken = await AuthService.getToken();
+    const tokenParts = accessToken.split(".");
+
+    if (tokenParts.length !== 3) throw new Error("Invalid token");
+
+    const encodedPayload = tokenParts[1];
+    const decodedPayload = atob(encodedPayload);
+    const parsedPayload = JSON.parse(decodedPayload);
+
+    dispatch(myreducers.senddetails(parsedPayload));
+
+    if (parsedPayload?.user_id) {
+      await getUserDetails(parsedPayload?.user_id); // ✅ await ensures order
+    }
+  } catch (error) {
+    console.error("Token parsing failed:", error);
+  }
+};
+
+const getUserDetails = async (user_id) => {
+  try {
+    const userDetails = await ProfileServices.getUserDetailsData(user_id);
+    setUserDetails([userDetails]);
+
+    const employee = await ProfileServices.getEmployeeDetailsData(userDetails?.username);
+    const empID = employee?.id;
+
+    if (empID) {
+      setempid(empID); // Set for future use
+      await getRecentActivity(empID); // ✅ immediate use
+      const fullDetails = await ProfileServices.getEmployeeFullDetails(empID);
+      setProfilePicUrl(fullDetails?.profile_url);
+      setGender(fullDetails?.gender);
+    }
+  } catch (err) {
+    console.error("User detail fetch failed", err);
+  }
+};
+
+const getRecentActivity = async (id) => {
+  try {
+    console.log("wwwwwwwwwwwwwwwwwwwwwwww",id);
+    
+    const recents = await ProfileServices.getRecentActivityData(id);
+    console.log("data",recents);
+    console.log("data",recents.length);
+    
+    const graph = await ProfileServices.getExpenseGraph(id);
+    setrecent(recents);
+    console.log("Recent Activities:", recent);
+    console.log("Expense Graph:", graph);
+  } catch (err) {
+    console.error("Fetching recent activity failed", err);
+  }
+};
+
+
+//
+
+   const handleRefreshLocation = async () => {
+    setIsRefreshLoading(true);
+    await fetchLatiLong();
+    setIsRefreshLoading(false);
+  };
+
+const fetchLatiLong = async () => {
+  try {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      alert('Permission to access location was denied');
+      return;
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    const { latitude, longitude } = location.coords;
+
+    setCurrenLatLocation(latitude);
+    setCurrenLongLocation(longitude);
+
+    updateStatus(latitude, longitude); // ✅ Now it's correct
+  } catch (error) {
+    console.error("Error fetching location:", error);
+  }
+};
+ function toFixedIfNecessary(value, dp) {
+    return +parseFloat(value).toFixed(dp);
+  }
+
+const updateStatus = async (latitude, longitude) => {
+  try {
+    const currentTime = moment(new Date());
+    const data = {
+      latitude: Number(latitude).toFixed(6),
+      longitude: Number(longitude).toFixed(6),
+      punch_time: currentTime.format('YYYY-MM-DDTHH:mm:ss'),
+      employee_id: empid, // ensure this is available or pass explicitly
+      clock_type: value,
+      work_code: workCode,
+    };
+console.log(workCode);
+
+    if (!data.employee_id || !data.clock_type || !data.work_code) {
+      console.warn("❌ Missing fields in punch data", data);
+      return;
+    }
+
+    console.log("✅ Final data for punch", data);
+    const res = await ProfileServices.updateClockStatus(data);
+    console.log("muresponse",res);
+     Toast.show({
+        type: 'success',
+        text1: getClockType(value),
+        position: 'bottom',
+      });
+     await getRecentActivity(empid);
+    setIsLoading(false);
+    setWorkCode(null);
+    setValue(null);
+    return data;
+  } catch (err) {
+    console.error("Error in updateStatus", err);
+    setIsLoading(false);
+  }
+};
+  const getClockType = value => {
+    console.log(value);
+     const num = Number(value)
+    switch (num) {
+      case 0:
+        return 'Check In';
+      case 1:
+        return 'Check Out';
+      case 2:
+        return 'Break Out';
+      case 3:
+        return 'Break In';
+      case 4:
+        return 'Overtime In';
+      case 5:
+        return 'Overtime Out';
+      default:
+        return '-';
     }
   };
   useEffect(() => {
-    parseAccessToken();
-  }, []);
-  async function getUserDetails(id) {
-    try {
-      console.log("oooouuuuuuuuuuuuuoo", id);
-      const RecentActivities = await ProfileServices.getUserDetailsData(id);
-      console.log("recent activites", RecentActivities);
-
-      setUserDetails([RecentActivities]);
-      console.log("uerrrr", UserDetails);
-
-      const employeeId = await ProfileServices.getEmployeeDetailsData(
-        RecentActivities?.username
-      );
-      console.log("employeeid", employeeId);
-
-      const employeeFullDetails = await ProfileServices.getEmployeeFullDetails(
-        employeeId?.id
-      );
-      setProfilePicUrl(`${employeeFullDetails?.profile_url}`);
-      setGender(`${employeeFullDetails?.gender}`);
-      // setEmployeeFullDetails(employeeFullDetails);
-
-      // setEmployeeId(employeeId?.id);
-      getRecentActivity(employeeId?.id);
-    } catch (err) {}
+  if (modalVisible1) {
+    fetchLatiLong();
   }
-  return (
+}, [modalVisible1]);
+const refreshLocation = async () => {
+  setIsRefreshing(true);
+  try {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      alert('Permission to access location was denied');
+      return;
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    setCurrenLatLocation(location.coords.latitude);
+    setCurrenLongLocation(location.coords.longitude);
+  } catch (error) {
+    console.error("Failed to refresh location:", error);
+  } finally {
+    setIsRefreshing(false);
+  }
+};
+const handlePunchConfirm = async (latitude, longitude) => {
+  if (
+    !(
+      value === 0 ||
+      value === 1 ||
+      value === 2 ||
+      value === 3 ||
+      value === 4 ||
+      value === 5
+    )
+  ) {
+    setPunchStateError('Punch state is required');
+    setIsLoading(false);
+    return;
+  }
+
+  setIsLoading(true);
+  await updateStatus(latitude, longitude);
+  await getRecentActivity(empid);
+  setModalVisible(false);
+  setIsLoading(false);
+};
+console.log("state",recent);
+
+  // const months = [
+  //   'Jan',
+  //   'Feb',
+  //   'Mar',
+  //   'Apr',
+  //   'May',
+  //   'Jun',
+  //   'Jul',
+  //   'Aug',
+  //   'Sep',
+  //   'Oct',
+  //   'Nov',
+  //   'Dec',
+  // ];
+let dates = recent.map(function (data,index) {
+  return data.updated_at
+})
+console.log("rrrr",dates);
+console.log("myrecent",recent);
+console.log("myrecent",recent.length);
+
+useEffect(() => {
+  if (recent.length > 0) {
+    const formatted = recent.map((data) => {
+      const dateObj = new Date(data.updated_at);
+      const months = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      ];
+      const day = dateObj.getDate();
+      const monthIndex = dateObj.getMonth();
+      const year = dateObj.getFullYear();
+      const formattedDate = `${day} ${months[monthIndex]} ${year}`;
+
+      const minutes = dateObj.getMinutes();
+      console.log(minutes);
+      
+      const seconds = dateObj.getSeconds();
+      console.log(seconds);
+      
+      const ampm = dateObj.getHours() >= 12 ? 'PM' : 'AM';
+      let hours = dateObj.getHours() % 12;
+      hours = hours ? hours : 12;
+      const formattedTime = `${hours}:${minutes < 10 ? `0${minutes}` : minutes}:${seconds < 10 ? `0${seconds}` : seconds} ${ampm}`;
+console.log("for",formattedTime);
+
+      return {
+        formattedDate,
+        formattedTime,
+        isoTime: moment.utc(dateObj).local().format(),
+      };
+    });
+
+    // Just set the latest (first) one
+    setformatdate(formatted[0].formattedDate);
+    setformattime(formatted[0].formattedTime);
+    console.log({formatdate:formatdate});
+    console.log({formattime:formattime});
+    
+  }
+}, [recent]); // ✅ only runs when `recent` updates
+
+
+function convertUTCToLocal(dateStr) {
+  const utcDate = new Date(dateStr);
+  return new Date(utcDate.getTime() + (utcDate.getTimezoneOffset() * 60000 * -1));
+}
+   return (
     <>
       <Modal
         animationType="slide"
@@ -215,58 +465,96 @@ const Dashboard = ({ navigation }) => {
           <View style={styles.modalOverlay}>
             <View style={styles.modalview}>
               <View style={styles.map}>
-                <Text>lgjkdf</Text>
+                 <MapView
+  style={{ height: 160, width: '100%', borderRadius: 10 }}
+  region={{
+    latitude: currenLatLocation || 12.9716,
+    longitude: currenLongLocation || 77.5946,
+    latitudeDelta: 0.01,
+    longitudeDelta: 0.01,
+  }}
+>
+  <Marker
+    coordinate={{
+      latitude: currenLatLocation,
+      longitude: currenLongLocation,
+    }}
+    title="Your Location"
+  >
+    <Image
+      source={require('../assets/images/Assets/live-location.png')}
+      style={{ width: 30, height: 30 }}
+    />
+  </Marker>
+</MapView>
               </View>
-              <TouchableOpacity style={styles.refresh}>
-                <Text style={styles.refreshbtn}>Refresh</Text>
-                <Icon
-                  name="refresh"
-                  size={20}
-                  color="white"
-                  fontWeight="400"
-                  marginLeft="6"
-                />
-              </TouchableOpacity>
+             <TouchableOpacity
+  style={{
+    backgroundColor: isRefreshing ? '#A9A9A9' : '#1E90FF',
+    padding: 10,
+    borderRadius: 5,
+    alignSelf: 'flex-start',
+    marginBottom: 10,
+  }}
+  onPress={refreshLocation}
+  disabled={isRefreshing}
+>
+  <Text style={{ color: 'white', fontWeight: 'bold' }}>
+    {isRefreshing ? 'Refreshing...' : 'Refresh Location'}
+  </Text>
+</TouchableOpacity>
               <View style={styles.containercheck}>
                 {/* {renderLabel()} */}
-                <Dropdown
-                  style={[
-                    styles.dropdown,
-                    isFocus && { borderWidth: 1, borderColor: "#697ce3" },
-                  ]}
-                  placeholderStyle={styles.placeholderStyle}
-                  selectedTextStyle={styles.selectedTextStyle}
-                  inputSearchStyle={styles.inputSearchStyle}
-                  iconStyle={styles.iconStyle}
-                  data={data}
-                  search
-                  maxHeight={300}
-                  labelField="label"
-                  valueField="value"
-                  placeholder={!isFocus ? "Select item" : "..."}
-                  searchPlaceholder="Search..."
-                  value={value}
-                  onFocus={() => setIsFocus(true)}
-                  onBlur={() => setIsFocus(false)}
-                  onChange={(item) => {
-                    setValue(item.value);
-                    setIsFocus(false);
-                  }}
-                  renderLeftIcon={() => (
-                    <AntDesign
-                      style={styles.icon}
-                      color={isFocus ? "blue" : "black"}
-                      name="Safety"
-                      size={20}
-                    />
-                  )}
-                />
-              </View>
+<Dropdown
+  style={[
+    styles.dropdown,
+    isFocus && { borderWidth: 1, borderColor: "#697ce3" },
+  ]}
+  placeholderStyle={styles.placeholderStyle}
+  selectedTextStyle={styles.selectedTextStyle}
+  inputSearchStyle={styles.inputSearchStyle}
+  iconStyle={styles.iconStyle}
+  data={options}
+  search
+  maxHeight={300}
+  labelField="label"
+  valueField="id"  // ✅ Fixed this line
+  placeholder={!isFocus ? "Select item" : "..."}
+  searchPlaceholder="Search..."
+  value={value}
+  onFocus={() => setIsFocus(true)}
+  onBlur={() => setIsFocus(false)}
+  onChange={(data) => {
+    setValue(data.id); // ✅ Set the actual ID value
+    setIsFocus(false);
+  }}
+  renderLeftIcon={() => (
+    <AntDesign
+      style={styles.icon}
+      color={isFocus ? "blue" : "black"}
+      name="Safety"
+      size={20}
+    />
+  )}
+/>
 
+              </View>
+ {!value || punchStateError ? (
+                              <Text
+                                style={{
+                                  color: 'red',
+                                  fontSize: 12,
+                                  marginLeft: 4,
+                                }}>
+                                {punchStateError}
+                              </Text>
+                            ) : null}
               <TextInput
                 placeholder="Work code (Optional)"
                 placeholderTextColor={"gray"}
                 style={styles.password}
+                value={workCode}
+                onChangeText={setWorkCode}
               />
               <View style={styles.dashbtn}>
                 <TouchableOpacity
@@ -275,7 +563,12 @@ const Dashboard = ({ navigation }) => {
                 >
                   <Text style={styles.dashtext1}>Cancel</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.dashbtn2}>
+                <TouchableOpacity style={styles.dashbtn2}  onPress={() =>
+                              handlePunchConfirm(
+                                currenLatLocation,
+                                currenLongLocation,
+                              )
+                            }>
                   <Text style={styles.dashtext2}>Add</Text>
                 </TouchableOpacity>
               </View>
@@ -419,7 +712,40 @@ const Dashboard = ({ navigation }) => {
               View All
             </Text>
           </View>
+          <ScrollView style={styles.myscroll}>
+{recent.map((data, index) => {
+  const localDate = convertUTCToLocal(data.updated_at);
+
+  const dateString = localDate.toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+
+  const timeString = localDate.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true,
+  });
+
+  return (
+    <View key={index} style={styles.scroll}>
+      <View style={styles.check}>
+        <Text style={styles.check}>{getClockType(data.clock_type)}</Text>
+        <Text style={styles.check1}>{dateString}</Text>
+      </View>
+      <Text style={styles.check2}>{timeString}</Text>
+    </View>
+  );
+})}
+
+
+          
+           
+          </ScrollView>
         </View>
+        <Toast/>
       </View>
     </>
   );
@@ -789,4 +1115,34 @@ const styles = StyleSheet.create({
     height: 40,
     fontSize: 16,
   },
+  myscroll:{
+    marginVertical:15,
+  },
+   scroll:{
+    width:"100%",
+    padding:10,
+  backgroundColor:"lightgray",
+    borderRadius:15,
+    display:"flex",
+    alignItems:"center",
+    justifyContent:"space-between",
+    flexDirection:"row", 
+    marginBottom:15
+  },
+  check:{
+    fontSize:15,
+    fontWeight:"bold",
+    color:"black",
+    marginBottom:4
+  },
+  check1:{
+    fontSize:15,
+    color:"gray",
+    fontWeight:600
+  },
+  check2:{
+    fontWeight:800,
+    color:"black",
+    fontSize:18
+  }
 });
