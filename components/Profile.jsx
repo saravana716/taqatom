@@ -161,7 +161,7 @@ console.log(gender,profilePic);
 
               {employeedetails.map(function (data,index) {
   return (
-    <View style={styles.punchtitle}>
+    <View style={styles.punchtitle} key={index}>
       <Text style={styles.punchday1}>
         {data.first_name} {data.last_name}
       </Text>

@@ -6,7 +6,9 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import * as Location from 'expo-location';
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "./AuthContext";
+
 import {
   Image,
   Modal,
@@ -34,12 +36,13 @@ const Dashboard = ({ navigation }) => {
   const [showPicker, setShowPicker] = useState(false);
   const [formatdate, setformatdate] = useState("")
   const [formattime, setformattime] = useState("")
+  const [getalldata, setgetalldata] = useState([])
 const [isRefreshing, setIsRefreshing] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
     const [currenLatLocation, setCurrenLatLocation] = useState(0);
   const [currenLongLocation, setCurrenLongLocation] = useState(0);
   const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const [endDate, setEndDate] = useState(moment().format('D/M/YYYY'));
   const [UserDetails, setUserDetails] = useState([]);
   const [currentField, setCurrentField] = useState(null); // "start" or "end"
 const [empid, setempid] = useState("")
@@ -83,21 +86,24 @@ const [recentactivity, setrecentactivity] = useState([])
     return null;
   };
  
-  console.log(workCode);
+  // console.log(workCode);
   
-  const handleDateChange = (event, date) => {
-    console.log("date selected", date);
+const handleDateChange = (event, date) => {
+  if (date) {
+    setSelectedDate(date);
+    const formattedDate = date.toLocaleDateString(); // e.g., 4/6/2025
 
-    if (date) {
-      setSelectedDate(date);
-      if (currentField === "start") {
-        setStartDate(date.toLocaleDateString());
-      } else if (currentField === "end") {
-        setEndDate(date.toLocaleDateString());
-      }
+    if (currentField === "start") {
+      setStartDate(formattedDate);
+      setEndDate(moment().format('D/M/YYYY')); // auto set to today
+    } else if (currentField === "end") {
+      setEndDate(formattedDate);
     }
-    setShowPicker(false);
-  };
+  }
+  setShowPicker(false);
+};
+
+
   function navigateprofile(params) {
     navigation.navigate("Profile");
   }
@@ -113,7 +119,7 @@ const [recentactivity, setrecentactivity] = useState([])
 
 //
 
-
+const { logout } = useContext(AuthContext);
 useEffect(() => {
   parseAccessToken();
 }, []);
@@ -158,19 +164,30 @@ const getUserDetails = async (user_id) => {
     console.error("User detail fetch failed", err);
   }
 };
+// useEffect(() => {
+// async function chekc(params) {
+//   try{
+//     await logout()
+//   }
+//   catch(err){
+
+//   }
+// }
+// chekc()
+// }, [])
 
 const getRecentActivity = async (id) => {
   try {
-    console.log("wwwwwwwwwwwwwwwwwwwwwwww",id);
+    // console.log("wwwwwwwwwwwwwwwwwwwwwwww",id);
     
     const recents = await ProfileServices.getRecentActivityData(id);
-    console.log("data",recents);
-    console.log("data",recents.length);
+    // console.log("data",recents);
+    // console.log("data",recents.length);
     
     const graph = await ProfileServices.getExpenseGraph(id);
     setrecent(recents);
-    console.log("Recent Activities:", recent);
-    console.log("Expense Graph:", graph);
+    // console.log("Recent Activities:", recent);
+    // console.log("Expense Graph:", graph);
   } catch (err) {
     console.error("Fetching recent activity failed", err);
   }
@@ -212,23 +229,23 @@ const updateStatus = async (latitude, longitude) => {
   try {
     const currentTime = moment(new Date());
     const data = {
-      latitude: Number(latitude).toFixed(6),
-      longitude: Number(longitude).toFixed(6),
+             latitude: toFixedIfNecessary(latitude, 6),
+        longitude: toFixedIfNecessary(longitude, 6),
       punch_time: currentTime.format('YYYY-MM-DDTHH:mm:ss'),
       employee_id: empid, // ensure this is available or pass explicitly
       clock_type: value,
       work_code: workCode,
     };
-console.log(workCode);
+// console.log(workCode);
 
     if (!data.employee_id || !data.clock_type || !data.work_code) {
       console.warn("❌ Missing fields in punch data", data);
       return;
     }
 
-    console.log("✅ Final data for punch", data);
+    // console.log("✅ Final data for punch", data);
     const res = await ProfileServices.updateClockStatus(data);
-    console.log("muresponse",res);
+    // console.log("muresponse",res);
      Toast.show({
         type: 'success',
         text1: getClockType(value),
@@ -245,7 +262,7 @@ console.log(workCode);
   }
 };
   const getClockType = value => {
-    console.log(value);
+    // console.log(value);
      const num = Number(value)
     switch (num) {
       case 0:
@@ -309,7 +326,7 @@ const handlePunchConfirm = async (latitude, longitude) => {
   setModalVisible(false);
   setIsLoading(false);
 };
-console.log("state",recent);
+// console.log("state",recent);
 
   // const months = [
   //   'Jan',
@@ -328,9 +345,9 @@ console.log("state",recent);
 let dates = recent.map(function (data,index) {
   return data.updated_at
 })
-console.log("rrrr",dates);
-console.log("myrecent",recent);
-console.log("myrecent",recent.length);
+// console.log("rrrr",dates);
+// console.log("myrecent",recent);
+// console.log("myrecent",recent.length);
 
 useEffect(() => {
   if (recent.length > 0) {
@@ -346,16 +363,16 @@ useEffect(() => {
       const formattedDate = `${day} ${months[monthIndex]} ${year}`;
 
       const minutes = dateObj.getMinutes();
-      console.log(minutes);
+      // console.log(minutes);
       
       const seconds = dateObj.getSeconds();
-      console.log(seconds);
+      // console.log(seconds);
       
       const ampm = dateObj.getHours() >= 12 ? 'PM' : 'AM';
       let hours = dateObj.getHours() % 12;
       hours = hours ? hours : 12;
       const formattedTime = `${hours}:${minutes < 10 ? `0${minutes}` : minutes}:${seconds < 10 ? `0${seconds}` : seconds} ${ampm}`;
-console.log("for",formattedTime);
+// console.log("for",formattedTime);
 
       return {
         formattedDate,
@@ -367,8 +384,8 @@ console.log("for",formattedTime);
     // Just set the latest (first) one
     setformatdate(formatted[0].formattedDate);
     setformattime(formatted[0].formattedTime);
-    console.log({formatdate:formatdate});
-    console.log({formattime:formattime});
+    // console.log({formatdate:formatdate});
+    // console.log({formattime:formattime});
     
   }
 }, [recent]); // ✅ only runs when `recent` updates
@@ -378,6 +395,44 @@ function convertUTCToLocal(dateStr) {
   const utcDate = new Date(dateStr);
   return new Date(utcDate.getTime() + (utcDate.getTimezoneOffset() * 60000 * -1));
 }
+
+
+// console.log({startDate:startDate,enddate:endDate});
+// console.log("myemploueee id",empid);
+
+useEffect(() => {
+  async function getdata() {
+    try {
+      if (!empid) return;
+
+      let startFormatted = moment().format('YYYY-MM-DD');
+      let endFormatted = moment().format('YYYY-MM-DD');
+
+      if (startDate) {
+        startFormatted = moment(startDate, 'D/M/YYYY').format('YYYY-MM-DD');
+      }
+
+      if (endDate) {
+        endFormatted = moment(endDate, 'D/M/YYYY').format('YYYY-MM-DD');
+      }
+
+      const result = await ProfileServices.getRecentActivityAllData({
+        id: empid,
+        start: startFormatted,
+        end: endFormatted,
+      });
+
+      setgetalldata(result);
+    } catch (err) {
+      console.error("getdata error", err);
+    }
+  }
+
+  getdata();
+}, [empid, startDate, endDate]);
+
+const today = moment().format('YYYY-MM-DD');
+
    return (
     <>
       <Modal
@@ -416,17 +471,17 @@ function convertUTCToLocal(dateStr) {
                 <TouchableOpacity
                   style={styles.models}
                   onPress={() => {
-                    console.log("openkgndfngndjn");
+                    // console.log("openkgndfngndjn");
 
                     setCurrentField("start");
                     setShowPicker(true);
                   }}
                 >
-                  <TouchableOpacity style={{ flex: 1 }}>
+                  <View style={{ flex: 1 }}>
                     <Text style={{ color: startDate ? "black" : "gray" }}>
                       {startDate || "Start Date"}
                     </Text>
-                  </TouchableOpacity>
+                  </View>
                   <Image
                     source={require("../assets/images/Assets/calendar.png")}
                     style={styles.images1}
@@ -440,17 +495,45 @@ function convertUTCToLocal(dateStr) {
                     setShowPicker(true);
                   }}
                 >
-                  <TouchableOpacity style={{ flex: 1 }}>
+                  <View style={{ flex: 1 }}>
                     <Text style={{ color: endDate ? "black" : "gray" }}>
                       {endDate || "End Date"}
                     </Text>
-                  </TouchableOpacity>
+                  </View>
                   <Image
                     source={require("../assets/images/Assets/calendar.png")}
                     style={styles.images1}
                   />
                 </TouchableOpacity>
               </View>
+              <ScrollView style={styles.dashscroll}>
+ {getalldata.map((data, index) => {
+  const localDate = convertUTCToLocal(data.updated_at);
+
+  const dateString = localDate.toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+
+  const timeString = localDate.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true,
+  });
+
+  return (
+    <View key={index} style={styles.scroll}>
+      <View style={styles.check}>
+        <Text style={styles.check}>{getClockType(data.clock_type)}</Text>
+        <Text style={styles.check1}>{dateString}</Text>
+      </View>
+      <Text style={styles.check2}>{timeString}</Text>
+    </View>
+  );
+})}
+              </ScrollView>
             </View>
           </View>
         </SafeAreaView>
@@ -615,7 +698,7 @@ function convertUTCToLocal(dateStr) {
           <View style={styles.punch}>
             <View style={styles.punchtitle}>
               <Text style={styles.punchday}>Today Overview</Text>
-              <Text style={styles.punchday1}>May 22,2025</Text>
+               <Text style={styles.punchday1}>{moment().format('MMMM D, YYYY')}</Text>
             </View>
             <TouchableOpacity
               style={styles.btn}
@@ -1144,5 +1227,12 @@ const styles = StyleSheet.create({
     fontWeight:800,
     color:"black",
     fontSize:18
+  },
+  dashscroll:{
+    width:"100%",
+    height:"100%",
+    backgroundColor:"gray",
+    marginTop:20,
+    padding:20
   }
 });
