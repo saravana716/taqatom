@@ -20,8 +20,8 @@ const Profile = ({ navigation }) => {
   const selector = useSelector(function (data) {
     return data.userDetails.user_id;
   });
-  console.log("selector", selector.user_id);
-
+  console.log("selector", selector);
+  
   const [token, settoken] = useState("");
   const [profilePic, setProfilePic] = useState("");
   const [gender, setGender] = useState("");
@@ -146,7 +146,7 @@ console.log(gender,profilePic);
                 style={styles.closeButton}
                 onPress={navigatepage}
               >
-                <Icon name="angle-left" size={30} color="white" />{" "}
+                <Icon name="angle-left" size={30} color="white" />
               </TouchableOpacity>
               <Text style={styles.modalText}>My Profile</Text>
             </View>
@@ -184,7 +184,7 @@ console.log(gender,profilePic);
             onPress={() => opennavigate("ProfileUpdate")}
           >
             <View style={styles.profileleft}>
-              {" "}
+              
               <Icon name="user" size={25} color="black" />
               <Text style={styles.my}>My Profile</Text>
             </View>
@@ -196,7 +196,7 @@ console.log(gender,profilePic);
             onPress={() => opennavigate("Password")}
           >
             <View style={styles.profileleft}>
-              {" "}
+              
               <Icon name="lock" size={25} color="black" />
               <Text style={styles.pass}>Change Password</Text>
             </View>
@@ -207,7 +207,7 @@ console.log(gender,profilePic);
             onPress={() => setModalVisible(true)}
           >
             <View style={styles.profileleft}>
-              {" "}
+              
               <Icon name="sign-out" size={25} color="white" />
               <Text style={styles.log}>Logout</Text>
             </View>

@@ -1,14 +1,13 @@
 import ProfileServices from "@/Services/API/ProfileServices";
-import AuthService from "@/Services/AuthService";
-import { myreducers } from "@/Store/Store";
-
 import AntDesign from "@expo/vector-icons/AntDesign";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import * as Location from 'expo-location';
+import { decode as atob } from "base-64";
+import * as Location from "expo-location";
 import moment from "moment";
+// import { LANG_CODES } from '../locales/translations/languages';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "./AuthContext";
-
 import {
   Image,
   Modal,
@@ -17,36 +16,43 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker } from "react-native-maps";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useDispatch } from "react-redux";
-const Dashboard = ({ navigation }) => {
+import { AuthContext } from "./AuthContext";
+import { myreducers } from "@/Store/Store";
+const Dashboard = () => {
+  const navigation = useNavigation(``);
   const dispatch = useDispatch();
   const [workCode, setWorkCode] = useState();
-  const [punchStateError, setPunchStateError] = useState('');
+  const [tokenDetail, setTokenDetail] = useState(null);
+
+  const [punchStateError, setPunchStateError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [recent, setrecent] = useState([])
+  const [recent, setrecent] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible1, setModalVisible1] = useState(false);
+  const [Gender, setGender] = useState("");
   const [showPicker, setShowPicker] = useState(false);
-  const [formatdate, setformatdate] = useState("")
-  const [formattime, setformattime] = useState("")
-  const [getalldata, setgetalldata] = useState([])
-const [isRefreshing, setIsRefreshing] = useState(false);
+  const [formatdate, setformatdate] = useState("");
+  const [formattime, setformattime] = useState("");
+  const [getalldata, setgetalldata] = useState([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
-    const [currenLatLocation, setCurrenLatLocation] = useState(0);
-  const [currenLongLocation, setCurrenLongLocation] = useState(0);
+  const [currenLatLocation, setCurrenLatLocation] = useState(12.9716);
+  const [currenLongLocation, setCurrenLongLocation] = useState(77.5946);
+  const [ProfilePicUrl, setProfilePicUrl] = useState("");
   const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(moment().format('D/M/YYYY'));
+  const [endDate, setEndDate] = useState(moment().format("D/M/YYYY"));
   const [UserDetails, setUserDetails] = useState([]);
   const [currentField, setCurrentField] = useState(null); // "start" or "end"
-const [empid, setempid] = useState("")
-const [recentactivity, setrecentactivity] = useState([])
+  const [empid, setempid] = useState("");
+  const [recentactivity, setrecentactivity] = useState([]);
   const options = [
     {
       id: 0,
@@ -85,27 +91,31 @@ const [recentactivity, setrecentactivity] = useState([])
     }
     return null;
   };
- 
+
   // console.log(workCode);
-  
-const handleDateChange = (event, date) => {
-  if (date) {
-    setSelectedDate(date);
-    const formattedDate = date.toLocaleDateString(); // e.g., 4/6/2025
 
-    if (currentField === "start") {
-      setStartDate(formattedDate);
-      setEndDate(moment().format('D/M/YYYY')); // auto set to today
-    } else if (currentField === "end") {
-      setEndDate(formattedDate);
+  const handleDateChange = (event, date) => {
+    if (date) {
+      setSelectedDate(date);
+      const formattedDate = date.toLocaleDateString(); // e.g., 4/6/2025
+
+      if (currentField === "start") {
+        setStartDate(formattedDate);
+        setEndDate(moment().format("D/M/YYYY")); // auto set to today
+      } else if (currentField === "end") {
+        setEndDate(formattedDate);
+      }
     }
-  }
-  setShowPicker(false);
-};
+    setShowPicker(false);
+  };
 
-
-  function navigateprofile(params) {
-    navigation.navigate("Profile");
+  async function navigateprofile(params) {
+    try {
+      let userid = await AsyncStorage.getItem("token");
+      console.log("ioioioioioi",userid);
+      
+      navigation.navigate("Profile");
+    } catch (err) {}
   }
   async function movepage(event) {
     try {
@@ -113,220 +123,255 @@ const handleDateChange = (event, date) => {
     } catch (err) {}
   }
 
-  console.log("value",value);
+  console.log("value", value);
 
+  //
 
-
-//
-
-const { logout } = useContext(AuthContext);
-useEffect(() => {
-  parseAccessToken();
-}, []);
-
-const parseAccessToken = async () => {
-  try {
-    const accessToken = await AuthService.getToken();
-    const tokenParts = accessToken.split(".");
-
-    if (tokenParts.length !== 3) throw new Error("Invalid token");
-
-    const encodedPayload = tokenParts[1];
-    const decodedPayload = atob(encodedPayload);
-    const parsedPayload = JSON.parse(decodedPayload);
-
-    dispatch(myreducers.senddetails(parsedPayload));
-
-    if (parsedPayload?.user_id) {
-      await getUserDetails(parsedPayload?.user_id); // ✅ await ensures order
-    }
-  } catch (error) {
-    console.error("Token parsing failed:", error);
-  }
-};
-
-const getUserDetails = async (user_id) => {
-  try {
-    const userDetails = await ProfileServices.getUserDetailsData(user_id);
-    setUserDetails([userDetails]);
-
-    const employee = await ProfileServices.getEmployeeDetailsData(userDetails?.username);
-    const empID = employee?.id;
-
-    if (empID) {
-      setempid(empID); // Set for future use
-      await getRecentActivity(empID); // ✅ immediate use
-      const fullDetails = await ProfileServices.getEmployeeFullDetails(empID);
-      setProfilePicUrl(fullDetails?.profile_url);
-      setGender(fullDetails?.gender);
-    }
-  } catch (err) {
-    console.error("User detail fetch failed", err);
-  }
-};
-// useEffect(() => {
-// async function chekc(params) {
-//   try{
-//     await logout()
-//   }
-//   catch(err){
-
-//   }
-// }
-// chekc()
-// }, [])
-
-const getRecentActivity = async (id) => {
-  try {
-    // console.log("wwwwwwwwwwwwwwwwwwwwwwww",id);
-    
-    const recents = await ProfileServices.getRecentActivityData(id);
-    // console.log("data",recents);
-    // console.log("data",recents.length);
-    
-    const graph = await ProfileServices.getExpenseGraph(id);
-    setrecent(recents);
-    // console.log("Recent Activities:", recent);
-    // console.log("Expense Graph:", graph);
-  } catch (err) {
-    console.error("Fetching recent activity failed", err);
-  }
-};
-
-
-//
-
-   const handleRefreshLocation = async () => {
-    setIsRefreshLoading(true);
-    await fetchLatiLong();
-    setIsRefreshLoading(false);
-  };
-
-const fetchLatiLong = async () => {
-  try {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Permission to access location was denied');
-      return;
-    }
-
-    let location = await Location.getCurrentPositionAsync({});
-    const { latitude, longitude } = location.coords;
-
-    setCurrenLatLocation(latitude);
-    setCurrenLongLocation(longitude);
-
-    updateStatus(latitude, longitude); // ✅ Now it's correct
-  } catch (error) {
-    console.error("Error fetching location:", error);
-  }
-};
- function toFixedIfNecessary(value, dp) {
-    return +parseFloat(value).toFixed(dp);
-  }
-
-const updateStatus = async (latitude, longitude) => {
-  try {
-    const currentTime = moment(new Date());
-    const data = {
-             latitude: toFixedIfNecessary(latitude, 6),
-        longitude: toFixedIfNecessary(longitude, 6),
-      punch_time: currentTime.format('YYYY-MM-DDTHH:mm:ss'),
-      employee_id: empid, // ensure this is available or pass explicitly
-      clock_type: value,
-      work_code: workCode,
-    };
-// console.log(workCode);
-
-    if (!data.employee_id || !data.clock_type || !data.work_code) {
-      console.warn("❌ Missing fields in punch data", data);
-      return;
-    }
-
-    // console.log("✅ Final data for punch", data);
-    const res = await ProfileServices.updateClockStatus(data);
-    // console.log("muresponse",res);
-     Toast.show({
-        type: 'success',
-        text1: getClockType(value),
-        position: 'bottom',
-      });
-     await getRecentActivity(empid);
-    setIsLoading(false);
-    setWorkCode(null);
-    setValue(null);
-    return data;
-  } catch (err) {
-    console.error("Error in updateStatus", err);
-    setIsLoading(false);
-  }
-};
-  const getClockType = value => {
-    // console.log(value);
-     const num = Number(value)
-    switch (num) {
-      case 0:
-        return 'Check In';
-      case 1:
-        return 'Check Out';
-      case 2:
-        return 'Break Out';
-      case 3:
-        return 'Break In';
-      case 4:
-        return 'Overtime In';
-      case 5:
-        return 'Overtime Out';
-      default:
-        return '-';
-    }
-  };
+  const { logout } = useContext(AuthContext);
   useEffect(() => {
-  if (modalVisible1) {
-    fetchLatiLong();
-  }
-}, [modalVisible1]);
-const refreshLocation = async () => {
-  setIsRefreshing(true);
-  try {
+    parseAccessToken();
+  }, []);
+
+  const parseAccessToken = async () => {
+    try {
+      const accessToken = await AsyncStorage.getItem("token");
+      console.log("accessToken1234567890", accessToken);
+
+      if (!accessToken || typeof accessToken !== "string") {
+        throw new Error("Access token is missing or invalid");
+      }
+
+      const tokenParts = accessToken.split(".");
+      if (tokenParts.length !== 3) {
+        throw new Error("Invalid token format");
+      }
+
+      const encodedPayload = tokenParts[1];
+      const decodedPayload = JSON.parse(atob(encodedPayload)); // ✅ Use base-64
+
+      console.log("Decoded Token:", decodedPayload);
+let ids=decodedPayload.user_id
+console.log("000000000000000000000000",ids);
+
+      setTokenDetail(decodedPayload);
+      getUserDetails(decodedPayload.user_id);
+      dispatch(myreducers.senddetails(decodedPayload))
+console.log("myserid1223456789",ids);
+
+      return decodedPayload;
+    } catch (error) {
+      console.error("Token parsing failed:", error);
+      throw error;
+    }
+  };
+
+  const getUserDetails = async (user_id) => {
+    try {
+      console.log("tttttttttttttttttttttttttttttttttttttttttt",user_id);
+      
+      const userDetails = await ProfileServices.getUserDetailsData(user_id);
+      setUserDetails([userDetails]);
+console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu",userDetails);
+
+      const employee = await ProfileServices.getEmployeeDetailsData(
+        userDetails?.username
+      );
+      const empID = employee?.id;
+
+      if (empID) {
+        setempid(empID); // Set for future use
+        await getRecentActivity(empID); // ✅ immediate use
+        const fullDetails = await ProfileServices.getEmployeeFullDetails(empID);
+        console.log("myyyyyyyy", fullDetails);
+
+        setProfilePicUrl(fullDetails?.profile_url);
+        setGender(fullDetails?.gender);
+      }
+    } catch (err) {
+      console.error("User detail fetch failed", err);
+    }
+  };
+
+  const getLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Permission to access location was denied');
+    if (status !== "granted") {
+      Alert.alert("Permission to access location was denied");
       return;
     }
 
     let location = await Location.getCurrentPositionAsync({});
     setCurrenLatLocation(location.coords.latitude);
     setCurrenLongLocation(location.coords.longitude);
-  } catch (error) {
-    console.error("Failed to refresh location:", error);
-  } finally {
-    setIsRefreshing(false);
-  }
-};
-const handlePunchConfirm = async (latitude, longitude) => {
-  if (
-    !(
-      value === 0 ||
-      value === 1 ||
-      value === 2 ||
-      value === 3 ||
-      value === 4 ||
-      value === 5
-    )
-  ) {
-    setPunchStateError('Punch state is required');
-    setIsLoading(false);
-    return;
+  };
+  useEffect(() => {
+    if (modalVisible1) {
+      getLocation();
+    }
+  }, [modalVisible1]);
+  // useEffect(() => {
+  // async function chekc(params) {
+  //   try{
+  //     await logout()
+  //   }
+  //   catch(err){
+
+  //   }
+  // }
+  // chekc()
+  // }, [])
+
+  const getRecentActivity = async (id) => {
+    try {
+      // console.log("wwwwwwwwwwwwwwwwwwwwwwww",id);
+
+      const recents = await ProfileServices.getRecentActivityData(id);
+      // console.log("data",recents);
+      // console.log("data",recents.length);
+
+      const graph = await ProfileServices.getExpenseGraph(id);
+      setrecent(recents);
+      // console.log("Recent Activities:", recent);
+      // console.log("Expense Graph:", graph);
+    } catch (err) {
+      console.error("Fetching recent activity failed", err);
+    }
+  };
+
+  //
+
+  const handleRefreshLocation = async () => {
+    setIsRefreshLoading(true);
+    await fetchLatiLong();
+    setIsRefreshLoading(false);
+  };
+
+  const fetchLatiLong = async () => {
+    try {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        alert("Permission to access location was denied");
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = location.coords;
+
+      setCurrenLatLocation(latitude);
+      setCurrenLongLocation(longitude);
+
+      updateStatus(latitude, longitude); // ✅ Now it's correct
+    } catch (error) {
+      console.error("Error fetching location:", error);
+    }
+  };
+  function toFixedIfNecessary(value, dp) {
+    return +parseFloat(value).toFixed(dp);
   }
 
-  setIsLoading(true);
-  await updateStatus(latitude, longitude);
-  await getRecentActivity(empid);
-  setModalVisible(false);
-  setIsLoading(false);
-};
-// console.log("state",recent);
+  const updateStatus = async (latitude, longitude) => {
+    try {
+      const currentTime = moment(new Date());
+      const data = {
+        latitude: toFixedIfNecessary(latitude, 6),
+        longitude: toFixedIfNecessary(longitude, 6),
+        punch_time: currentTime.format("YYYY-MM-DDTHH:mm:ss"),
+        employee_id: empid, // ensure this is available or pass explicitly
+        clock_type: value,
+        work_code: workCode,
+      };
+      // console.log(workCode);
+
+      if (!data.employee_id || !data.clock_type || !data.work_code) {
+        console.warn("❌ Missing fields in punch data", data);
+        return;
+      }
+
+      // console.log("✅ Final data for punch", data);
+      const res = await ProfileServices.updateClockStatus(data);
+      console.log("muresponse", res);
+
+      setModalVisible1(false); // close immediately
+      Toast.show({
+        type: "success",
+        text1: getClockType(value),
+        position: "bottom",
+      });
+      await getRecentActivity(empid);
+      setIsLoading(false);
+      setWorkCode(null);
+      setValue(null);
+      return data;
+    } catch (err) {
+      console.error("Error in updateStatus", err);
+      setIsLoading(false);
+    }
+  };
+  const getClockType = (value) => {
+    // console.log(value);
+    const num = Number(value);
+    switch (num) {
+      case 0:
+        return "Check In";
+      case 1:
+        return "Check Out";
+      case 2:
+        return "Break Out";
+      case 3:
+        return "Break In";
+      case 4:
+        return "Overtime In";
+      case 5:
+        return "Overtime Out";
+      default:
+        return "-";
+    }
+  };
+  useEffect(() => {
+    if (modalVisible1) {
+      fetchLatiLong();
+    }
+  }, [modalVisible1]);
+  const refreshLocation = async () => {
+    setIsRefreshing(true);
+    try {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        alert("Permission to access location was denied");
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setCurrenLatLocation(location.coords.latitude);
+      setCurrenLongLocation(location.coords.longitude);
+    } catch (error) {
+      console.error("Failed to refresh location:", error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+  const handlePunchConfirm = async (latitude, longitude) => {
+    if (
+      !(
+        value === 0 ||
+        value === 1 ||
+        value === 2 ||
+        value === 3 ||
+        value === 4 ||
+        value === 5
+      )
+    ) {
+      setPunchStateError("Punch state is required");
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    await updateStatus(latitude, longitude);
+    await getRecentActivity(empid);
+    setModalVisible(false);
+    setIsLoading(false);
+  };
+  // console.log("state",recent);
 
   // const months = [
   //   'Jan',
@@ -342,78 +387,87 @@ const handlePunchConfirm = async (latitude, longitude) => {
   //   'Nov',
   //   'Dec',
   // ];
-let dates = recent.map(function (data,index) {
-  return data.updated_at
-})
-// console.log("rrrr",dates);
-// console.log("myrecent",recent);
-// console.log("myrecent",recent.length);
+  // let dates = recent.map(function (data,index) {
+  //   return data.updated_at
+  // })
+  // console.log("rrrr",dates);
+  // console.log("myrecent",recent);
+  // console.log("myrecent",recent.length);
 
-useEffect(() => {
-  if (recent.length > 0) {
-    const formatted = recent.map((data) => {
-      const dateObj = new Date(data.updated_at);
-      const months = [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-      ];
-      const day = dateObj.getDate();
-      const monthIndex = dateObj.getMonth();
-      const year = dateObj.getFullYear();
-      const formattedDate = `${day} ${months[monthIndex]} ${year}`;
+  useEffect(() => {
+    if (recent.length > 0) {
+      const formatted = recent.map((data, index) => {
+        const dateObj = new Date(data.updated_at);
+        const months = [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec",
+        ];
+        const day = dateObj.getDate();
+        const monthIndex = dateObj.getMonth();
+        const year = dateObj.getFullYear();
+        const formattedDate = `${day} ${months[monthIndex]} ${year}`;
 
-      const minutes = dateObj.getMinutes();
-      // console.log(minutes);
-      
-      const seconds = dateObj.getSeconds();
-      // console.log(seconds);
-      
-      const ampm = dateObj.getHours() >= 12 ? 'PM' : 'AM';
-      let hours = dateObj.getHours() % 12;
-      hours = hours ? hours : 12;
-      const formattedTime = `${hours}:${minutes < 10 ? `0${minutes}` : minutes}:${seconds < 10 ? `0${seconds}` : seconds} ${ampm}`;
-// console.log("for",formattedTime);
+        const minutes = dateObj.getMinutes();
+        // console.log(minutes);
 
-      return {
-        formattedDate,
-        formattedTime,
-        isoTime: moment.utc(dateObj).local().format(),
-      };
-    });
+        const seconds = dateObj.getSeconds();
+        // console.log(seconds);
 
-    // Just set the latest (first) one
-    setformatdate(formatted[0].formattedDate);
-    setformattime(formatted[0].formattedTime);
-    // console.log({formatdate:formatdate});
-    // console.log({formattime:formattime});
-    
+        const ampm = dateObj.getHours() >= 12 ? "PM" : "AM";
+        let hours = dateObj.getHours() % 12;
+        hours = hours ? hours : 12;
+        const formattedTime = `${hours}:${
+          minutes < 10 ? `0${minutes}` : minutes
+        }:${seconds < 10 ? `0${seconds}` : seconds} ${ampm}`;
+        // console.log("for",formattedTime);
+
+        return {
+          formattedDate,
+          formattedTime,
+          isoTime: moment.utc(dateObj).local().format(),
+        };
+      });
+
+      // Just set the latest (first) one
+      setformatdate(formatted[0].formattedDate);
+      setformattime(formatted[0].formattedTime);
+      // console.log({formatdate:formatdate});
+      // console.log({formattime:formattime});
+    }
+  }, [recent]); // ✅ only runs when `recent` updates
+
+  function convertUTCToLocal(dateStr) {
+    const utcDate = new Date(dateStr);
+    return new Date(
+      utcDate.getTime() + utcDate.getTimezoneOffset() * 60000 * -1
+    );
   }
-}, [recent]); // ✅ only runs when `recent` updates
 
-
-function convertUTCToLocal(dateStr) {
-  const utcDate = new Date(dateStr);
-  return new Date(utcDate.getTime() + (utcDate.getTimezoneOffset() * 60000 * -1));
-}
-
-
-// console.log({startDate:startDate,enddate:endDate});
-// console.log("myemploueee id",empid);
-
-useEffect(() => {
+  // console.log({startDate:startDate,enddate:endDate});
+  // console.log("myemploueee id",empid);
   async function getdata() {
     try {
       if (!empid) return;
 
-      let startFormatted = moment().format('YYYY-MM-DD');
-      let endFormatted = moment().format('YYYY-MM-DD');
+      let startFormatted = moment().format("YYYY-MM-DD");
+      let endFormatted = moment().format("YYYY-MM-DD");
 
       if (startDate) {
-        startFormatted = moment(startDate, 'D/M/YYYY').format('YYYY-MM-DD');
+        startFormatted = moment(startDate, "D/M/YYYY").format("YYYY-MM-DD");
       }
 
       if (endDate) {
-        endFormatted = moment(endDate, 'D/M/YYYY').format('YYYY-MM-DD');
+        endFormatted = moment(endDate, "D/M/YYYY").format("YYYY-MM-DD");
       }
 
       const result = await ProfileServices.getRecentActivityAllData({
@@ -427,13 +481,43 @@ useEffect(() => {
       console.error("getdata error", err);
     }
   }
+  useEffect(() => {
+    getdata();
+  }, [empid, startDate, endDate]);
 
-  getdata();
-}, [empid, startDate, endDate]);
+  const today = moment().format("YYYY-MM-DD");
+  // useEffect(() => {
+  //  async function Logout() {
+  //     try {
+  //      await logout()
+  //     } catch (err) {
+  //       console.log("Logout Error:", err);
+  //     }
+  //   }
+  //   Logout()
 
-const today = moment().format('YYYY-MM-DD');
+  // }, [])
+  async function openmodel(params) {
+    try {
+      setModalVisible(true);
+      getdata();
+    } catch (err) {}
+  }
+  // const handleLanguageChange = useCallback(async () => {
+  //     console.log("ooopopopopopopopopopopop");
 
-   return (
+  //     const language =
+  //       i18n.language === LANG_CODES.ARABIC
+  //         ? LANG_CODES.ENGLISH
+  //         : LANG_CODES.ARABIC;
+
+  //     console.log("loadLanguages", language);
+
+  //     await i18n.changeLanguage(language);
+  //     setCurrentLang(language); // Trigger re-render
+  //   }, []);
+
+  return (
     <>
       <Modal
         animationType="slide"
@@ -444,95 +528,99 @@ const today = moment().format('YYYY-MM-DD');
         <SafeAreaView>
           <View style={styles.modalOverlay1}>
             <View style={styles.modalContainer}>
-              <View style={styles.modalContainer1}>
-                <TouchableOpacity
-                  style={styles.closeButton}
-                  onPress={() => setModalVisible(false)}
-                >
-                  <Icon name="angle-left" size={30} color="white" />{" "}
-                </TouchableOpacity>
-                <Text
-                  style={styles.modalText}
-                  onPress={() => setModalVisible(false)}
-                >
-                  Recent Activity
-                </Text>
-              </View>
-              <View style={styles.search}>
-                {showPicker && (
-                  <DateTimePicker
-                    value={selectedDate}
-                    mode="date"
-                    display="default"
-                    onChange={handleDateChange}
-                  />
-                )}
+              <View style={styles.modelcon}>
+                <View style={styles.modalContainer1}>
+                  <TouchableOpacity
+                    style={styles.closeButton}
+                    onPress={() => setModalVisible(false)}
+                  >
+                    <Icon name="angle-left" size={30} color="black" />
+                  </TouchableOpacity>
+                  <Text
+                    style={styles.modalText}
+                    onPress={() => setModalVisible(false)}
+                  >
+                    Recent Activity
+                  </Text>
+                </View>
+                <View style={styles.search}>
+                  {showPicker && (
+                    <DateTimePicker
+                      value={selectedDate}
+                      mode="date"
+                      display="default"
+                      onChange={handleDateChange}
+                    />
+                  )}
 
-                <TouchableOpacity
-                  style={styles.models}
-                  onPress={() => {
-                    // console.log("openkgndfngndjn");
+                  <TouchableOpacity
+                    style={styles.models}
+                    onPress={() => {
+                      // console.log("openkgndfngndjn");
 
-                    setCurrentField("start");
-                    setShowPicker(true);
-                  }}
-                >
-                  <View style={{ flex: 1 }}>
-                    <Text style={{ color: startDate ? "black" : "gray" }}>
-                      {startDate || "Start Date"}
-                    </Text>
-                  </View>
-                  <Image
-                    source={require("../assets/images/Assets/calendar.png")}
-                    style={styles.images1}
-                  />
-                </TouchableOpacity>
+                      setCurrentField("start");
+                      setShowPicker(true);
+                    }}
+                  >
+                    <View style={{ flex: 1 }}>
+                      <Text style={{ color: startDate ? "black" : "gray" }}>
+                        {startDate || "Start Date"}
+                      </Text>
+                    </View>
+                    <Image
+                      source={require("../assets/images/Assets/calendar.png")}
+                      style={styles.images1}
+                    />
+                  </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={styles.models}
-                  onPress={() => {
-                    setCurrentField("end");
-                    setShowPicker(true);
-                  }}
-                >
-                  <View style={{ flex: 1 }}>
-                    <Text style={{ color: endDate ? "black" : "gray" }}>
-                      {endDate || "End Date"}
-                    </Text>
-                  </View>
-                  <Image
-                    source={require("../assets/images/Assets/calendar.png")}
-                    style={styles.images1}
-                  />
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.models}
+                    onPress={() => {
+                      setCurrentField("end");
+                      setShowPicker(true);
+                    }}
+                  >
+                    <View style={{ flex: 1 }}>
+                      <Text style={{ color: endDate ? "black" : "gray" }}>
+                        {endDate || "End Date"}
+                      </Text>
+                    </View>
+                    <Image
+                      source={require("../assets/images/Assets/calendar.png")}
+                      style={styles.images1}
+                    />
+                  </TouchableOpacity>
+                </View>
               </View>
               <ScrollView style={styles.dashscroll}>
- {getalldata.map((data, index) => {
-  const localDate = convertUTCToLocal(data.updated_at);
+                {getalldata.map((data, index) => {
+                  const localDate = convertUTCToLocal(data.updated_at);
 
-  const dateString = localDate.toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  });
+                  const dateString = localDate.toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  });
 
-  const timeString = localDate.toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: true,
-  });
+                  const timeString = localDate.toLocaleTimeString("en-US", {
+                    hour: "numeric",
+                    minute: "2-digit",
+                    second: "2-digit",
+                    hour12: true,
+                  });
 
-  return (
-    <View key={index} style={styles.scroll}>
-      <View style={styles.check}>
-        <Text style={styles.check}>{getClockType(data.clock_type)}</Text>
-        <Text style={styles.check1}>{dateString}</Text>
-      </View>
-      <Text style={styles.check2}>{timeString}</Text>
-    </View>
-  );
-})}
+                  return (
+                    <View key={index} style={styles.scroll}>
+                      <View style={styles.check}>
+                        <Text style={styles.check}>
+                          {getClockType(data.clock_type)}
+                        </Text>
+                        <Text style={styles.check1}>{dateString}</Text>
+                      </View>
+                      <Text style={styles.check2}>{timeString}</Text>
+                    </View>
+                  );
+                })}
               </ScrollView>
             </View>
           </View>
@@ -548,90 +636,92 @@ const today = moment().format('YYYY-MM-DD');
           <View style={styles.modalOverlay}>
             <View style={styles.modalview}>
               <View style={styles.map}>
-                 <MapView
-  style={{ height: 160, width: '100%', borderRadius: 10 }}
-  region={{
-    latitude: currenLatLocation || 12.9716,
-    longitude: currenLongLocation || 77.5946,
-    latitudeDelta: 0.01,
-    longitudeDelta: 0.01,
-  }}
->
-  <Marker
-    coordinate={{
-      latitude: currenLatLocation,
-      longitude: currenLongLocation,
-    }}
-    title="Your Location"
-  >
-    <Image
-      source={require('../assets/images/Assets/live-location.png')}
-      style={{ width: 30, height: 30 }}
-    />
-  </Marker>
-</MapView>
+                <MapView
+                  style={{ height: 160, width: "100%", borderRadius: 10 }}
+                  region={{
+                    latitude: currenLatLocation || 12.9716,
+                    longitude: currenLongLocation || 77.5946,
+                    latitudeDelta: 0.01,
+                    longitudeDelta: 0.01,
+                  }}
+                >
+                  {currenLatLocation && currenLongLocation && (
+                    <Marker
+                      coordinate={{
+                        latitude: currenLatLocation,
+                        longitude: currenLongLocation,
+                      }}
+                      title="Your Location"
+                    >
+                      <Image
+                        source={require("../assets/images/Assets/live-location.png")}
+                        style={{ width: 30, height: 30 }}
+                      />
+                    </Marker>
+                  )}
+                </MapView>
               </View>
-             <TouchableOpacity
-  style={{
-    backgroundColor: isRefreshing ? '#A9A9A9' : '#1E90FF',
-    padding: 10,
-    borderRadius: 5,
-    alignSelf: 'flex-start',
-    marginBottom: 10,
-  }}
-  onPress={refreshLocation}
-  disabled={isRefreshing}
->
-  <Text style={{ color: 'white', fontWeight: 'bold' }}>
-    {isRefreshing ? 'Refreshing...' : 'Refresh Location'}
-  </Text>
-</TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: isRefreshing ? "#A9A9A9" : "#1E90FF",
+                  padding: 10,
+                  borderRadius: 5,
+                  alignSelf: "flex-start",
+                  marginBottom: 10,
+                }}
+                onPress={refreshLocation}
+                disabled={isRefreshing}
+              >
+                <Text style={{ color: "white", fontWeight: "bold" }}>
+                  {isRefreshing ? "Refreshing..." : "Refresh Location"}
+                </Text>
+              </TouchableOpacity>
               <View style={styles.containercheck}>
                 {/* {renderLabel()} */}
-<Dropdown
-  style={[
-    styles.dropdown,
-    isFocus && { borderWidth: 1, borderColor: "#697ce3" },
-  ]}
-  placeholderStyle={styles.placeholderStyle}
-  selectedTextStyle={styles.selectedTextStyle}
-  inputSearchStyle={styles.inputSearchStyle}
-  iconStyle={styles.iconStyle}
-  data={options}
-  search
-  maxHeight={300}
-  labelField="label"
-  valueField="id"  // ✅ Fixed this line
-  placeholder={!isFocus ? "Select item" : "..."}
-  searchPlaceholder="Search..."
-  value={value}
-  onFocus={() => setIsFocus(true)}
-  onBlur={() => setIsFocus(false)}
-  onChange={(data) => {
-    setValue(data.id); // ✅ Set the actual ID value
-    setIsFocus(false);
-  }}
-  renderLeftIcon={() => (
-    <AntDesign
-      style={styles.icon}
-      color={isFocus ? "blue" : "black"}
-      name="Safety"
-      size={20}
-    />
-  )}
-/>
-
+                <Dropdown
+                  style={[
+                    styles.dropdown,
+                    isFocus && { borderWidth: 1, borderColor: "#697ce3" },
+                  ]}
+                  placeholderStyle={styles.placeholderStyle}
+                  selectedTextStyle={styles.selectedTextStyle}
+                  inputSearchStyle={styles.inputSearchStyle}
+                  iconStyle={styles.iconStyle}
+                  data={options}
+                  search
+                  maxHeight={300}
+                  labelField="label"
+                  valueField="id" // ✅ Fixed this line
+                  placeholder={!isFocus ? "Select item" : "..."}
+                  searchPlaceholder="Search..."
+                  value={value}
+                  onFocus={() => setIsFocus(true)}
+                  onBlur={() => setIsFocus(false)}
+                  onChange={(data) => {
+                    setValue(data.id); // ✅ Set the actual ID value
+                    setIsFocus(false);
+                  }}
+                  renderLeftIcon={() => (
+                    <AntDesign
+                      style={styles.icon}
+                      color={isFocus ? "blue" : "black"}
+                      name="Safety"
+                      size={20}
+                    />
+                  )}
+                />
               </View>
- {!value || punchStateError ? (
-                              <Text
-                                style={{
-                                  color: 'red',
-                                  fontSize: 12,
-                                  marginLeft: 4,
-                                }}>
-                                {punchStateError}
-                              </Text>
-                            ) : null}
+              {!value || punchStateError ? (
+                <Text
+                  style={{
+                    color: "red",
+                    fontSize: 12,
+                    marginLeft: 4,
+                  }}
+                >
+                  {punchStateError}
+                </Text>
+              ) : null}
               <TextInput
                 placeholder="Work code (Optional)"
                 placeholderTextColor={"gray"}
@@ -646,12 +736,12 @@ const today = moment().format('YYYY-MM-DD');
                 >
                   <Text style={styles.dashtext1}>Cancel</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.dashbtn2}  onPress={() =>
-                              handlePunchConfirm(
-                                currenLatLocation,
-                                currenLongLocation,
-                              )
-                            }>
+                <TouchableOpacity
+                  style={styles.dashbtn2}
+                  onPress={() =>
+                    handlePunchConfirm(currenLatLocation, currenLongLocation)
+                  }
+                >
                   <Text style={styles.dashtext2}>Add</Text>
                 </TouchableOpacity>
               </View>
@@ -674,9 +764,9 @@ const today = moment().format('YYYY-MM-DD');
                   style={styles.leftimg}
                 />
               </TouchableOpacity>
-              {UserDetails.map(function (data) {
+              {UserDetails.map(function (data, index) {
                 return (
-                  <View style={styles.leftcontent}>
+                  <View style={styles.leftcontent} key={index}>
                     <Text style={styles.lefttitle}>Good Evening</Text>
                     <Text style={styles.leftpara}>
                       {data.first_name} {data.last_name}
@@ -698,7 +788,9 @@ const today = moment().format('YYYY-MM-DD');
           <View style={styles.punch}>
             <View style={styles.punchtitle}>
               <Text style={styles.punchday}>Today Overview</Text>
-               <Text style={styles.punchday1}>{moment().format('MMMM D, YYYY')}</Text>
+              <Text style={styles.punchday1}>
+                {moment().format("MMMM D, YYYY")}
+              </Text>
             </View>
             <TouchableOpacity
               style={styles.btn}
@@ -748,6 +840,8 @@ const today = moment().format('YYYY-MM-DD');
             </View>
             <Text style={styles.holiday}>Holiday</Text>
           </View>
+        </View>
+        <View style={styles.dash12}>
           <View style={styles.hol}>
             <View style={styles.dash1}>
               <Image
@@ -788,47 +882,42 @@ const today = moment().format('YYYY-MM-DD');
         <View style={styles.activity}>
           <View style={styles.activitytop}>
             <Text style={styles.recenttext}>Recent Activity</Text>
-            <Text
-              style={styles.recenttext1}
-              onPress={() => setModalVisible(true)}
-            >
-              View All
-            </Text>
+            <TouchableOpacity onPress={openmodel}>
+              <Text style={styles.recenttext1}>View All</Text>
+            </TouchableOpacity>
           </View>
           <ScrollView style={styles.myscroll}>
-{recent.map((data, index) => {
-  const localDate = convertUTCToLocal(data.updated_at);
+            {recent.map((data, index) => {
+              const localDate = convertUTCToLocal(data.updated_at);
 
-  const dateString = localDate.toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  });
+              const dateString = localDate.toLocaleDateString("en-GB", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              });
 
-  const timeString = localDate.toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: true,
-  });
+              const timeString = localDate.toLocaleTimeString("en-US", {
+                hour: "numeric",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: true,
+              });
 
-  return (
-    <View key={index} style={styles.scroll}>
-      <View style={styles.check}>
-        <Text style={styles.check}>{getClockType(data.clock_type)}</Text>
-        <Text style={styles.check1}>{dateString}</Text>
-      </View>
-      <Text style={styles.check2}>{timeString}</Text>
-    </View>
-  );
-})}
-
-
-          
-           
+              return (
+                <View key={index} style={styles.scroll}>
+                  <View style={styles.check}>
+                    <Text style={styles.check}>
+                      {getClockType(data.clock_type)}
+                    </Text>
+                    <Text style={styles.check1}>{dateString}</Text>
+                  </View>
+                  <Text style={styles.check2}>{timeString}</Text>
+                </View>
+              );
+            })}
           </ScrollView>
         </View>
-        <Toast/>
+        <Toast />
       </View>
     </>
   );
@@ -840,7 +929,8 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     height: "100%",
-    backgroundColor: "lightgray",
+    backgroundColor: "#f6f6f6",
+
     display: "flex",
     alignItems: "center",
     justifyContent: "flex-start",
@@ -849,7 +939,6 @@ const styles = StyleSheet.create({
   topcontainer: {
     width: "100%",
     height: "30%",
-    backgroundColor: "red",
     borderBottomRightRadius: 30,
     borderBottomLeftRadius: 30,
     position: "relative",
@@ -914,6 +1003,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     zIndex: 1,
     left: "50%",
+    shadowColor: "gray",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3.84,
+    elevation: 5,
     transform: [{ translateX: "-50%" }], // half of the width
   },
   punchtitle: {
@@ -947,13 +1041,22 @@ const styles = StyleSheet.create({
   dash: {
     width: "100%",
     padding: 20,
-    height: "35%",
     display: "flex",
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between",
     flexWrap: "wrap",
     paddingTop: 80,
+    gap: 40,
+  },
+  dash12: {
+    width: "100%",
+    padding: 20,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    flexWrap: "wrap",
     gap: 40,
   },
   hol: {
@@ -1010,9 +1113,7 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     width: "100%",
-    padding: 20,
-    backgroundColor: "lightgray",
-    padding: 20,
+    padding: 0,
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -1198,41 +1299,47 @@ const styles = StyleSheet.create({
     height: 40,
     fontSize: 16,
   },
-  myscroll:{
-    marginVertical:15,
+  myscroll: {
+    marginVertical: 15,
   },
-   scroll:{
-    width:"100%",
-    padding:10,
-  backgroundColor:"lightgray",
-    borderRadius:15,
-    display:"flex",
-    alignItems:"center",
-    justifyContent:"space-between",
-    flexDirection:"row", 
-    marginBottom:15
+  scroll: {
+    width: "100%",
+    padding: 10,
+    backgroundColor: "#f6f6f6",
+    borderRadius: 15,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    flexDirection: "row",
+    marginBottom: 15,
   },
-  check:{
-    fontSize:15,
-    fontWeight:"bold",
-    color:"black",
-    marginBottom:4
+  check: {
+    fontSize: 15,
+    fontWeight: "bold",
+    color: "black",
+    marginBottom: 4,
   },
-  check1:{
-    fontSize:15,
-    color:"gray",
-    fontWeight:600
+  check1: {
+    fontSize: 15,
+    color: "gray",
+    fontWeight: 600,
   },
-  check2:{
-    fontWeight:800,
-    color:"black",
-    fontSize:18
+  check2: {
+    fontWeight: 800,
+    color: "black",
+    fontSize: 18,
   },
-  dashscroll:{
-    width:"100%",
-    height:"100%",
-    backgroundColor:"gray",
-    marginTop:20,
-    padding:20
-  }
+  dashscroll: {
+    width: "100%",
+    height: "70%",
+    backgroundColor: "white",
+    marginTop: 0,
+    padding: 20,
+  },
+  modelcon: {
+    width: "100%",
+    height: "30%",
+    backgroundColor: "#f6f6f6",
+    padding: 20,
+  },
 });
