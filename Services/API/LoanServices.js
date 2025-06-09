@@ -1,6 +1,6 @@
 import APIService from '../APIService';
-import {API_URL} from '@env';
-console.log('API_URLL', API_URL);
+const API_URL="https://api.hr-ms.com"
+
 const LoanServices = {
 
   getUserDetails() {

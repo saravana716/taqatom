@@ -7,7 +7,6 @@ import moment from "moment";
 // import { LANG_CODES } from '../locales/translations/languages';
 import { myreducers } from "@/Store/Store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
 import { useContext, useEffect, useState } from "react";
 import {
   Image,
@@ -828,13 +827,15 @@ const Dashboard = ({navigation}) => {
             <Text style={styles.holiday}>Shift</Text>
           </View>
           <View style={styles.hol}>
-            <View style={styles.dash1}>
+            <TouchableOpacity style={styles.dash1}
+            onPress={() => movepage("Loan")}
+            >
               <Image
                 source={require("../assets/images/Assets/dollar.png")}
                 style={styles.images}
               />
-            </View>
-            <Text style={styles.holiday}>Holiday</Text>
+            </TouchableOpacity>
+            <Text style={styles.holiday}>Loan</Text>
           </View>
           <View style={styles.hol}>
             <View style={styles.dash1}>

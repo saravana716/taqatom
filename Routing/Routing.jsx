@@ -5,6 +5,10 @@ import { AuthContext } from '../components/AuthContext';
 import Dashboard from "../components/Dashboard";
 import ForgotPassword from "../components/ForgotPassword";
 import Holiday from "../components/Holiday";
+import ApplyLoanScreen from "../components/Loan/ApplyLoanScreen";
+import ClearedLoan from "../components/Loan/ClearedLoan";
+import RunningLoans from "../components/Loan/RunningLoans";
+import LoanScreen from "../components/LoanScreen";
 import Login from "../components/Login";
 import Notification from "../components/Notification";
 import OtpVerification from "../components/OtpVerification";
@@ -33,6 +37,10 @@ console.log("auth",isAuthenticated);
           <Stack.Screen name="Profile" component={Profile} />
           <Stack.Screen name="ProfileUpdate" component={ProfileUpdate} />
           <Stack.Screen name="Shift" component={Shift} />
+          <Stack.Screen name="Loan" component={LoanScreen} />
+          <Stack.Screen name="ApplyLoanScreen" component={ApplyLoanScreen} />
+          <Stack.Screen name="RunningLoans" component={RunningLoans} />
+          <Stack.Screen name="ClearedLoans" component={ClearedLoan} />
         </>
       ) : (
         <>
