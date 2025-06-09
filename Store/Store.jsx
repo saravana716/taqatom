@@ -7,7 +7,8 @@ const myslice=createSlice({
     initialState:{
         userDetails:{},
         employeedetails:[],
-        setprofiledata:{}
+        setprofiledata:{},
+        empid:""
     },
     reducers:{
         senddetails(store,action){
@@ -24,6 +25,11 @@ const myslice=createSlice({
         profiledetails(store,action){
             console.log("myaction",action);
             store.setprofiledata=action.payload
+            
+        },
+        sendempid(store,action){
+            console.log(action);
+            store.empid=action.payload
             
         }
     }

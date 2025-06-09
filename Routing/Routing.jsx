@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { AuthContext } from '../components/AuthContext';
 
 import Dashboard from "../components/Dashboard";
@@ -11,8 +11,8 @@ import OtpVerification from "../components/OtpVerification";
 import PasswordUpdate from "../components/PasswordUpdate";
 import Profile from "../components/Profile";
 import ProfileUpdate from "../components/ProfileUpdate";
+import Shift from "../components/Shift";
 import SwitchOrganization from "../components/SwitchOrganization";
-
 const Stack = createNativeStackNavigator();
 
 const Routing = () => {
@@ -32,6 +32,7 @@ console.log("auth",isAuthenticated);
           <Stack.Screen name="Password" component={PasswordUpdate} />
           <Stack.Screen name="Profile" component={Profile} />
           <Stack.Screen name="ProfileUpdate" component={ProfileUpdate} />
+          <Stack.Screen name="Shift" component={Shift} />
         </>
       ) : (
         <>

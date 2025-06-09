@@ -5,6 +5,7 @@ import { decode as atob } from "base-64";
 import * as Location from "expo-location";
 import moment from "moment";
 // import { LANG_CODES } from '../locales/translations/languages';
+import { myreducers } from "@/Store/Store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { useContext, useEffect, useState } from "react";
@@ -25,7 +26,6 @@ import Toast from "react-native-toast-message";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useDispatch } from "react-redux";
 import { AuthContext } from "./AuthContext";
-import { myreducers } from "@/Store/Store";
 const Dashboard = () => {
   const navigation = useNavigation(``);
   const dispatch = useDispatch();
@@ -112,8 +112,8 @@ const Dashboard = () => {
   async function navigateprofile(params) {
     try {
       let userid = await AsyncStorage.getItem("token");
-      console.log("ioioioioioi",userid);
-      
+      console.log("ioioioioioi", userid);
+
       navigation.navigate("Profile");
     } catch (err) {}
   }
@@ -150,13 +150,13 @@ const Dashboard = () => {
       const decodedPayload = JSON.parse(atob(encodedPayload)); // ✅ Use base-64
 
       console.log("Decoded Token:", decodedPayload);
-let ids=decodedPayload.user_id
-console.log("000000000000000000000000",ids);
+      let ids = decodedPayload.user_id;
+      console.log("000000000000000000000000", ids);
 
       setTokenDetail(decodedPayload);
       getUserDetails(decodedPayload.user_id);
-      dispatch(myreducers.senddetails(decodedPayload))
-console.log("myserid1223456789",ids);
+      dispatch(myreducers.senddetails(decodedPayload));
+      console.log("myserid1223456789", ids);
 
       return decodedPayload;
     } catch (error) {
@@ -167,15 +167,17 @@ console.log("myserid1223456789",ids);
 
   const getUserDetails = async (user_id) => {
     try {
-      console.log("tttttttttttttttttttttttttttttttttttttttttt",user_id);
-      
+      console.log("tttttttttttttttttttttttttttttttttttttttttt", user_id);
+
       const userDetails = await ProfileServices.getUserDetailsData(user_id);
       setUserDetails([userDetails]);
-console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu",userDetails);
+      console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu", userDetails);
 
       const employee = await ProfileServices.getEmployeeDetailsData(
         userDetails?.username
       );
+      console.log("emplyeeee", employee);
+
       const empID = employee?.id;
 
       if (empID) {
@@ -186,6 +188,7 @@ console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu",userDetails);
 
         setProfilePicUrl(fullDetails?.profile_url);
         setGender(fullDetails?.gender);
+        dispatch(myreducers.sendempid(empID));
       }
     } catch (err) {
       console.error("User detail fetch failed", err);
@@ -814,9 +817,21 @@ console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu",userDetails);
             <Text style={styles.holiday}>Holiday</Text>
           </View>
           <View style={styles.hol}>
+            <TouchableOpacity
+              style={styles.dash1}
+              onPress={() => movepage("Shift")}
+            >
+              <Image
+                source={require("../assets/images/Assets/overtimes.png")}
+                style={styles.images}
+              />
+            </TouchableOpacity>
+            <Text style={styles.holiday}>Shift</Text>
+          </View>
+          <View style={styles.hol}>
             <View style={styles.dash1}>
               <Image
-                source={require("../assets/images/Assets/holiday.png")}
+                source={require("../assets/images/Assets/dollar.png")}
                 style={styles.images}
               />
             </View>
@@ -825,16 +840,7 @@ console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu",userDetails);
           <View style={styles.hol}>
             <View style={styles.dash1}>
               <Image
-                source={require("../assets/images/Assets/holiday.png")}
-                style={styles.images}
-              />
-            </View>
-            <Text style={styles.holiday}>Holiday</Text>
-          </View>
-          <View style={styles.hol}>
-            <View style={styles.dash1}>
-              <Image
-                source={require("../assets/images/Assets/holiday.png")}
+                source={require("../assets/images/Assets/payslip.png")}
                 style={styles.images}
               />
             </View>
@@ -845,7 +851,7 @@ console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu",userDetails);
           <View style={styles.hol}>
             <View style={styles.dash1}>
               <Image
-                source={require("../assets/images/Assets/holiday.png")}
+                source={require("../assets/images/Assets/resignation-icon.png")}
                 style={styles.images}
               />
             </View>
@@ -854,7 +860,7 @@ console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu",userDetails);
           <View style={styles.hol}>
             <View style={styles.dash1}>
               <Image
-                source={require("../assets/images/Assets/holiday.png")}
+                source={require("../assets/images/Assets/request-icon.png")}
                 style={styles.images}
               />
             </View>
@@ -863,7 +869,7 @@ console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu",userDetails);
           <View style={styles.hol}>
             <View style={styles.dash1}>
               <Image
-                source={require("../assets/images/Assets/holiday.png")}
+                source={require("../assets/images/Assets/approval-icon.png")}
                 style={styles.images}
               />
             </View>
@@ -872,7 +878,7 @@ console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu",userDetails);
           <View style={styles.hol}>
             <View style={styles.dash1}>
               <Image
-                source={require("../assets/images/Assets/holiday.png")}
+                source={require("../assets/images/Assets/reports.png")}
                 style={styles.images}
               />
             </View>
@@ -1342,4 +1348,5 @@ const styles = StyleSheet.create({
     backgroundColor: "#f6f6f6",
     padding: 20,
   },
+ 
 });
