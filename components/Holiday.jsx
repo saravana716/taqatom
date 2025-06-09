@@ -55,32 +55,14 @@ console.log("myuserid",selector);
 
   //Get All Holidays//
   const getHolidayDetails = async () => {
-    try {
-      console.log(selector,selectedYear);
-      
-      const RecentActivities = await ProfileServices.getHolidayDetails(selector, selectedYear);
-      console.log('RecentActivities', RecentActivities);
-      setHolidayDetails(RecentActivities);
-
-       if (!res.ok) {
-    const errorBody = await res.json(); // <-- log this
-    console.warn("API error:", errorBody);
-    return;
-  }
-  const data = await res.json();
-      // const convertedData = RecentActivities.reduce((acc, item) => {
-      //   acc[item.start_date] = {
-      //     selectedColor:
-      //       item.color_setting === null ? item.color_setting : '#000',
-      //     selected: true,
-      //   };
-      //   return acc;
-      // }, {});
-    } catch (err) {
+  try {
+    const RecentActivities = await ProfileServices.getHolidayDetails(selector, selectedYear);
+    setHolidayDetails(RecentActivities);
+  } catch (err) {
     console.warn("Request failed:", err);
+  }
+};
 
-    }
-  };
 console.log('dataFormatConver(holidayDetails)', dataFormatConver(holidayDetails));
   useEffect(() => {
     getHolidayDetails();
@@ -125,7 +107,7 @@ function padZero(num) {
                 style={styles.closeButton}
                 onPress={navigatepage}
               >
-                <Icon name="angle-left" size={30} color="white" />{" "}
+                <Icon name="angle-left" size={30} color="white" />
               </TouchableOpacity>
               <Text style={styles.modalText}>Holiday</Text>
             </View>
@@ -150,7 +132,7 @@ function padZero(num) {
               console.log('selected day', day);
               setSelectedYear(day?.year)
             }}
-            log
+          
             theme={{
               arrowColor: "#697ce3",
               selectedDayBackgroundColor: "#697ce3",
@@ -270,12 +252,13 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "white",
   },
-  HolidayText: {
-    width: "100%",
-    display: "flex",
-    alignItems: "flex-start",
-    justifyContentL: "flex-start",
-  },
+HolidayText: {
+  width: "100%",
+  display: "flex",
+  alignItems: "flex-start",
+  justifyContent: "flex-start", // typo here
+},
+
   Texttitle: {
     fontSize: 18,
     fontWeight: 800,

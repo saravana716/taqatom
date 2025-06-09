@@ -104,9 +104,7 @@ console.log("respone",response);
     });
 
     // Wait 2 seconds after showing toast, then navigate
-    setTimeout(() => {
-      navigation.navigate("Dashboard");
-    }, 2000);
+   
 
   } catch (err) {
     console.error(err);

@@ -26,8 +26,7 @@ import Toast from "react-native-toast-message";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useDispatch } from "react-redux";
 import { AuthContext } from "./AuthContext";
-const Dashboard = () => {
-  const navigation = useNavigation(``);
+const Dashboard = ({navigation}) => {
   const dispatch = useDispatch();
   const [workCode, setWorkCode] = useState();
   const [tokenDetail, setTokenDetail] = useState(null);
