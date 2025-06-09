@@ -110,7 +110,7 @@ async function checkpassword() {
       position: 'bottom',
     });
   } finally {
-    setIsLoading(false);
+    // setIsLoading(false);
   }
 }
 
@@ -141,7 +141,7 @@ const ResendOtp = async () => {
       position: 'bottom',
     });
   } finally {
-    setIsLoading(false);
+    // setIsLoading(false);
   }
 };
 

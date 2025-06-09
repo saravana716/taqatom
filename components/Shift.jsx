@@ -11,57 +11,47 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useSelector } from "react-redux";
-const Shift = ({navigation}) => {
-  const selector = useSelector(function (data) {
-    return data.empid;
-  });
+import { formatErrorsToToastMessages } from "../utils/error-format";
+
+const Shift = ({ navigation }) => {
+  const selector = useSelector((state) => state.empid);
   console.log("selector", selector);
-  const [hide, sethide] = useState(false);
-    const [recentShiftData, setRecentShiftData] = useState([]);
-  const [fromDate, setFromDate] = useState(new Date());
-  
+
+  const [hide, setHide] = useState(false);
+  const [recentShiftData, setRecentShiftData] = useState([]);
   const [recentActivityData, setRecentActivityData] = useState([]);
+
   const [date, setDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
+
   const [fromDateShow, setFromDateShow] = useState(false);
   const [endDateShow, setEndDateShow] = useState(false);
-  const [toDate, setToDate] = useState(new Date());
 
-  const [showFromPicker, setShowFromPicker] = useState(false);
-  const [showToPicker, setShowToPicker] = useState(false);
-  async function toggletbn(params) {
-    try {
-      sethide(!hide);
-    } catch (err) {}
+  const currentDate = new Date();
+
+  async function toggleBtn() {
+    setHide((prev) => !prev);
   }
 
   const formatDate = (date) =>
     `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
 
-  const currentDate = new Date();
-  const formattedDate = currentDate.toLocaleDateString();
-  console.log("currentdata", currentDate);
-  console.log("formated date", formattedDate);
+  // Convert time string "HH:mm" to 12-hour am/pm format
   function convertToAMPM(timeString) {
-    const [hours, minutes] = timeString?.split(":");
+    if (!timeString) return "";
+    const [hours, minutes] = timeString.split(":");
     let hoursInt = parseInt(hours, 10);
     const ampm = hoursInt >= 12 ? "pm" : "am";
-    hoursInt = hoursInt % 12;
-    hoursInt = hoursInt ? hoursInt : 12;
-    const formattedTime = `${hoursInt}:${minutes.padStart(2, "0")} ${ampm}`;
-    return formattedTime;
+    hoursInt = hoursInt % 12 || 12;
+    return `${hoursInt}:${minutes.padStart(2, "0")} ${ampm}`;
   }
 
   useEffect(() => {
-    const currentDate = new Date();
-
     const oneDayMilliseconds = 24 * 60 * 60 * 1000;
     setDate(new Date(currentDate.getTime() - oneDayMilliseconds));
-    // setDate(moment().subtract(1, 'day'))
   }, []);
 
   const getCustomShifts = async () => {
-    // setIsLoading(true);
     try {
       const RecentActivities = await ProfileServices.getShiftDetails({
         id: Number(selector),
@@ -70,18 +60,14 @@ const Shift = ({navigation}) => {
       });
       setRecentShiftData(RecentActivities);
     } catch (err) {
-      formatErrorsToToastMessages(error);
-    } finally {
-      setIsLoading(false);
+      formatErrorsToToastMessages(err);
     }
   };
-console.log("recents",recentShiftData);
 
   const getTodayShifts = async () => {
-    // setIsLoading(true);
     try {
       const Recent = await ProfileServices.getShiftDetails({
-        id: selector,
+        id: Number(selector),
         start: moment(currentDate).format("YYYY-MM-DD"),
         end: moment(currentDate).format("YYYY-MM-DD"),
       });
@@ -89,164 +75,127 @@ console.log("recents",recentShiftData);
       console.log("RecentActivities1223", Recent);
     } catch (err) {
       console.log("err", err?.errorResponse);
-      formatErrorsToToastMessages(error);
-    } finally {
-      setIsLoading(false);
+      formatErrorsToToastMessages(err);
     }
   };
+
   useEffect(() => {
     getTodayShifts();
   }, []);
+
   useEffect(() => {
     getCustomShifts();
   }, [date, endDate]);
 
-  console.log("reeeeeeeeeeeeeeeeeee", recentActivityData);
   const onChange = (event, selectedDate) => {
-    const currentSelectDate = selectedDate || date;
     setFromDateShow(false);
-    setDate(currentSelectDate);
-    const currentDate = moment(currentSelectDate);
-    const dateArray = [];
-    for (let i = 0; i < 6; i++) {
-      const formattedDate = currentDate.clone().add(i, "days");
-      dateArray.push(formattedDate);
-    }
+    if (selectedDate) setDate(selectedDate);
   };
 
   const onChangeEnd = (event, selectedDate) => {
-    const currentSelectDate = selectedDate || date;
     setEndDateShow(false);
-
-    setEndDate(currentSelectDate);
-    const currentDate = moment(currentSelectDate);
-    const dateArray = [];
-    for (let i = 0; i < 6; i++) {
-      const formattedDate = currentDate.clone().add(i, "days");
-      dateArray.push(formattedDate);
-    }
+    if (selectedDate) setEndDate(selectedDate);
   };
+
   const convertToCustomFormat = (dateString) => {
-    const date = new Date(dateString);
-    const day = date.getUTCDate();
-    const month = date.getUTCMonth() + 1;
-    const year = date.getUTCFullYear();
-    const formattedDate = `${day}:${month}:${year}`;
-
-    return formattedDate;
+    const dateObj = new Date(dateString);
+    const day = dateObj.getUTCDate();
+    const month = dateObj.getUTCMonth() + 1;
+    const year = dateObj.getUTCFullYear();
+    return `${day}:${month}:${year}`;
   };
 
- function navigatepage(params) {
+  function navigatePage() {
     navigation.navigate("Dashboard");
   }
+
+  const formattedDate = currentDate.toLocaleDateString();
+
   return (
     <View style={styles.shiftContainer}>
       <View style={styles.shiftTop}>
-        <View style={styles.left} 
-        >
+        <View style={styles.left}>
           <View style={styles.leftcon1}>
-            <TouchableOpacity
-              onPress={navigatepage}
-
-              style={styles.closeButton}
-            >
+            <TouchableOpacity onPress={navigatePage} style={styles.closeButton}>
               <Icon name="angle-left" size={30} color="black" />
             </TouchableOpacity>
             <Text style={styles.modalText}>Holiday</Text>
           </View>
         </View>
       </View>
+
       <View style={styles.toggle}>
         <TouchableOpacity
           style={hide ? styles.touchbtn1 : styles.touchbtn}
-          onPress={toggletbn}
+          onPress={toggleBtn}
         >
           <Text style={hide ? styles.btn1 : styles.btn}>Today shift</Text>
         </TouchableOpacity>
+
         <TouchableOpacity
           style={hide ? styles.touchbtn : styles.touchbtn1}
-          onPress={toggletbn}
+          onPress={toggleBtn}
         >
           <Text style={hide ? styles.btn : styles.btn1}>Custom Date</Text>
         </TouchableOpacity>
       </View>
+
       <View style={styles.togglePage}>
         {!hide && (
           <View style={styles.page1}>
             <ScrollView style={styles.scrollpage}>
-              {recentActivityData.map((data, index) => {
-                return (
-                  <View style={styles.scrollbox} key={index}>
-                    {/* Top Date */}
-                    <View style={styles.top}>
-                      <Text style={styles.date}>{formattedDate}</Text>
-                    </View>
+              {recentActivityData.map((data, index) => (
+                <View style={styles.scrollbox} key={index}>
+                  <View style={styles.top}>
+                    <Text style={styles.date}>{formattedDate}</Text>
+                  </View>
 
-                    {/* Shift Info Box */}
-                    <View style={styles.box}>
-                      <View style={styles.box1}>
-                        <View style={styles.shiftleft1}>
-                          {data.holiday_alias ? (
-                            <Text style={styles.Shifttext}>
-                              {data.holiday_alias}
-                            </Text>
-                          ) : (
-                            <Text style={styles.Shifttext}>
-                              {data.shift?.name}
-                            </Text>
-                          )}
+                  <View style={styles.box}>
+                    <View style={styles.box1}>
+                      <View style={styles.shiftleft1}>
+                        {data.holiday_alias ? (
+                          <Text style={styles.Shifttext}>{data.holiday_alias}</Text>
+                        ) : (
+                          <Text style={styles.Shifttext}>{data.shift?.name}</Text>
+                        )}
 
-                          {!data.holiday_alias && (
-                            <Text style={styles.Shifttext1}>
-                              {convertToAMPM(data.start_time)} -{" "}
-                              {convertToAMPM(data.end_time)}
-                            </Text>
-                          )}
-                        </View>
+                        {!data.holiday_alias && (
+                          <Text style={styles.Shifttext1}>
+                            {convertToAMPM(data.start_time)} - {convertToAMPM(data.end_time)}
+                          </Text>
+                        )}
+                      </View>
 
-                        {/* Optional: Break info */}
-                        <View style={styles.shift1}>
-                          {!data?.holiday_alias && (
-                            <Text style={styles.Shift1text}>
-                              {" "}
-                              {data?.break_times
-                                ? data?.break_times[0]
-                                  ? `${data?.break_times[0]?.duration} Mins`
-                                  : "-"
-                                : "-"}{" "}
-                            </Text>
-                          )}
-                          <Text style={styles.Shift1text2}>Break Time</Text>
-                        </View>
+                      <View style={styles.shift1}>
+                        {!data?.holiday_alias && (
+                          <Text style={styles.Shift1text}>
+                            {data?.break_times?.[0]
+                              ? `${data.break_times[0].duration} Mins`
+                              : "-"}
+                          </Text>
+                        )}
+                        <Text style={styles.Shift1text2}>Break Time</Text>
                       </View>
                     </View>
                   </View>
-                );
-              })}
+                </View>
+              ))}
             </ScrollView>
           </View>
         )}
+
         {hide && (
           <View style={styles.page2}>
             <View style={styles.datePickerContainer}>
-              {/* From Date */}
-                <TouchableOpacity
-                  onPress={() => setFromDateShow(true)}
-                  style={styles.dateInputRow}
-                >
-                  <Text> {convertToCustomFormat(date)}</Text>
-                  <Icon name="calendar" size={16} color="#693ce3" />
-                </TouchableOpacity>
+              <TouchableOpacity onPress={() => setFromDateShow(true)} style={styles.dateInputRow}>
+                <Text>{convertToCustomFormat(date)}</Text>
+                <Icon name="calendar" size={16} color="#693ce3" />
+              </TouchableOpacity>
 
-              {/* To Date */}
-              
-                <TouchableOpacity
-                  onPress={() => setEndDateShow(true)}
-                  style={styles.dateInputRow}
-                >
-                  <Text> {convertToCustomFormat(endDate)}</Text>
-                  <Icon name="calendar" size={16} color="#693ce3" />
-                </TouchableOpacity>
+              <TouchableOpacity onPress={() => setEndDateShow(true)} style={styles.dateInputRow}>
+                <Text>{convertToCustomFormat(endDate)}</Text>
+                <Icon name="calendar" size={16} color="#693ce3" />
+              </TouchableOpacity>
             </View>
 
             {fromDateShow && (
@@ -254,9 +203,9 @@ console.log("recents",recentShiftData);
                 value={date}
                 mode="date"
                 is24Hour={true}
-                // display="default"
+                display="default"
                 onChange={onChange}
-                minDate={new Date()}
+                // minDate={new Date()} // optionally uncomment to restrict past dates
               />
             )}
 
@@ -267,58 +216,48 @@ console.log("recents",recentShiftData);
                 is24Hour={true}
                 display="default"
                 onChange={onChangeEnd}
-                minDate={new Date()}
+                // minDate={date} // optionally uncomment to restrict endDate >= startDate
               />
             )}
+
             <ScrollView style={styles.scrollpage1}>
-            {recentShiftData.map(function (data,index) {
-              return(
-                  <View style={styles.scrollbox} key={index}>
-                <View style={styles.top1}>
-                  <Text style={styles.date}>{data.shift_type}</Text>
+              {recentShiftData.map((data, index) => (
+                <View style={styles.scrollbox} key={index}>
+                  <View style={styles.top1}>
+                    <Text style={styles.date}>{data.shift_type}</Text>
+                    <Text style={styles.date}>{data.date}</Text>
+                  </View>
 
-                  <Text style={styles.date}>{data.date}</Text>
-                </View>
-              <View style={styles.box}>
-                      <View style={styles.box1}>
-                        <View style={styles.shiftleft1}>
-                          {data.holiday_alias ? (
-                            <Text style={styles.Shifttext}>
-                              {data.holiday_alias}
-                            </Text>
-                          ) : (
-                            <Text style={styles.Shifttext}>
-                              {data.shift?.name}
-                            </Text>
-                          )}
+                  <View style={styles.box}>
+                    <View style={styles.box1}>
+                      <View style={styles.shiftleft1}>
+                        {data.holiday_alias ? (
+                          <Text style={styles.Shifttext}>{data.holiday_alias}</Text>
+                        ) : (
+                          <Text style={styles.Shifttext}>{data.shift?.name}</Text>
+                        )}
 
-                          {!data.holiday_alias && (
-                            <Text style={styles.Shifttext1}>
-                              {convertToAMPM(data.start_time)} -{" "}
-                              {convertToAMPM(data.end_time)}
-                            </Text>
-                          )}
-                        </View>
+                        {!data.holiday_alias && (
+                          <Text style={styles.Shifttext1}>
+                            {convertToAMPM(data.start_time)} - {convertToAMPM(data.end_time)}
+                          </Text>
+                        )}
+                      </View>
 
-                        {/* Optional: Break info */}
-                        <View style={styles.shift1}>
-                          {!data?.holiday_alias && (
-                            <Text style={styles.Shift1text}>
-                              {" "}
-                              {data?.break_times
-                                ? data?.break_times[0]
-                                  ? `${data?.break_times[0]?.duration} Mins`
-                                  : "-"
-                                : "-"}{" "}
-                            </Text>
-                          )}
-                          <Text style={styles.Shift1text2}>Break Time</Text>
-                        </View>
+                      <View style={styles.shift1}>
+                        {!data?.holiday_alias && (
+                          <Text style={styles.Shift1text}>
+                            {data?.break_times?.[0]
+                              ? `${data.break_times[0].duration} Mins`
+                              : "-"}
+                          </Text>
+                        )}
+                        <Text style={styles.Shift1text2}>Break Time</Text>
                       </View>
                     </View>
-              </View>
-              )
-            })}
+                  </View>
+                </View>
+              ))}
             </ScrollView>
           </View>
         )}
@@ -359,12 +298,6 @@ const styles = StyleSheet.create({
     width: "100%",
     position: "relative",
   },
-  leftimg: {
-    width: 70,
-    height: 70,
-    borderRadius: "100%",
-    marginRight: 10,
-  },
   closeButton: {
     position: "absolute",
     left: 0,
@@ -372,7 +305,7 @@ const styles = StyleSheet.create({
   },
   modalText: {
     fontSize: 20,
-    fontWeight: "700", // ✅ Corrected
+    fontWeight: "700",
     width: "100%",
     textAlign: "center",
     color: "black",
@@ -399,7 +332,7 @@ const styles = StyleSheet.create({
   },
   btn: {
     color: "white",
-    fontWeight: 500,
+    fontWeight: "500",
     fontSize: 18,
   },
   touchbtn1: {
@@ -412,7 +345,7 @@ const styles = StyleSheet.create({
   },
   btn1: {
     color: "black",
-    fontWeight: 500,
+    fontWeight: "500",
     fontSize: 18,
   },
   togglePage: {
@@ -432,7 +365,7 @@ const styles = StyleSheet.create({
   },
   scrollpage1: {
     width: "100%",
-    height: "10%",
+    height: "100%",
     display: "flex",
     flexDirection: "column",
     gap: 20,
@@ -453,10 +386,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 15,
     backgroundColor: "white",
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
   },
   top: {
     width: "100%",
@@ -506,12 +435,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
 
-    // ✅ Android shadow
+    // Android shadow
     elevation: 5,
   },
   Shifttext: {
     color: "#693ce3",
-    fontWeight:"500"
+    fontWeight: "500",
   },
   Shift1text2: {
     borderWidth: 1,
@@ -520,16 +449,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     fontSize: 9,
     marginTop: 5,
-   backgroundColor:"rgba(105, 60, 227, 0.2)",
-   color:"#693ce3"
+    backgroundColor: "rgba(105, 60, 227, 0.2)",
+    color: "#693ce3",
   },
   shift1: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "column",
-    fontWeight:"500"
-
+    fontWeight: "500",
   },
   Shift1text: {
     fontSize: 16,

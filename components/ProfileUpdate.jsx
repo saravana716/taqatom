@@ -109,11 +109,11 @@ const handleFilePick = useCallback(async () => {
         position: 'bottom',
       });
 
-      setIsLoading(false);
+      // setIsLoading(false);
     }
   } catch (error) {
     console.error('Upload error', error);
-    setIsLoading(false);
+    // setIsLoading(false);
     Toast.show({
       type: 'error',
       text1: 'Upload failed',

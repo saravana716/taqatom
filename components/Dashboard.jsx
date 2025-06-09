@@ -299,7 +299,7 @@ const Dashboard = ({navigation}) => {
         position: "bottom",
       });
       await getRecentActivity(empid);
-      setIsLoading(false);
+      // setIsLoading(false);
       setWorkCode(null);
       setValue(null);
       return data;
@@ -363,7 +363,7 @@ const Dashboard = ({navigation}) => {
       )
     ) {
       setPunchStateError("Punch state is required");
-      setIsLoading(false);
+      // setIsLoading(false);
       return;
     }
 
@@ -371,7 +371,7 @@ const Dashboard = ({navigation}) => {
     await updateStatus(latitude, longitude);
     await getRecentActivity(empid);
     setModalVisible(false);
-    setIsLoading(false);
+    // setIsLoading(false);
   };
   // console.log("state",recent);
 
