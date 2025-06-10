@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import Icon from "react-native-vector-icons/FontAwesome";
 import {
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
-import tokens from '../locales/tokens';
+import Icon from "react-native-vector-icons/FontAwesome";
 // import {Iconify} from 'react-native-iconify';
-import LoanServices from '../Services/API/LoanServices';
 import { useSelector } from 'react-redux';
+import LoanServices from '../Services/API/LoanServices';
 
 export default function LoanScreen({navigation}) {
   const { t } = useTranslation();
@@ -184,7 +183,7 @@ console.log(selectorid);
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={()=>handleApplyLoanScreen("AllLoanDetails")}
+                onPress={()=>handleApplyLoanScreen("AllLoansDetails")}
                 style={[styles.listItem, { backgroundColor: '#64A5F10D' }]}
               >
                 <Text style={styles.listItemText}>All Loan Details</Text>

@@ -2,11 +2,17 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useContext } from 'react';
 import { AuthContext } from '../components/AuthContext';
 
+import ApprovedExpenseScreen from "../components/ApprovedExpenseScreen";
 import Dashboard from "../components/Dashboard";
+import ExpenseComponents from "../components/ExpenseComponents";
+import ExpenseScreen from "../components/ExpenseScreen";
+import ReimbursementScreen from "../components/ReimbursementScreen";
 import ForgotPassword from "../components/ForgotPassword";
 import Holiday from "../components/Holiday";
+import AllLoansDetails from "../components/Loan/AllLoansDetails";
 import ApplyLoanScreen from "../components/Loan/ApplyLoanScreen";
 import ClearedLoan from "../components/Loan/ClearedLoan";
+import RequestedLoans from "../components/Loan/RequestedLoans";
 import RunningLoans from "../components/Loan/RunningLoans";
 import LoanScreen from "../components/LoanScreen";
 import Login from "../components/Login";
@@ -41,6 +47,12 @@ console.log("auth",isAuthenticated);
           <Stack.Screen name="ApplyLoanScreen" component={ApplyLoanScreen} />
           <Stack.Screen name="RunningLoans" component={RunningLoans} />
           <Stack.Screen name="ClearedLoans" component={ClearedLoan} />
+          <Stack.Screen name="AllLoansDetails" component={AllLoansDetails} />
+          <Stack.Screen name="RequestedLoans" component={RequestedLoans} />
+          <Stack.Screen name="ExpenseComponents" component={ExpenseComponents} />
+          <Stack.Screen name="ApprovedExpenseScreen" component={ApprovedExpenseScreen} />
+          <Stack.Screen name="ExpenseScreen" component={ExpenseScreen} />
+          <Stack.Screen name="ReimbursementScreen" component={ReimbursementScreen} />
         </>
       ) : (
         <>

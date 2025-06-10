@@ -3,15 +3,16 @@ import round from "lodash/round";
 import moment from "moment";
 import React, { useState } from "react";
 import {
-    Modal,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Icon from "react-native-vector-icons/FontAwesome";
 import { useSelector } from "react-redux";
 import LoanServices from "../../Services/API/LoanServices";
 import { formatErrorsToToastMessages } from "../../utils/error-format";
@@ -119,13 +120,28 @@ export default function ApplyLoanScreen({ navigation }) {
     !isNaN(text) && setInterestAmount(text);
   const handleInterestMonthChange = (text) =>
     !isNaN(text) && setRepaymentTerm(text);
-
+function navigatepage(params) {
+  navigation.navigate("Loan")
+}
+function openCalculator(params) {
+  
+}
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <TouchableOpacity />
+
+
+        <TouchableOpacity onPress={navigatepage}>
+        <Icon name="angle-left" size={30} color="#697ce3" />
+
+        </TouchableOpacity>
+     
         <Text style={styles.title}>Apply Loan</Text>
-        <TouchableOpacity onPress={() => setConfirmVisible(true)} />
+<TouchableOpacity  onPress={() => {
+              setConfirmVisible(true);
+            }}>
+          <Icon name="calculator" size={20} color="#697ce3" />
+        </TouchableOpacity>
       </View>
 
       <View style={styles.bodyContainer}>
@@ -147,6 +163,8 @@ export default function ApplyLoanScreen({ navigation }) {
               onPress={() => setFromDateShow(true)}
             >
               <Text>{formatExpectDate || "Expected Month"}</Text>
+          <Icon name="calendar-check-o" size={20} color="lightgray" />
+
             </TouchableOpacity>
             {fromDateShow && (
               <DateTimePicker
@@ -161,6 +179,8 @@ export default function ApplyLoanScreen({ navigation }) {
               onPress={() => setEndDateShow(true)}
             >
               <Text>{emiStartDate || "EMI Starts From"}</Text>
+          <Icon name="calendar-check-o" size={20} color="lightgray" />
+
             </TouchableOpacity>
             {endDateShow && (
               <DateTimePicker
@@ -265,10 +285,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#F8F8FF",
   },
   headerContainer: {
+    width:"100%",
+    display:"flex",
     flexDirection: "row",
     padding: 20,
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "center"
   },
   title: {
     fontSize: 20,
@@ -291,6 +313,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingHorizontal: 16,
     marginBottom: 10,
+    display:"flex",
+    alignItems:"center",justifyContent:"space-between",flexDirection:"row"
   },
   submitButton: {
     height: 48,
@@ -321,6 +345,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 10,
+    textAlign:"center"
   },
   resultBox: {
     marginTop: 10,
