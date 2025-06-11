@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
 const Notification = () => {
      const [modalVisible, setModalVisible] = useState(false);
@@ -13,7 +13,7 @@ const [currentField, setCurrentField] = useState(null); // "start" or "end"
 
 
     const handleDateChange = (event, date) => {
-      console.log("date selected",date);
+      
       
   if (date) {
     setSelectedDate(date);

@@ -16,11 +16,11 @@ import { AuthContext } from "./AuthContext";
 const Profile = ({ navigation }) => {
    const { logout } = useContext(AuthContext);
   const dispatch = useDispatch();
-  console.log(token);
+  
   const selector = useSelector(function (data) {
     return data.userDetails.user_id;
   });
-  console.log("selector", selector);
+  
   
   const [token, settoken] = useState("");
   const [profilePic, setProfilePic] = useState("");
@@ -36,7 +36,7 @@ const Profile = ({ navigation }) => {
   const [currentField, setCurrentField] = useState(null); // "start" or "end"
 
   const handleDateChange = (event, date) => {
-    console.log("date selected", date);
+    
 
     if (date) {
       setSelectedDate(date);
@@ -62,27 +62,27 @@ const Profile = ({ navigation }) => {
     try {
      await logout()
     } catch (err) {
-      console.log("Logout Error:", err);
+      
     }
   }
 
   async function getUserDetails(params) {
     try {
-      console.log("function works");
-      console.log("selectore", selector);
+      
+      
 
       const RecentActivities = await ProfileServices.getUserDetailsData(
         selector
       );
-      console.log("oooooooooooooooooooooooooooooooooooooo");
-      console.log("recentactivites", RecentActivities);
+      
+      
       setUserDetails([RecentActivities]);
-      console.log("rr", UserDetails);
+      
 
       const employeeId = await ProfileServices.getEmployeeDetailsData(
         RecentActivities?.username
       );
-      console.log("employee id", employeeId);
+      
       console.log(
         "ooooooooooouuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuooooooooooooooooooooooooooo"
       );
@@ -90,21 +90,21 @@ const Profile = ({ navigation }) => {
       let userDetails = await ProfileServices.getEmployeeFullDetails(
         employeeId?.id
       );
-      console.log("useDetails", [userDetails]);
+      
       // let data = [userDetails];
-      console.log("fghjkl");
+      
       
     setProfilePic(`${userDetails?.profile_url}`);
       setGender(`${userDetails?.gender}`);
       setemployeedetails([userDetails]);
     } catch (err) {}
   }
-console.log(gender,profilePic);
+
 
   useEffect(() => {
     getUserDetails();
   }, [selector]);
-  console.log("emp", employeedetails);
+  
 
   return (
     <>

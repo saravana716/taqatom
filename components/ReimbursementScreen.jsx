@@ -1,18 +1,18 @@
+import { myreducers } from "@/Store/Store";
 import React, { useEffect, useState } from "react";
 import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
+    Image,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from "react-native";
 import { LineChart } from "react-native-gifted-charts";
 import Icon from "react-native-vector-icons/Ionicons";
+import { useDispatch, useSelector } from "react-redux";
 import ExpenseComponents from "../components/ExpenseComponents";
 import ProfileServices from "../Services/API/ProfileServices";
-import { useDispatch, useSelector } from "react-redux";
-import { myreducers } from "@/Store/Store";
 
 export default function ReimbursementScreen({ navigation }) {
 
@@ -20,7 +20,7 @@ const dispatch=useDispatch()
     const selectorid=useSelector(function (data) {
         return data.empid
     })
-    console.log(selectorid);
+    
     
   const [activeField, setActiveField] = useState("");
   const [expenseDetails, setExpenseDetails] = useState([]);

@@ -27,7 +27,7 @@ export default function ExpenseScreen({navigation}) {
 const selectorid=useSelector(function (data) {
     return data.empid
 })
-console.log(selectorid);
+
 
   const [description, setDescription] = useState('');
   const [date, setDate] = useState(new Date());
@@ -65,11 +65,11 @@ const handleFilePick = async () => {
     });
 
     if (result.type === 'success') {
-      console.log('Document picked:', result);
+      
       // result.uri, result.name, result.size, result.mimeType
       // You can now upload or handle the file
     } else {
-      console.log('Document picking cancelled');
+      
     }
   } catch (error) {
     console.error('Document pick error:', error);

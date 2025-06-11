@@ -21,7 +21,7 @@ export default function ApplyLoanScreen({ navigation }) {
   const selectorid = useSelector(function (data) {
     return data.empid;
   });
-  console.log(selectorid);
+  
 
   const [date, setDate] = useState();
   const [endDate, setEndDate] = useState();
@@ -110,7 +110,7 @@ export default function ApplyLoanScreen({ navigation }) {
         });
       }
     } catch (error) {
-      console.log(error);
+      
       formatErrorsToToastMessages(error);
     }
   };

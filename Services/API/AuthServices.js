@@ -15,7 +15,7 @@ const AuthServices = {
           body: JSON.stringify(options),
         },
         (error, data) => {
-          console.log(error, data);
+          
           if (error) {
             reject(error);
             return;
@@ -41,7 +41,7 @@ const AuthServices = {
           body: JSON.stringify(options),
         },
         (error, data) => {
-          console.log('l8l', error, data);
+          
           if (error) {
             reject(data);
             return;
@@ -63,7 +63,7 @@ const AuthServices = {
           body: JSON.stringify(options),
         },
         (error, data) => {
-          console.log(error, data);
+          
           if (error) {
             reject(error);
             return;
@@ -85,7 +85,7 @@ const AuthServices = {
           body: JSON.stringify(options),
         },
         (error, data) => {
-          console.log(error, data);
+          
           if (error) {
             reject(error);
             return;
@@ -103,7 +103,7 @@ const AuthServices = {
           method: 'PUT',
         },
         (error, data) => {
-          console.log(error, data);
+          
           if (error) {
             reject(error);
             return;

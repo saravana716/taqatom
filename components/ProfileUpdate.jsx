@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux';
 const ProfileUpdate = () => {
   const [isLoading, setIsLoading] = useState(false);
   const selector = useSelector((data) => data.employeedetails);
-  console.log("myselector",selector);
+  
   
   const profilePicFromStore = useSelector((data) => data.setprofiledata.profilePic);
   const gender = useSelector((data) => data.setprofiledata.gender);
@@ -67,7 +67,7 @@ const handleFilePick = useCallback(async () => {
 
       // Get the user ID from selector array (first item)
       const myid = selector.length > 0 ? selector[0].id : null;
-      console.log('Selected user id:', myid);
+      
       if (!myid) throw new Error('User ID not found.');
 
       const mimeType = imageAsset.type ?? 'image/jpeg';
@@ -79,10 +79,10 @@ const handleFilePick = useCallback(async () => {
         name: imageAsset.fileName ?? `profile_${Date.now()}.jpg`,
       });
 
-      console.log('response12345', res);
+      
 
       const s3Link = get(res, 'url');
-      console.log('mylink', s3Link);
+      
 
       if (!s3Link) {
         throw new Error('Failed to get S3 presigned URL');
@@ -100,7 +100,7 @@ const handleFilePick = useCallback(async () => {
 
       // Step 3: Update profilePic state with cache busting
       const updatedPicUrl = `${s3Link.split('?')[0]}?t=${Date.now()}`;
-      console.log('updatepic', updatedPicUrl);
+      
       setProfilePic(updatedPicUrl);
 
       Toast.show({

@@ -1,9 +1,9 @@
 import React from 'react';
-import {Text, View} from 'react-native';
-import {Iconify} from 'react-native-iconify';
+import { Text, View } from 'react-native';
+import { Iconify } from 'react-native-iconify';
 
 export default function RequestLoanCard({ requestLoan, newItem }) {
-  console.log('newItem', newItem);
+  
 
   return (
     <View className="bg-[#6466F10D] rounded-2xl">

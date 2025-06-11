@@ -1,7 +1,7 @@
 import moment from 'moment';
 import React from 'react';
-import { FontAwesome } from "react-native-vector-icons/FontAwesome";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 
 import {
     Image,
@@ -19,8 +19,7 @@ export default function ApprovedExpenseScreen({navigation}) {
         return data.expenseData
     })
     
-    const Icon = Ionicons;
-console.log("myexpesne data",expenseData);
+// 
 
   const handleBack = () => {
     navigation.navigate("Dashboard")
@@ -133,7 +132,7 @@ console.log("myexpesne data",expenseData);
       },
     });
   };
-console.log("expensedata",expenseData);
+// 
 
   return (
     <View style={{ flex: 1, backgroundColor: '#F1F3F4' }}>
@@ -156,11 +155,13 @@ console.log("expensedata",expenseData);
         <View style={{ backgroundColor: '#fff', borderRadius: 16, padding: 20 }}>
           <View style={{ alignItems: 'center', marginBottom: 20 }}>
         {expenseData?.Status === 'Approved' && (
- <Ionicons name="checkmark-circle" size={30} color="green" />
+               <Icon name="checkmark" size={30} color="green" />
+
 )}
 
 {expenseData?.Status === 'Pending' && (
-  <FontAwesome name="pause" size={30} color="orange" />
+               <Icon name="push" size={30} color="green" />
+
 )}
             <Text style={{ fontSize: 18, fontFamily: 'PublicSans-Bold', color: statusColor(expenseData?.Status), textAlign: 'center' }}>
               {expenseData?.Status}

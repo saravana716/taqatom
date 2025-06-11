@@ -1,13 +1,13 @@
+import isEmpty from 'lodash/isEmpty';
 import React, { useEffect, useState } from 'react';
 import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from 'react-native';
 import Icon from "react-native-vector-icons/FontAwesome";
-import isEmpty from 'lodash/isEmpty';
 import { useSelector } from 'react-redux';
 
 import LoanCard from '../../components/LoanCart';
@@ -24,10 +24,10 @@ export default function AllLoansDetails({ navigation }) {
   const getUserDetails = async () => {
     try {
       const allLoansList = await LoanServices.getAllLoan(selectorid);
-      console.log('totalOutstanding', allLoansList);
+      
       setLoanDetails(allLoansList);
     } catch (err) {
-      console.log('error', err);
+      
       console.warn(err);
     }
   };

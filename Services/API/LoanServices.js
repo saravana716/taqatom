@@ -23,7 +23,7 @@ const LoanServices = {
 
   postLoanDetails(options) {
     return new Promise((resolve, reject) => {
-      console.log('optionsnnd', options);
+      
       APIService.request(
         {
           url: `${API_URL}/v1/employeeloan/`,

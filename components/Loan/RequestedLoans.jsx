@@ -25,14 +25,14 @@ export default function RequestedLoans({ navigation }) {
     try {
       const allLoansList = await LoanServices.getRequestedLoan(selectorid);
 
-      console.log('totalOutstanding', allLoansList);
+      
       if (allLoansList?.error) {
         setLoanDetails([]);
       } else {
         setLoanDetails(allLoansList);
       }
     } catch (err) {
-      console.log('error', err);
+      
       console.warn(err);
     }
   };

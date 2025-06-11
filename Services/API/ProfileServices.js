@@ -162,7 +162,7 @@ const ProfileServices = {
   },
 
   // downloadPaySlip(pay_run_id, employee_id) {
-  //   console.log('Pay Run ID:', pay_run_id, 'Employee ID:', employee_id);
+  //   
   //   console.log(
   //     `${API_URL}/file/get_all_payslips/?pay_run_id=${pay_run_id}&employee_id=${employee_id}`,
   //   );
@@ -172,7 +172,7 @@ const ProfileServices = {
   //       data: `${API_URL}/file/get_all_payslips/?pay_run_id=${pay_run_id}&employee_id=${employee_id}`,
   //     });
 
-  //     // console.log('Successfullyyyyy');
+  //     // 
 
   //     const session = await AuthService.getSessionToken();
   //     const token = await AuthService.getToken();
@@ -197,27 +197,27 @@ const ProfileServices = {
   //     //     method: 'GET',
   //     //   },
   //     //   (error, data) => {
-  //     //     console.log('Successfully fetched payslip data:', data);
+  //     //     
   //     //     if (error) {
   //     //       console.error('Error downloading payslip:', error);
   //     //       reject(error);
   //     //       return;
   //     //     }
-  //     //     console.log('Successfully fetched payslip data:', data);
+  //     //     
   //     //     resolve(data);
   //     //   },
   //     // );
   //     const pdfBlob = new Blob([get(res, 'data')], {type: 'application/pdf'});
-  //     console.log('pdfBlob', pdfBlob);
+  //     
   //     const pdfurl = URL.createObjectURL(pdfBlob);
-  //     console.log('pdfurl,', pdfurl);
+  //     
   //     const data = res;
   //     resolve(data);
   //   });
   // },
 
   // downloadPaySlip(pay_run_id, employee_id) {
-  //   console.log('Pay Run ID:', pay_run_id, 'Employee ID:', employee_id);
+  //   
   
   //   return new Promise(async (resolve, reject) => {
   //     try {
@@ -226,7 +226,7 @@ const ProfileServices = {
   //       const domainName = await getUrlForHeaders();
   //       const pdfUrl = `${API_URL}/file/get_all_payslips/?pay_run_id=${pay_run_id}&employee_id=${employee_id}`;
         
-  //       console.log('PDF URL:', pdfUrl);
+  //       
   
   //       const {config, fs} = RNFetchBlob;
   //       const downloadDir =
@@ -247,7 +247,7 @@ const ProfileServices = {
   //         hostName: domainName,
   //       });
   
-  //       console.log('File downloaded to:', response.path());
+  //       );
   //       resolve({
   //         path: response.path(),
   //         success: true,
@@ -260,7 +260,7 @@ const ProfileServices = {
   // },
   
  downloadPaySlip(pay_run_id, employee_id) {
-    console.log('Pay Run ID:', pay_run_id, 'Employee ID:', employee_id);
+    
 
     return new Promise((resolve, reject) => {
       let sessionToken = '';
@@ -280,7 +280,7 @@ const ProfileServices = {
         .then((domain) => {
           domainName = domain;
           const pdfUrl = `${API_URL}/file/get_all_payslips/?pay_run_id=${pay_run_id}&employee_id=${employee_id}`;
-          console.log('PDF URL:', pdfUrl);
+          
 
           downloadUri = `${FileSystem.documentDirectory}payslip_${pay_run_id}_${employee_id}.pdf`;
 
@@ -299,7 +299,7 @@ const ProfileServices = {
           return downloadResumable.downloadAsync();
         })
         .then(({ uri }) => {
-          console.log('Downloaded to:', uri);
+          
 
           if (Platform.OS === 'android') {
             return MediaLibrary.requestPermissionsAsync().then((permission) => {
@@ -335,7 +335,7 @@ const ProfileServices = {
     });
   },
   updateClockStatus(options) {
-    console.log('options1712', options);
+    
     return new Promise((resolve, reject) => {
       APIService.request(
         {
@@ -401,7 +401,7 @@ const ProfileServices = {
   //         body: JSON.stringify(options),
   //       },
   //       (error, data) => {
-  //         console.log(error, data);
+  //         
   //         if (error) {
   //           reject(error);
   //           return;
@@ -449,7 +449,7 @@ const ProfileServices = {
   },
 
   sendImagesToS3(options) {
-    console.log('options', options);
+    
     return new Promise((resolve, reject) => {
       APIService.fetch(
         options.S3URL,
@@ -461,7 +461,7 @@ const ProfileServices = {
           body: options.file,
         },
         (error, data) => {
-          console.log(error, data, 'pplloo');
+          
           if (error) {
             reject(error);
             return;
@@ -697,7 +697,7 @@ const ProfileServices = {
     });
   },
   getUserDetailsData(id) {
-    console.log('iddhht99', id);
+    
     return new Promise((resolve, reject) => {
       APIService.request(
         {
@@ -769,7 +769,7 @@ const ProfileServices = {
   },
 
   editManualLogRequest({options, id}) {
-    console.log('options1', options, '123', id);
+    
     return new Promise((resolve, reject) => {
       APIService.request(
         {
@@ -1047,7 +1047,7 @@ const ProfileServices = {
   },
 
   postManualLogApprove(options,approveReason) {
-    console.log('approveReason12', approveReason);
+    
     return new Promise((resolve, reject) => {
       APIService.request(
         {
@@ -1218,7 +1218,7 @@ const ProfileServices = {
   },
 
   postManualLogRevoke(id) {
-    console.log('manual_log_ids', id);
+    
     return new Promise((resolve, reject) => {
       APIService.request(
         {
@@ -1295,7 +1295,7 @@ const ProfileServices = {
   },
 
   deleteManualRequest({id}) {
-    console.log('manual delete:', id);
+    
     return new Promise((resolve, reject) => {
       APIService.request(
         {
@@ -1332,7 +1332,7 @@ const ProfileServices = {
   },
 
   deleteOvertimeRequest({id}) {
-    console.log('12121', id);
+    
     return new Promise((resolve, reject) => {
       APIService.request(
         {

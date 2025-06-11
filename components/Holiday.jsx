@@ -8,10 +8,10 @@ import {
   View,
 } from "react-native";
 
+import get from "lodash/get";
 import { Calendar } from "react-native-calendars";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useSelector } from "react-redux";
-import get from "lodash/get";
 
 import ProfileServices from "@/Services/API/ProfileServices";
 
@@ -82,7 +82,7 @@ const Holiday = ({ navigation }) => {
         <Calendar
           current={formattedToday}
           style={styles.calendar}
-          onDayPress={(day) => console.log("selected day", day)}
+          onDayPress={(day) => day}
           onMonthChange={(day) => {
             console.log("selected month", day);
             setSelectedYear(day?.year.toString());
@@ -162,14 +162,14 @@ const styles = StyleSheet.create({
   },
   topcontainer: {
     width: "100%",
-    height: "30%",
+    height: "65%",
     borderBottomRightRadius: 30,
     borderBottomLeftRadius: 30,
     position: "relative",
   },
   images: {
     width: "100%",
-    height: "100%",
+    height: "45%",
     resizeMode: "cover",
     borderBottomRightRadius: 30,
     borderBottomLeftRadius: 30,
@@ -214,8 +214,8 @@ const styles = StyleSheet.create({
   },
   HolidayBottom: {
     width: "100%",
-    height: "45%",
-    padding: 20,
+    height: "50%",
+    paddingHorizontal: 20,
   },
   HolidayText: {
     width: "100%",

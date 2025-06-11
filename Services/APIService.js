@@ -62,7 +62,7 @@ export default {
         fileName,
         isFileData = false,
       } = options;
-      // console.log('data1212', data, options, isFileData);
+      // 
       let headers = {
         Accept: 'application/json',
         'Access-Control-Allow-Origin': '*',
@@ -87,9 +87,9 @@ export default {
           SessionToken: sessionToken,
         },
       };
-      console.log('customHeaders12', customHeaders);
+      
       if (customHeaders) {
-        console.log('customHeaders', customHeaders);
+        
         headers = {...headers, ...customHeaders};
       }
 
@@ -101,9 +101,9 @@ export default {
             ? this._getJsonData(data)
             : data,
       };
-      console.log('fileName12', fileName);
+      
       if (fileName) {
-        console.log('fileName', fileName);
+        
         fetchOptions.fileName = fileName;
       }
 
@@ -122,7 +122,7 @@ export default {
         fileName,
         isFileData = false,
       } = options;
-      // console.log('data1212', data, options);
+      // 
       let headers = {
         Accept: 'application/json',
         'Access-Control-Allow-Origin': '*',
@@ -223,14 +223,14 @@ export default {
         return serverResponse.text();
       })
       .then(parsedResponse => {
-        console.log('response121', response);
+        
         const contentType = response.headers.get('content-type');
         if (
           contentType &&
           (contentType.indexOf('application/pdf') !== -1 ||
             contentType.indexOf('zip') !== -1)
         ) {
-          console.log('contentTypecontentType', contentType);
+          
           const fileURL = window.URL.createObjectURL(parsedResponse);
           const a = document.createElement('a');
           a.href = fileURL;
@@ -309,7 +309,7 @@ export default {
    * @param {*} cb
    */
   fetch(url, params, cb) {
-    console.log('API Fetching', {url, params});
+    
 
     let response;
     this._fetchWithTimeout(url, params, cb)
@@ -348,7 +348,7 @@ export default {
         );
       })
       .catch(err => {
-        console.log(err,'EEERR')
+        
         cb(err);
       });
   },
@@ -380,19 +380,19 @@ export default {
       });
   },
   fetchPdfURL(url, fetchOptions, cb) {
-    console.log('NANANnn', url);
+    
 
     return new Promise((resolve, reject) => {
       fetch(url, {method: 'GET'})
         .then(response => {
-          console.log('responseAN', response);
+          
           // if (!response.ok) {
           //   throw new Error(`HTTP error! status: ${response.status}, URL: ${url}`);
           // }
           return response.blob();
         })
         .then(blob => {
-          console.log('Successfully fetched payslip data:', blob);
+          
           resolve(blob); // Resolve the promise with the blob
         })
         .catch(error => {

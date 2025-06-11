@@ -8,10 +8,10 @@ export async function checkLocationPermission() {
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
       );
       if (granted) {
-        console.log("Location permission is granted");
+        
         return true;
       } else {
-        console.log("Location permission is denied");
+        
         return false;
       }
     } catch (err) {
@@ -36,7 +36,7 @@ export const checkEnableLocation = async () => {
           fastInterval: 5000,
         })
           .then(() => {
-            console.log("Location services enabled.");
+            
             return true;
           })
           .catch((error) => {

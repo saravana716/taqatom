@@ -15,7 +15,7 @@ import { formatErrorsToToastMessages } from "../utils/error-format";
 
 const Shift = ({ navigation }) => {
   const selector = useSelector((state) => state.empid);
-  console.log("selector", selector);
+  
 
   const [hide, setHide] = useState(false);
   const [recentShiftData, setRecentShiftData] = useState([]);
@@ -72,9 +72,9 @@ const Shift = ({ navigation }) => {
         end: moment(currentDate).format("YYYY-MM-DD"),
       });
       setRecentActivityData(Recent);
-      console.log("RecentActivities1223", Recent);
+      
     } catch (err) {
-      console.log("err", err?.errorResponse);
+      
       formatErrorsToToastMessages(err);
     }
   };
@@ -275,6 +275,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     paddingHorizontal: 20,
+backgroundColor: "#f6f6f6",
   },
   shiftTop: {
     width: "100%",

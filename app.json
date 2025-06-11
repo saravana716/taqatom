@@ -4,14 +4,14 @@
     "slug": "taqadom",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/splash_icon 1.png",
     "scheme": "taqadom",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash_icon 1.png",
       "resizeMode": "contain",
-      "backgroundColor": "#000000"
+      "backgroundColor": "#693ce3"
     },
     "ios": {
       "supportsTablet": true,
@@ -23,12 +23,12 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff",
-        
+        "foregroundImage": "./assets/images/splash_icon 1.png",
+        "backgroundColor": "#693ce3"
       },
-            "permissions": [
-        "ACCESS_FINE_LOCATION"
+      "permissions": [
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION"
       ],
       "edgeToEdgeEnabled": true,
       "package": "com.saravanapriyan.taqadom"
@@ -36,14 +36,14 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/splash_icon 1.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/splash_icon 1.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
@@ -56,7 +56,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "7de982dc-ee52-485a-98f3-fa7fa21b12c3"
+        "projectId": "8ef69eec-ab5c-449c-84c7-04cb85b14f80"
       }
     }
   }

@@ -23,7 +23,7 @@ export default function LoanScreen({navigation}) {
 const selectorid=useSelector(function (data) {
     return data.empid
 })
-console.log(selectorid);
+
 
 
   const handleApplyLoanScreen = (event) => {

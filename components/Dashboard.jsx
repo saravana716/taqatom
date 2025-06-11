@@ -90,7 +90,7 @@ const Dashboard = ({navigation}) => {
     return null;
   };
 
-  // console.log(workCode);
+  // 
 
   const handleDateChange = (event, date) => {
     if (date) {
@@ -110,7 +110,7 @@ const Dashboard = ({navigation}) => {
   async function navigateprofile(params) {
     try {
       let userid = await AsyncStorage.getItem("token");
-      console.log("ioioioioioi", userid);
+      // 
 
       navigation.navigate("Profile");
     } catch (err) {}
@@ -121,7 +121,7 @@ const Dashboard = ({navigation}) => {
     } catch (err) {}
   }
 
-  console.log("value", value);
+  // 
 
   //
 
@@ -133,7 +133,7 @@ const Dashboard = ({navigation}) => {
   const parseAccessToken = async () => {
     try {
       const accessToken = await AsyncStorage.getItem("token");
-      console.log("accessToken1234567890", accessToken);
+      // 
 
       if (!accessToken || typeof accessToken !== "string") {
         throw new Error("Access token is missing or invalid");
@@ -147,34 +147,38 @@ const Dashboard = ({navigation}) => {
       const encodedPayload = tokenParts[1];
       const decodedPayload = JSON.parse(atob(encodedPayload)); // ✅ Use base-64
 
-      console.log("Decoded Token:", decodedPayload);
+      // 
       let ids = decodedPayload.user_id;
-      console.log("000000000000000000000000", ids);
+      // 
 
       setTokenDetail(decodedPayload);
       getUserDetails(decodedPayload.user_id);
       dispatch(myreducers.senddetails(decodedPayload));
-      console.log("myserid1223456789", ids);
+      // 
 
       return decodedPayload;
     } catch (error) {
-      console.error("Token parsing failed:", error);
+      // console.error("Token parsing failed:", error);
       throw error;
     }
   };
 
   const getUserDetails = async (user_id) => {
+    // 
+    
     try {
-      console.log("tttttttttttttttttttttttttttttttttttttttttt", user_id);
+      // 
 
       const userDetails = await ProfileServices.getUserDetailsData(user_id);
+      
+      
       setUserDetails([userDetails]);
-      console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu", userDetails);
+      // 
 
       const employee = await ProfileServices.getEmployeeDetailsData(
         userDetails?.username
       );
-      console.log("emplyeeee", employee);
+      // 
 
       const empID = employee?.id;
 
@@ -182,14 +186,14 @@ const Dashboard = ({navigation}) => {
         setempid(empID); // Set for future use
         await getRecentActivity(empID); // ✅ immediate use
         const fullDetails = await ProfileServices.getEmployeeFullDetails(empID);
-        console.log("myyyyyyyy", fullDetails);
+        // 
 
         setProfilePicUrl(fullDetails?.profile_url);
         setGender(fullDetails?.gender);
         dispatch(myreducers.sendempid(empID));
       }
     } catch (err) {
-      console.error("User detail fetch failed", err);
+      // console.error("User detail fetch failed", err);
     }
   };
 
@@ -223,16 +227,16 @@ const Dashboard = ({navigation}) => {
 
   const getRecentActivity = async (id) => {
     try {
-      // console.log("wwwwwwwwwwwwwwwwwwwwwwww",id);
+      // 
 
       const recents = await ProfileServices.getRecentActivityData(id);
-      // console.log("data",recents);
-      // console.log("data",recents.length);
+      // 
+      // 
 
       const graph = await ProfileServices.getExpenseGraph(id);
       setrecent(recents);
-      // console.log("Recent Activities:", recent);
-      // console.log("Expense Graph:", graph);
+      // 
+      // 
     } catch (err) {
       console.error("Fetching recent activity failed", err);
     }
@@ -262,7 +266,7 @@ const Dashboard = ({navigation}) => {
 
       updateStatus(latitude, longitude); // ✅ Now it's correct
     } catch (error) {
-      console.error("Error fetching location:", error);
+      // console.error("Error fetching location:", error);
     }
   };
   function toFixedIfNecessary(value, dp) {
@@ -271,7 +275,11 @@ const Dashboard = ({navigation}) => {
 
   const updateStatus = async (latitude, longitude) => {
     try {
+      
+      
       const currentTime = moment(new Date());
+      
+      
       const data = {
         latitude: toFixedIfNecessary(latitude, 6),
         longitude: toFixedIfNecessary(longitude, 6),
@@ -280,16 +288,21 @@ const Dashboard = ({navigation}) => {
         clock_type: value,
         work_code: workCode,
       };
-      // console.log(workCode);
+      
+      
+      // 
+      
+      // 
 
-      if (!data.employee_id || !data.clock_type || !data.work_code) {
-        console.warn("❌ Missing fields in punch data", data);
-        return;
-      }
+      // if (!data.employee_id || !data.clock_type || !data.work_code) {
+      //   console.warn("❌ Missing fields in punch data", data);
+      //   return;
+      // }
 
-      // console.log("✅ Final data for punch", data);
+      
       const res = await ProfileServices.updateClockStatus(data);
-      console.log("muresponse", res);
+      
+
 
       setModalVisible1(false); // close immediately
       Toast.show({
@@ -307,8 +320,10 @@ const Dashboard = ({navigation}) => {
       setIsLoading(false);
     }
   };
+  
+  
   const getClockType = (value) => {
-    // console.log(value);
+    // 
     const num = Number(value);
     switch (num) {
       case 0:
@@ -351,6 +366,8 @@ const Dashboard = ({navigation}) => {
     }
   };
   const handlePunchConfirm = async (latitude, longitude) => {
+    
+    
     if (
       !(
         value === 0 ||
@@ -362,39 +379,16 @@ const Dashboard = ({navigation}) => {
       )
     ) {
       setPunchStateError("Punch state is required");
-      // setIsLoading(false);
       return;
     }
 
-    setIsLoading(true);
     await updateStatus(latitude, longitude);
     await getRecentActivity(empid);
     setModalVisible(false);
     // setIsLoading(false);
   };
-  // console.log("state",recent);
 
-  // const months = [
-  //   'Jan',
-  //   'Feb',
-  //   'Mar',
-  //   'Apr',
-  //   'May',
-  //   'Jun',
-  //   'Jul',
-  //   'Aug',
-  //   'Sep',
-  //   'Oct',
-  //   'Nov',
-  //   'Dec',
-  // ];
-  // let dates = recent.map(function (data,index) {
-  //   return data.updated_at
-  // })
-  // console.log("rrrr",dates);
-  // console.log("myrecent",recent);
-  // console.log("myrecent",recent.length);
-
+ 
   useEffect(() => {
     if (recent.length > 0) {
       const formatted = recent.map((data, index) => {
@@ -419,10 +413,10 @@ const Dashboard = ({navigation}) => {
         const formattedDate = `${day} ${months[monthIndex]} ${year}`;
 
         const minutes = dateObj.getMinutes();
-        // console.log(minutes);
+        // 
 
         const seconds = dateObj.getSeconds();
-        // console.log(seconds);
+        // 
 
         const ampm = dateObj.getHours() >= 12 ? "PM" : "AM";
         let hours = dateObj.getHours() % 12;
@@ -430,7 +424,7 @@ const Dashboard = ({navigation}) => {
         const formattedTime = `${hours}:${
           minutes < 10 ? `0${minutes}` : minutes
         }:${seconds < 10 ? `0${seconds}` : seconds} ${ampm}`;
-        // console.log("for",formattedTime);
+        // 
 
         return {
           formattedDate,
@@ -442,8 +436,8 @@ const Dashboard = ({navigation}) => {
       // Just set the latest (first) one
       setformatdate(formatted[0].formattedDate);
       setformattime(formatted[0].formattedTime);
-      // console.log({formatdate:formatdate});
-      // console.log({formattime:formattime});
+      // 
+      // 
     }
   }, [recent]); // ✅ only runs when `recent` updates
 
@@ -454,8 +448,8 @@ const Dashboard = ({navigation}) => {
     );
   }
 
-  // console.log({startDate:startDate,enddate:endDate});
-  // console.log("myemploueee id",empid);
+  // 
+  // 
   async function getdata() {
     try {
       if (!empid) return;
@@ -492,7 +486,7 @@ const Dashboard = ({navigation}) => {
   //     try {
   //      await logout()
   //     } catch (err) {
-  //       console.log("Logout Error:", err);
+  //       
   //     }
   //   }
   //   Logout()
@@ -505,14 +499,14 @@ const Dashboard = ({navigation}) => {
     } catch (err) {}
   }
   // const handleLanguageChange = useCallback(async () => {
-  //     console.log("ooopopopopopopopopopopop");
+  //     
 
   //     const language =
   //       i18n.language === LANG_CODES.ARABIC
   //         ? LANG_CODES.ENGLISH
   //         : LANG_CODES.ARABIC;
 
-  //     console.log("loadLanguages", language);
+  //     
 
   //     await i18n.changeLanguage(language);
   //     setCurrentLang(language); // Trigger re-render
@@ -557,7 +551,7 @@ const Dashboard = ({navigation}) => {
                   <TouchableOpacity
                     style={styles.models}
                     onPress={() => {
-                      // console.log("openkgndfngndjn");
+                      // 
 
                       setCurrentField("start");
                       setShowPicker(true);
@@ -755,7 +749,7 @@ const Dashboard = ({navigation}) => {
         <View style={styles.topcontainer}>
           <Image
             source={require("../assets/images/Assets/blue-bg.png")}
-            style={styles.images}
+            style={styles.images12}
           />
           <View style={styles.left}>
             <View style={styles.leftcon}>
@@ -905,7 +899,7 @@ const Dashboard = ({navigation}) => {
               const timeString = localDate.toLocaleTimeString("en-US", {
                 hour: "numeric",
                 minute: "2-digit",
-                second: "2-digit",
+                // second: "2-digit",
                 hour12: true,
               });
 
@@ -944,7 +938,7 @@ const styles = StyleSheet.create({
   },
   topcontainer: {
     width: "100%",
-    height: "30%",
+    height: "40%",
     borderBottomRightRadius: 30,
     borderBottomLeftRadius: 30,
     position: "relative",
@@ -952,6 +946,13 @@ const styles = StyleSheet.create({
   images: {
     width: "100%",
     height: "100%",
+    objectFit: "contain",
+    borderBottomRightRadius: 30,
+    borderBottomLeftRadius: 30,
+  },
+    images12: {
+    width: "100%",
+    height: "65%",
     objectFit: "cover",
     borderBottomRightRadius: 30,
     borderBottomLeftRadius: 30,
@@ -1004,7 +1005,7 @@ const styles = StyleSheet.create({
     height: 160,
     backgroundColor: "white",
     position: "absolute",
-    bottom: -50,
+    bottom:0,
     padding: 15,
     borderRadius: 20,
     zIndex: 1,
@@ -1052,7 +1053,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     justifyContent: "space-between",
     flexWrap: "wrap",
-    paddingTop: 80,
+    paddingTop: 20,
     gap: 40,
   },
   dash12: {

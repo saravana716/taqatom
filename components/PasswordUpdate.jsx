@@ -28,7 +28,7 @@ const PasswordUpdate = ({navigation}) => {
   const [currentField, setCurrentField] = useState(null); // "start" or "end"
 
   const handleDateChange = (event, date) => {
-    console.log("date selected", date);
+    // 
 
     if (date) {
       setSelectedDate(date);
@@ -41,28 +41,28 @@ const PasswordUpdate = ({navigation}) => {
     setShowPicker(false);
   };
   useEffect(() => {
-    console.log("9999999999999999999999999999");
+    // 
     
     async function getemail(params) {
       try {
         const email = await AsyncStorage.getItem("email");
-        console.log("email", email);
-    console.log("99");
+        // 
+    // 
 
         setgetmail(email);
       } catch (err) {}
     }
     getemail();
   }, []);
-  console.log("myemail",getmail);
+  // 
   
   function navigateprofile(params) {
     navigation.navigate("Profile");
   }
-  console.log({ old: oldPassword, new: password, confirm: confirmPassword });
+  // 
   async function savepassword(params) {
     try {
-      console.log('flhlkfjhlkfjlk');
+      // 
       
       if (oldPassword.trim() === "") {
         Toast.show({
@@ -99,10 +99,10 @@ const PasswordUpdate = ({navigation}) => {
           new_password: password,
           confirm_password: confirmPassword,
         }
-        console.log("check",data);
+        
         
         const resdata = await ProfileServices.resetPassword(data);
-        console.log("resdata", resdata);
+        
 
         Toast.show({
           type: "success",

@@ -1,10 +1,19 @@
 import React, { useState } from 'react';
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  ActivityIndicator,
+} from 'react-native';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import AuthService from '../Services/AuthService';
 
 const SwitchOrganization = ({ navigation }) => {
-  const [organizationName, setOrganizationName] = useState("");
+  const [organizationName, setOrganizationName] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const submitDemo = async () => {
     if (!organizationName.trim()) {
@@ -17,17 +26,33 @@ const SwitchOrganization = ({ navigation }) => {
       return;
     }
 
-    await AuthService.setDomainName(organizationName);
-    Toast.show({
-      type: 'success',
-      text1: 'Organization Name saved successfully',
-      position: 'bottom',
-      visibilityTime: 2000,
-    });
+    setIsLoading(true); // Start loader
 
-    setTimeout(() => {
-      navigation.navigate("Login");
-    }, 1500);
+    try {
+      // Simulate API call or AsyncStorage/domain update
+      await AuthService.setDomainName(organizationName);
+
+      Toast.show({
+        type: 'success',
+        text1: 'Organization Name saved successfully',
+        position: 'bottom',
+        visibilityTime: 2000,
+      });
+
+      setTimeout(() => {
+        navigation.navigate('Login');
+      }, 1500);
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Something went wrong. Please try again.',
+        position: 'bottom',
+        visibilityTime: 2000,
+      });
+    } finally {
+      setIsLoading(false); // Stop loader
+    }
   };
 
   return (
@@ -44,9 +69,18 @@ const SwitchOrganization = ({ navigation }) => {
             placeholderTextColor="gray"
             onChangeText={setOrganizationName}
             value={organizationName}
+            autoCapitalize="none"
           />
-          <TouchableOpacity style={styles.Btn} onPress={submitDemo}>
-            <Text style={styles.btnText}>Submit</Text>
+          <TouchableOpacity
+            style={[styles.Btn, isLoading && styles.disabledBtn]}
+            onPress={submitDemo}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.btnText}>Submit</Text>
+            )}
           </TouchableOpacity>
         </View>
       </View>
@@ -97,6 +131,10 @@ const styles = StyleSheet.create({
     marginVertical: 15,
     borderRadius: 10,
     backgroundColor: '#697ce3',
+    alignItems: 'center',
+  },
+  disabledBtn: {
+    backgroundColor: '#A9D0F5', // Change color when loading
   },
   btnText: {
     fontSize: 20,

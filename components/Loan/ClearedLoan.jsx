@@ -1,3 +1,4 @@
+import isEmpty from 'lodash/isEmpty';
 import React, { useEffect, useState } from 'react';
 import {
   ScrollView,
@@ -6,18 +7,17 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import isEmpty from 'lodash/isEmpty';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+import { useSelector } from 'react-redux';
 import LoanCard from '../../components/LoanCart';
 import LoanServices from '../../Services/API/LoanServices';
-import { useSelector } from 'react-redux';
 
 export default function ClearedLoan({ navigation }) {
     const selectorid=useSelector(function (data) {
         return data.empid
     })
-    console.log(selectorid);
+    
     
   const [loanDetails, setLoanDetails] = useState([]);
 
@@ -28,10 +28,10 @@ export default function ClearedLoan({ navigation }) {
   const getUserDetails = async () => {
     try {
       const allLoansList = await LoanServices.getClearedLoan(selectorid);
-      console.log('tolOutstanding', allLoansList);
+      
       setLoanDetails(allLoansList);
     } catch (err) {
-      console.log('error', err);
+      
       console.warn(err);
     }
   };

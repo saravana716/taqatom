@@ -6,7 +6,6 @@ import ApprovedExpenseScreen from "../components/ApprovedExpenseScreen";
 import Dashboard from "../components/Dashboard";
 import ExpenseComponents from "../components/ExpenseComponents";
 import ExpenseScreen from "../components/ExpenseScreen";
-import ReimbursementScreen from "../components/ReimbursementScreen";
 import ForgotPassword from "../components/ForgotPassword";
 import Holiday from "../components/Holiday";
 import AllLoansDetails from "../components/Loan/AllLoansDetails";
@@ -21,13 +20,14 @@ import OtpVerification from "../components/OtpVerification";
 import PasswordUpdate from "../components/PasswordUpdate";
 import Profile from "../components/Profile";
 import ProfileUpdate from "../components/ProfileUpdate";
+import ReimbursementScreen from "../components/ReimbursementScreen";
 import Shift from "../components/Shift";
 import SwitchOrganization from "../components/SwitchOrganization";
 const Stack = createNativeStackNavigator();
 
 const Routing = () => {
   const { isAuthenticated, loading } = useContext(AuthContext);
-console.log("auth",isAuthenticated);
+
 
   if (loading) return null; // Optional: you can return a splash screen here
 
@@ -37,7 +37,6 @@ console.log("auth",isAuthenticated);
         <>
           <Stack.Screen name="Dashboard" component={Dashboard} />
           <Stack.Screen name="Holiday" component={Holiday} />
-          <Stack.Screen name="OtpVerification" component={OtpVerification} />
           <Stack.Screen name="Notification" component={Notification} />
           <Stack.Screen name="Password" component={PasswordUpdate} />
           <Stack.Screen name="Profile" component={Profile} />
@@ -59,6 +58,8 @@ console.log("auth",isAuthenticated);
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Organization" component={SwitchOrganization} />
           <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+          <Stack.Screen name="OtpVerification" component={OtpVerification} />
+
         </>
       )}
     </Stack.Navigator>
