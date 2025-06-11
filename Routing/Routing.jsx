@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import { AuthContext } from '../components/AuthContext';
 
 import ApprovedExpenseScreen from "../components/ApprovedExpenseScreen";
+import ClockActivityComponent from "../components/ClockActivityComponent";
 import Dashboard from "../components/Dashboard";
 import ExpenseComponents from "../components/ExpenseComponents";
 import ExpenseScreen from "../components/ExpenseScreen";
@@ -18,9 +19,19 @@ import Login from "../components/Login";
 import Notification from "../components/Notification";
 import OtpVerification from "../components/OtpVerification";
 import PasswordUpdate from "../components/PasswordUpdate";
+import PaySlipComponent from "../components/PaySlipComponent";
+import PaySlipScreen from "../components/PaySlipScreen";
 import Profile from "../components/Profile";
 import ProfileUpdate from "../components/ProfileUpdate";
+import RecentResignationComponent from "../components/RecentResignationComponent";
+import IndividualResignation from "../components/IndividualResignation";
 import ReimbursementScreen from "../components/ReimbursementScreen";
+import ResignationScreen from "../components/ResignationScreen";
+import AddResignation from "../components/AddResignation";
+import RequestScreen from "../components/RequestScreen";
+import ManualLogScreen from "../components/Request/ManualLogScreen";
+import ManualLogRequestDetails from "../components/Request/ManualLogRequestDetails";
+import LeaveScreen from "../components/Request/LeaveScreen";
 import Shift from "../components/Shift";
 import SwitchOrganization from "../components/SwitchOrganization";
 const Stack = createNativeStackNavigator();
@@ -52,6 +63,17 @@ const Routing = () => {
           <Stack.Screen name="ApprovedExpenseScreen" component={ApprovedExpenseScreen} />
           <Stack.Screen name="ExpenseScreen" component={ExpenseScreen} />
           <Stack.Screen name="ReimbursementScreen" component={ReimbursementScreen} />
+          <Stack.Screen name="PaySlipScreen" component={PaySlipScreen} />
+          <Stack.Screen name="ClockActivityComponent" component={ClockActivityComponent} />
+          <Stack.Screen name="PaySlipComponent" component={PaySlipComponent} />
+          <Stack.Screen name="ResignationScreen" component={ResignationScreen} />
+          <Stack.Screen name="RecentResignationComponent" component={RecentResignationComponent} />
+          <Stack.Screen name="IndividualResignation" component={IndividualResignation} />
+          <Stack.Screen name="AddResignation" component={AddResignation} />
+          <Stack.Screen name="RequestScreen" component={RequestScreen} />
+          <Stack.Screen name="ManualLogScreen" component={ManualLogScreen} />
+          <Stack.Screen name="ManualLogRequestDetails" component={ManualLogRequestDetails} />
+          <Stack.Screen name="LeaveScreen" component={LeaveScreen} />
         </>
       ) : (
         <>

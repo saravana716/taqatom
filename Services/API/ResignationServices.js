@@ -1,5 +1,6 @@
 import APIService from "../APIService";
-import { API_URL } from "@env";
+let API_URL="https://api.hr-ms.com"
+
 
 const ResignationService = {
   updateStatus(options) {

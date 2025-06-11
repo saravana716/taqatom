@@ -9,7 +9,9 @@ const myslice=createSlice({
         employeedetails:[],
         setprofiledata:{},
         empid:"",
-        expenseData:{}
+        expenseData:{},
+        employeeFullDetails:{},
+        newItem:{}
     },
     reducers:{
         senddetails(store,action){
@@ -37,7 +39,14 @@ const myslice=createSlice({
             
             store.expenseData=action.payload
             
-        }
+        },
+        sendempDetails(store,action){
+            store.employeeFullDetails=action.payload
+        },
+        sendNewItem(store,action){
+            store.newItem=action.payload
+        },
+       
     }
 })
 

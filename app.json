@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash_icon 1.png",
-      "resizeMode": "contain",
+      "resizeMode": "cover",
       "backgroundColor": "#693ce3"
     },
     "ios": {
@@ -24,7 +24,10 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/splash_icon 1.png",
-        "backgroundColor": "#693ce3"
+        "backgroundColor": "#693ce3",
+      "resizeMode": "contain"
+
+        
       },
       "permissions": [
         "android.permission.ACCESS_FINE_LOCATION",
@@ -46,7 +49,7 @@
           "image": "./assets/images/splash_icon 1.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#693ce3"
         }
       ]
     ],

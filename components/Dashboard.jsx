@@ -26,6 +26,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { useDispatch } from "react-redux";
 import { AuthContext } from "./AuthContext";
 const Dashboard = ({navigation}) => {
+  
   const dispatch = useDispatch();
   const [workCode, setWorkCode] = useState();
   const [tokenDetail, setTokenDetail] = useState(null);
@@ -191,6 +192,7 @@ const Dashboard = ({navigation}) => {
         setProfilePicUrl(fullDetails?.profile_url);
         setGender(fullDetails?.gender);
         dispatch(myreducers.sendempid(empID));
+        dispatch(myreducers.sendempDetails(fullDetails));
       }
     } catch (err) {
       // console.error("User detail fetch failed", err);
@@ -843,31 +845,31 @@ const Dashboard = ({navigation}) => {
         </View>
         <View style={styles.dash12}>
           <View style={styles.hol}>
-            <View style={styles.dash1}>
+            <TouchableOpacity style={styles.dash1} onPress={() => movepage("PaySlipScreen")}>
               <Image
                 source={require("../assets/images/Assets/resignation-icon.png")}
                 style={styles.images}
               />
-            </View>
-            <Text style={styles.holiday}>Holiday</Text>
+            </TouchableOpacity>
+            <Text style={styles.holiday}>Payslip</Text>
           </View>
           <View style={styles.hol}>
-            <View style={styles.dash1}>
+            <TouchableOpacity style={styles.dash1}onPress={()=>movepage("ResignationScreen")}>
               <Image
                 source={require("../assets/images/Assets/request-icon.png")}
                 style={styles.images}
               />
-            </View>
-            <Text style={styles.holiday}>Holiday</Text>
+            </TouchableOpacity>
+            <Text style={styles.holiday}>Resignation</Text>
           </View>
           <View style={styles.hol}>
-            <View style={styles.dash1}>
+            <TouchableOpacity style={styles.dash1} onPress={()=>movepage("RequestScreen")}>
               <Image
                 source={require("../assets/images/Assets/approval-icon.png")}
                 style={styles.images}
               />
-            </View>
-            <Text style={styles.holiday}>Holiday</Text>
+            </TouchableOpacity>
+            <Text style={styles.holiday}>Request</Text>
           </View>
           <View style={styles.hol}>
             <View style={styles.dash1}>
