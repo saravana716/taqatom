@@ -522,7 +522,7 @@ const styles = StyleSheet.create({
     gap: 20,
     padding: 9,
   },
-   container: { flex: 1, justifyContent: 'space-between' },
+   container: { flex: 1, justifyContent: 'space-between' ,backgroundColor:"white"},
   innerContainer: { paddingBottom: 48 },
   header: {
     flexDirection: 'row',

@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import {dateTimeToShow, formatDateTime} from '../utils/formatDateTime';
 import {
   Menu,
@@ -25,13 +26,13 @@ import {Toast} from 'react-native-toast-message/lib/src/Toast';
 import {formatErrorsToToastMessages} from '../utils/error-format';
 
 export default function LeaveCard({
-  navigation,
   newItem,
   componentId,
   employeeId,
   leaveList,
   leavePayCodes,
 }) {
+    const navigation=useNavigation()
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
   const [revokeConfirmVisible, setRevokeConfirmVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -58,22 +59,11 @@ export default function LeaveCard({
   const [endError, setEndError] = useState('');
 
   const handleFulldetails = () => {
-    Navigation.push(componentId, {
-      component: {
-        name: 'LeaveRequestDetails',
-        passProps: {
-          employeeId,
+    navigation.navigate("LeaveRequestDetails",{ employeeId,
           newItem,
           leavePayCodes,
-          leaveList,
-        },
-        options: {
-          animations: {push: {enabled: false}, pop: {enabled: false}},
-          topBar: {visible: false},
-          bottomTabs: {visible: false, drawBehind: true},
-        },
-      },
-    });
+          leaveList,})
+  
   };
 
   const showDeleteConfirmDialog = () => setDeleteConfirmVisible(true);
@@ -240,7 +230,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 4,
     borderBottomColor: '#697CE3',
     marginBottom: 10,
-    elevation: 2,
+     elevation: 4,
+  // Shadow for iOS
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.1,
+  shadowRadius: 4,
   },
   touchableFull: {
     width: '100%',

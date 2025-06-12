@@ -19,12 +19,12 @@ export default function RequestScreen({navigation,
   };
 
   const handleOvertimeScreen = () => {
-  navigation.navigate('OvertimeScreen',{employeeId,userId})
+  navigation.navigate('OverTimeScreen')
    
   };
 
   const handleTrainingScreen = () => {
-  navigation.navigate('TrainingScreen',{employeeId,userId})
+  navigation.navigate('TrainingScreen')
 
   
   };

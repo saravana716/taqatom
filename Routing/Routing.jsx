@@ -29,9 +29,14 @@ import ReimbursementScreen from "../components/ReimbursementScreen";
 import ResignationScreen from "../components/ResignationScreen";
 import AddResignation from "../components/AddResignation";
 import RequestScreen from "../components/RequestScreen";
+import OverTimeScreen from "../components/OverTimeScreen";
+import OvertimeRequestDetails from "../components/OvertimeRequestDetails";
+import OverTimeCard from "../components/OverTimeCard";
+import OverTimesComponent from "../components/OverTimesComponent";
 import ManualLogScreen from "../components/Request/ManualLogScreen";
 import ManualLogRequestDetails from "../components/Request/ManualLogRequestDetails";
 import LeaveScreen from "../components/Request/LeaveScreen";
+import LeaveRequestDetails from "../components/Request/LeaveRequestDetails";
 import Shift from "../components/Shift";
 import SwitchOrganization from "../components/SwitchOrganization";
 const Stack = createNativeStackNavigator();
@@ -74,6 +79,12 @@ const Routing = () => {
           <Stack.Screen name="ManualLogScreen" component={ManualLogScreen} />
           <Stack.Screen name="ManualLogRequestDetails" component={ManualLogRequestDetails} />
           <Stack.Screen name="LeaveScreen" component={LeaveScreen} />
+          <Stack.Screen name="LeaveRequestDetails" component={LeaveRequestDetails} />
+          <Stack.Screen name="OverTimeScreen" component={OverTimeScreen} />
+          <Stack.Screen name="OverTimeCard" component={OverTimeCard} />
+          <Stack.Screen name="OverTimesComponent" component={OverTimesComponent} />
+          <Stack.Screen name="OvertimeRequestDetails" component={OvertimeRequestDetails} />
+          
         </>
       ) : (
         <>
