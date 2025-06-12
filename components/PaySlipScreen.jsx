@@ -5,12 +5,12 @@ import chunk from 'lodash/chunk';
 import isEmpty from 'lodash/isEmpty';
 import React, { useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { PieChart } from 'react-native-gifted-charts';
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -37,22 +37,12 @@ export default function PaySlipScreen({ navigation }) {
   const handleBack = () => navigation.navigate("Dashboard");
 
   const getPayrollHistory = async () => {
-    console.log("dede",employeeFullDetails.id);
-    console.log("dede",employeeFullDetails);
-    
     // setIsLoading(true);
     try {
-        console.log("");
-        
       const response = await ProfileServices.getPayrollHistory(employeeFullDetails.id);
-      console.log("rpsone",response);
-      
       setPayrollHistory(response?.results);
       setTotalCount(response?.count);
-      console.log("pay",payrollHistory);
-      
     } catch (err) {
-      console.log('Error getting payroll history:', err?.errorResponse?.errors?.[0]?.message);
     } finally {
       setIsLoading(false);
     }
@@ -64,7 +54,6 @@ export default function PaySlipScreen({ navigation }) {
       const response = await ProfileServices.getSalaryStructure('earning', employeeFullDetails?.id);
       setPayrollData(response);
     } catch (err) {
-      console.log('Error getting salary structure:', err?.errorResponse?.errors?.[0]?.message);
     } finally {
       setIsLoading(false);
     }
@@ -107,8 +96,6 @@ export default function PaySlipScreen({ navigation }) {
       setPagination(prev => ({ ...prev, pageIndex: prev.pageIndex - 1 }));
     }
   };
-console.log(payrollHistory);
-
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>

@@ -1,7 +1,12 @@
-import {useCallback, useEffect, useState} from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import DateTimePicker from '@react-native-community/datetimepicker';
+import find from 'lodash/find';
+import get from 'lodash/get';
+import moment from 'moment';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   Modal,
@@ -12,10 +17,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import ProfileServices from '../../Services/API/ProfileServices';
-import {Toast} from 'react-native-toast-message/lib/src/Toast';
-import {dateTimeToShow, formatDateTime} from '../../utils/formatDateTime';
-import get from 'lodash/get';
+import { Dropdown } from 'react-native-element-dropdown';
 import {
   Menu,
   MenuOption,
@@ -23,22 +25,17 @@ import {
   MenuProvider,
   MenuTrigger,
 } from 'react-native-popup-menu';
-import {Dropdown} from 'react-native-element-dropdown';
-import {PUNCH_STATE_OPTIONS} from '../../components/PunchStateOptions';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import moment from 'moment';
-import find from 'lodash/find';
-import { useTranslation } from 'react-i18next';
+import { Toast } from 'react-native-toast-message/lib/src/Toast';
+import { PUNCH_STATE_OPTIONS } from '../../components/PunchStateOptions';
 import tokens from '../../locales/tokens';
+import ProfileServices from '../../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../../utils/error-format';
+import { dateTimeToShow, formatDateTime } from '../../utils/formatDateTime';
 
 export default function ManualLogRequestDetails({
  route
 }) {
    const { employeeId, newItem, manualLogList } = route.params;
-    console.log('Received employeeId:', employeeId);
-    console.log('Received newItem:', newItem);
-    console.log('Received manualLogList:', manualLogList);
   const {t}=useTranslation()
   const [isLoading, setIsLoading] = useState(false);
   const [manualLogData, setManualLogData] = useState([]);
@@ -111,7 +108,6 @@ export default function ManualLogRequestDetails({
         position: 'bottom',
       });
     } catch (error) {
-      console.log(error?.errorResponse, 'err');
      formatErrorsToToastMessages(error)
       setRevokeConfirmVisible(false);
     }

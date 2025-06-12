@@ -24,7 +24,7 @@ export default function RequestScreen({navigation,
   };
 
   const handleTrainingScreen = () => {
-  navigation.navigate('TrainingScreen')
+  navigation.navigate('Training')
 
   
   };

@@ -26,8 +26,6 @@ export default function OvertimeScreen({ navigation }) {
     const selectorid= useSelector(function (data) {
         return data.empid
     })
-    console.log(selectorid);
-    
   const [modalVisible, setModalVisible] = useState(false);
   const [startDatePicker, setStartDatePicker] = useState(false);
   const [startTimePicker, setStartTimePicker] = useState(false);

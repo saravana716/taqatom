@@ -1,6 +1,5 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
 import find from 'lodash/find';
-import get from 'lodash/get';
 import moment from 'moment';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -25,10 +24,9 @@ import {
   MenuTrigger,
 } from 'react-native-popup-menu';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
-import tokens from '../../locales/tokens';
 import ProfileServices from '../../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../../utils/error-format';
-import { dateTimeToShow, formatDateTime } from '../../utils/formatDateTime';
+import { formatDateTime } from '../../utils/formatDateTime';
 
 export default function LeaveRequestDetails({
 navigation,route
@@ -181,7 +179,6 @@ navigation,route
       return;
     }
     try {
-      console.log('kkk');
       const response = await ProfileServices.editLeaveRequest({
         options: {
           employee: employeeId,
@@ -201,11 +198,8 @@ navigation,route
         text1: 'Updated Successfully',
         position: 'bottom',
       });
-      console.log('responselll', response);
     } catch (error) {
       setIsLoading(false);
-      console.log(error?.errorResponse?.errors[0]?.message, 'ldldldl?.');
-
      formatErrorsToToastMessages(error)
       setModalVisible(false);
     }
@@ -226,7 +220,6 @@ navigation,route
         });
       }, 1000);
     } catch (error) {
-      console.log(error?.errorResponse?.errors[0]?.message, 'err');
       formatErrorsToToastMessages(error)
     }
   };
@@ -243,7 +236,6 @@ navigation,route
         position: 'bottom',
       });
     } catch (error) {
-      console.log(error?.errorResponse[0]?.message, 'err');
       formatErrorsToToastMessages(error)
       setRevokeConfirmVisible(false);
     }

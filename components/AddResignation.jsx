@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Modal,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -46,8 +46,6 @@ export default function AddResignation({route,navigation}) {
       formatErrorsToToastMessages(error);
     }
   };
-console.log("empid",employeeFullDetails);
-
   useEffect(() => {
     fetchConfig();
   }, []);
@@ -81,8 +79,6 @@ console.log("empid",employeeFullDetails);
           reason: reason,
           lwd_reason: lwdReason,
         }
-        console.log("datas",datas);
-        
       if (employeeFullDetails && resignationDate && endDate && reason) {
         await ProfileServices.postResignationDetails(datas);
         Toast.show({ type: 'success', text1: 'Resignation Applied', position: 'bottom' });

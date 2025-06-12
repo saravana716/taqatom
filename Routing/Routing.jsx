@@ -34,10 +34,20 @@ import OvertimeRequestDetails from "../components/OvertimeRequestDetails";
 import OverTimeCard from "../components/OverTimeCard";
 import OverTimesComponent from "../components/OverTimesComponent";
 import ManualLogScreen from "../components/Request/ManualLogScreen";
+import Training from "../components/Request/Training";
+import TrainingRequestDetails from "../components/Request/TrainingRequestDetails";
 import ManualLogRequestDetails from "../components/Request/ManualLogRequestDetails";
 import LeaveScreen from "../components/Request/LeaveScreen";
 import LeaveRequestDetails from "../components/Request/LeaveRequestDetails";
 import Shift from "../components/Shift";
+import ApprovalScreen from "../components/ApprovalScreen";
+import ApprovalManualLogScreen from "../components/Approval/ApprovalManualLogScreen";
+import ApprovalLeaveScreen from "../components/Approval/ApprovalLeaveScreen";
+import ApprovalOvertimeScreen from "../components/Approval/ApprovalOvertimeScreen";
+import ApprovalTrainingScreen from "../components/Approval/ApprovalTrainingScreen";
+import ApprovalManualCard from "../components/ApprovalCards/ApprovalManualCard";
+import ApprovalOvertimeCard from "../components/ApprovalCards/ApprovalOvertimeCard";
+import ApprovalTrainingCard from "../components/ApprovalCards/ApprovalTrainingCard";
 import SwitchOrganization from "../components/SwitchOrganization";
 const Stack = createNativeStackNavigator();
 
@@ -84,6 +94,16 @@ const Routing = () => {
           <Stack.Screen name="OverTimeCard" component={OverTimeCard} />
           <Stack.Screen name="OverTimesComponent" component={OverTimesComponent} />
           <Stack.Screen name="OvertimeRequestDetails" component={OvertimeRequestDetails} />
+          <Stack.Screen name="Training" component={Training} />
+          <Stack.Screen name="TrainingRequestDetails" component={TrainingRequestDetails} />
+          <Stack.Screen name="ApprovalScreen" component={ApprovalScreen} />
+          <Stack.Screen name="ApprovalManualLogScreen" component={ApprovalManualLogScreen} />
+          <Stack.Screen name="ApprovalLeaveScreen" component={ApprovalLeaveScreen} />
+          <Stack.Screen name="ApprovalManualCard" component={ApprovalManualCard} />
+          <Stack.Screen name="ApprovalOvertimeScreen" component={ApprovalOvertimeScreen} />
+          <Stack.Screen name="ApprovalTrainingScreen" component={ApprovalTrainingScreen} />
+          <Stack.Screen name="ApprovalOvertimeCard" component={ApprovalOvertimeCard} />
+          <Stack.Screen name="ApprovalTrainingCard" component={ApprovalTrainingCard} />
           
         </>
       ) : (

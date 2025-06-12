@@ -1,18 +1,15 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  ScrollView,
+  StyleSheet,
   Text,
   TouchableOpacity,
-  View,
-  StyleSheet,
+  View
 } from 'react-native';
+import { PieChart } from 'react-native-gifted-charts';
 import { Iconify } from 'react-native-iconify';
 import { Navigation } from 'react-native-navigation';
-import LeaveComponent from '../../Components/Component/LeaveComponent';
 import ProfileServices from '../../Services/API/ProfileServices';
-import { Toast } from 'react-native-toast-message/lib/src/Toast';
-import { PieChart } from 'react-native-gifted-charts';
 import { formatErrorsToToastMessages } from '../../utils/error-format';
 
 export default function AllLeaveScreen({ componentId, userId }) {
@@ -70,7 +67,6 @@ export default function AllLeaveScreen({ componentId, userId }) {
   const handlePressChart = (value, text) => {
     setValue(value?.value);
     setName(value?.text);
-    console.log('Pressed:', text, 'with value:', value);
   };
 
   const getLeaveList = async () => {

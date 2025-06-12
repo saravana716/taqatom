@@ -1,20 +1,23 @@
-import find from 'lodash/find';
-import get from 'lodash/get';
-import moment from 'moment';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
     ActivityIndicator,
+    Modal,
     ScrollView,
     StyleSheet,
     Text,
+    TextInput,
     TouchableOpacity,
-    Modal,
     View,
-    Dropdown,
-    TextInput
 } from 'react-native';
 import Icon from "react-native-vector-icons/FontAwesome";
+import ProfileServices from '../Services/API/ProfileServices';
 
+import DateTimePicker from '@react-native-community/datetimepicker';
+import find from 'lodash/find';
+import get from 'lodash/get';
+import moment from 'moment';
+import { useTranslation } from 'react-i18next';
+import { Dropdown } from 'react-native-element-dropdown';
 import {
     Menu,
     MenuOption,
@@ -23,19 +26,18 @@ import {
     MenuTrigger,
 } from 'react-native-popup-menu';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
-import ProfileServices from '../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../utils/error-format';
 import { dateTimeToShow, formatDateTime } from '../utils/formatDateTime';
 
 export default function OvertimeRequestDetails({
   navigation,route
 }) {
-  const { employeeId,
+  const {employeeId,
           newItem,
           payCodesList,
           getPayCodeList,
-          overtimeList } = route.params;
-
+          overtimeList}=route.params
+  const {t} = useTranslation(); // 't' function is used for translation
   const [isLoading, setIsLoading] = useState(false);
   const [OvertimeData, setOvertimeData] = useState([]);
   const matchedData = find(OvertimeData, log => log?.id === newItem?.id);
@@ -43,34 +45,72 @@ export default function OvertimeRequestDetails({
   const [revokeConfirmVisible, setRevokeConfirmVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [startDate, setStartDate] = useState(false);
-  const [formatStartDate, setFormatStartDate] = useState(newItem?.start_time || null);
+  const [formatStartDate, setFormatStartDate] = useState(
+    newItem?.start_time || null,
+  );
   const [dateStart, setDateStart] = useState(new Date());
   const [startTime, setStartTime] = useState(new Date());
+
   const [endDate, setEndDate] = useState(false);
-  const [formatEndDate, setFormatEndDate] = useState(newItem?.end_time || null);
+  const [formatEndDate, setFormatEndDate] = useState(
+    newItem?.end_time || null,
+  );
   const [dateEnd, setDateEnd] = useState(new Date());
   const [endTime, setEndTime] = useState(new Date());
+
   const [workCode, setWorkCode] = useState(newItem?.work_code || '');
   const [applyReason, setApplyReason] = useState(newItem?.apply_reason || '');
   const [showStartDateTime, setShowStartDateTime] = useState(false);
   const [showEndDateTime, setShowEndDateTime] = useState(false);
+
   const [payCode, setPayCode] = useState(newItem?.paycode_details?.id || '');
   const [startDateError, setStartDateError] = useState('');
   const [endDateError, setEndDateError] = useState('');
   const [payCodeError, setPayCodeError] = useState('');
 
   const handleBack = () => {
-  navigation.navigate('OverTimeScreen')
+  navigation.navigate("OverTimeScreen")
     overtimeList();
   };
 
   const getOvertimeList = async () => {
     try {
-      const RecentActivities = await ProfileServices.getOvertimeData(employeeId);
+      const RecentActivities = await ProfileServices.getOvertimeData(
+        employeeId,
+      );
       setOvertimeData(RecentActivities?.results);
     } catch (error) {
       formatErrorsToToastMessages(error);
     }
+  };
+
+  const handleFulldetails = () => {
+    Navigation.push(componentId, {
+      component: {
+        name: 'OvertimeRequestDetails',
+        passProps: {
+          employeeId,
+          matchedData,
+        },
+        options: {
+          animations: {
+            push: {
+              enabled: false,
+            },
+            pop: {
+              enabled: false,
+            },
+          },
+          topBar: {
+            visible: false,
+          },
+          bottomTabs: {
+            visible: false,
+            drawBehind: true,
+          },
+        },
+      },
+    });
   };
 
   const showDeleteConfirmDialog = () => {
@@ -83,7 +123,8 @@ export default function OvertimeRequestDetails({
 
   const onDateChange = useCallback((event, selectedDate) => {
     if (event.type === 'set' && selectedDate) {
-      const formattedDate = moment(selectedDate).format('DD MMMM YYYY');
+      const formattedDate = moment(selectedDate).format('DD MMMM ');
+
       setDateStart(selectedDate);
       setFormatStartDate(formattedDate);
       setStartDate(false);
@@ -97,20 +138,24 @@ export default function OvertimeRequestDetails({
         const combinedDateTime = new Date(dateStart);
         combinedDateTime.setHours(selectedTime.getHours());
         combinedDateTime.setMinutes(selectedTime.getMinutes());
-        const formattedDate = moment(combinedDateTime).format('YYYY-MM-DDTHH:mm:ss');
+        const formattedDate = moment(combinedDateTime).format(
+          'YYYY-MM-DDTHH:mm:ss',
+        );
         setFormatStartDate(formattedDate);
         setShowStartDateTime(false);
       } else {
         setShowStartDateTime(false);
       }
     },
-    [dateStart]
+    [dateStart],
   );
 
   const onEndDateChange = useCallback((event, selectedDate) => {
     if (selectedDate) {
-      const formattedDate = moment(selectedDate).format('DD MMMM YYYY');
+      const formattedDate = moment(selectedDate).format('DD MMMM ');
+
       setDateEnd(selectedDate);
+      // setFormatEndDate(formattedDate);
       setEndDate(false);
       setShowEndDateTime(true);
     }
@@ -122,14 +167,16 @@ export default function OvertimeRequestDetails({
         const combinedDateTime = new Date(dateEnd);
         combinedDateTime.setHours(selectedTime.getHours());
         combinedDateTime.setMinutes(selectedTime.getMinutes());
-        const formattedDate = moment(combinedDateTime).format('YYYY-MM-DDTHH:mm:ss');
+        const formattedDate = moment(combinedDateTime).format(
+          'YYYY-MM-DDTHH:mm:ss',
+        );
         setFormatEndDate(formattedDate);
         setShowEndDateTime(false);
       } else {
         setShowEndDateTime(false);
       }
     },
-    [dateEnd]
+    [dateEnd],
   );
 
   const renderItem = item => {
@@ -139,11 +186,9 @@ export default function OvertimeRequestDetails({
       </View>
     );
   };
-
   const handleNumberChange = text => {
     setWorkCode(text);
   };
-
   const handleOvertimeLeave = async () => {
     setEndDateError('');
     setStartDateError('');
@@ -156,7 +201,6 @@ export default function OvertimeRequestDetails({
       setEndDateError('End Date must be after Start Date');
       return;
     }
-
     try {
       const response = await ProfileServices.editOvertimeRequest({
         options: {
@@ -171,6 +215,7 @@ export default function OvertimeRequestDetails({
       setIsLoading(false);
       setModalVisible(false);
       getOvertimeList();
+
       Toast.show({
         type: 'success',
         text1: 'Updated Successfully',
@@ -181,12 +226,12 @@ export default function OvertimeRequestDetails({
       formatErrorsToToastMessages(error);
     }
   };
-
   const handleDelete = async () => {
     try {
       const response = await ProfileServices.deleteOvertimeRequest({
         id: matchedData?.id,
       });
+
       setDeleteConfirmVisible(false);
       overtimeList();
       handleBack();
@@ -201,10 +246,11 @@ export default function OvertimeRequestDetails({
       formatErrorsToToastMessages(error);
     }
   };
-
   const handleRevoke = async () => {
     try {
-      const response = await ProfileServices.postOvertimeRevoke(matchedData?.id);
+      const response = await ProfileServices.postOvertimeRevoke(
+        matchedData?.id,
+      );
       setRevokeConfirmVisible(false);
       getOvertimeList();
       Toast.show({
@@ -225,25 +271,28 @@ export default function OvertimeRequestDetails({
   return (
     <>
       {!matchedData ? (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <View style={styles.activityIndicatorContainer}>
           <ActivityIndicator size="large" color="#697CE3" />
         </View>
       ) : (
         <MenuProvider>
-          <View style={styles.containerStyle}>
+          <View style={styles.mainContainer}>
             <View style={styles.header}>
-              <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-             <Icon name="angle-left" size={30} color="black" />
-              </TouchableOpacity>
-              <View style={styles.titleContainer}>
-                <Text style={styles.titleText}>View</Text>
+              <View>
+                <TouchableOpacity onPress={handleBack}>
+                  <Icon name="angle-left" size={30} color="black" />
+                </TouchableOpacity>
               </View>
-              <View style={styles.menuContainer}>
+
+              <View style={styles.headerTitleContainer}>
+                <Text style={styles.headerTitle}>View</Text>
+              </View>
+
+              <View style={styles.headerMenuContainer}>
                 {matchedData?.approval_status === 1 && (
                   <Menu>
                     <MenuTrigger>
-                       <Icon icon="fluent:more-vertical-16-filled" size={22} color="#000" /> 
-                    </MenuTrigger>
+                   <Icon name="ellipsis-v" size={24} color="#000" />       </MenuTrigger>
                     <MenuOptions
                       customStyles={{
                         optionsContainer: {
@@ -260,13 +309,18 @@ export default function OvertimeRequestDetails({
                           fontSize: 16,
                           marginLeft: 10,
                         },
-                      }}
-                    >
+                      }}>
                       {matchedData?.approval_status === 1 && (
                         <MenuOption onSelect={() => setModalVisible(true)}>
-                          <View style={styles.menuOptionRow}>
-                            <Icon icon="mdi:edit" size={20} color="#000" />
-                            <Text style={styles.menuOptionText}>Edit</Text>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                            }}>
+                            <Icon name="pencil" size={20} color="#000" />
+                            <Text style={{marginLeft: 10}}>
+                            Edit
+                            </Text>
                           </View>
                         </MenuOption>
                       )}
@@ -275,437 +329,526 @@ export default function OvertimeRequestDetails({
                 )}
               </View>
             </View>
-
-            <ScrollView style={styles.scrollView}>
-              <View style={styles.card}>
-                <View style={styles.cardContent}>
-                  {/* Approval Status */}
-                  <View style={styles.row}>
-                    <Text style={styles.labelText}>Approval Status</Text>
-                    {matchedData?.approval_status === 3 && (
-                      <Text style={styles.statusRejected}>Reject</Text>
+            <View style={styles.detailsContainer}>
+              <ScrollView style={styles.scrollViewContent}>
+                <View style={styles.detailsCard}>
+                  <View>
+                    <View style={styles.detailRow}>
+                      <Text style={styles.detailLabel}>
+                        Approval Status
+                      </Text>
+                      {matchedData?.approval_status === 3 && (
+                        <Text style={styles.rejectedStatus}>
+                          Rejected
+                        </Text>
+                      )}
+                      {matchedData?.approval_status === 2 && (
+                        <Text style={styles.approvedStatus}>
+                          Approved
+                        </Text>
+                      )}
+                      {matchedData?.approval_status === 1 && (
+                        <Text style={styles.pendingStatus}>
+                          Pending
+                        </Text>
+                      )}
+                      {matchedData?.approval_status === 4 && (
+                        <Text style={styles.revokedStatus}>
+                          Revoked
+                        </Text>
+                      )}
+                    </View>
+                    <View style={styles.detailRow}>
+                      <Text style={styles.detailLabel}>
+                        First Name
+                      </Text>
+                      <Text style={styles.detailValue}>
+                        {get(matchedData, 'first_name')}
+                      </Text>
+                    </View>
+                    <View style={styles.detailRow}>
+                      <Text style={styles.detailLabel}>
+                        Last Name
+                      </Text>
+                      <Text style={styles.detailValue}>
+                        {get(matchedData, 'last_name')}
+                      </Text>
+                    </View>
+                    <View style={styles.detailRow}>
+                      <Text style={styles.detailLabel}>
+                        Employee Code
+                      </Text>
+                      <Text style={styles.detailValue}>
+                        {get(matchedData, 'emp_code')}
+                      </Text>
+                    </View>
+                    <View style={styles.detailRow}>
+                      <Text style={styles.detailLabel}>
+                        Department
+                      </Text>
+                      <Text style={styles.detailValue}>
+                        {get(matchedData, 'department_info.department_name')}
+                      </Text>
+                    </View>
+                    <View style={styles.detailRow}>
+                      <Text style={styles.detailLabel}>
+                        Position
+                      </Text>
+                      <Text style={styles.detailValue}>
+                        {get(matchedData, 'position_info.position_name')}
+                      </Text>
+                    </View>
+                    <View style={styles.detailRow}>
+                      <Text style={styles.detailLabel}>
+                        Start Time
+                      </Text>
+                      <Text style={styles.detailValue}>
+                        {dateTimeToShow(matchedData?.start_time)}
+                      </Text>
+                    </View>
+                    <View style={styles.detailRowNoBorder}>
+                      <Text style={styles.detailLabel}>
+                        End Time
+                      </Text>
+                      <Text style={styles.detailValue}>
+                        {dateTimeToShow(matchedData?.end_time)}
+                      </Text>
+                    </View>
+                    <View style={styles.detailRowNoBorder}>
+                      <Text style={styles.detailLabel}>
+                        Pay Code
+                      </Text>
+                      <Text style={styles.detailValue}>
+                        {matchedData?.paycode_details?.name}
+                      </Text>
+                    </View>
+                    <View style={styles.detailRowNoBorder}>
+                      <Text style={styles.detailLabel}>
+                        Reason
+                      </Text>
+                      <Text style={styles.detailValue}>
+                        {matchedData?.apply_reason || '-'}
+                      </Text>
+                    </View>
+                  </View>
+                  <View style={styles.actionButtonsContainer}>
+                    {(matchedData?.approval_status === 1 ||
+                      matchedData?.approval_status === 2) && (
+                      <TouchableOpacity
+                        onPress={showRevokeConfirmDialog}
+                        style={[
+                          styles.actionButton,
+                          matchedData?.approval_status === 4
+                            ? styles.disabledButton
+                            : styles.primaryButton,
+                        ]}>
+                        <Text style={styles.actionButtonText}>
+                          Revoke
+                        </Text>
+                      </TouchableOpacity>
                     )}
-                    {matchedData?.approval_status === 2 && (
-                      <Text style={styles.statusApproved}>Approve</Text>
-                    )}
-                    {matchedData?.approval_status === 1 && (
-                      <Text style={styles.statusPending}>Pending</Text>
-                    )}
-                    {matchedData?.approval_status === 4 && (
-                      <Text style={styles.statusRevoked}>Revoke</Text>
-                    )}
-                  </View>
-                  {/* First Name */}
-                  <View style={styles.row}>
-                    <Text style={styles.labelText}>First Name</Text>
-                    <Text style={styles.valueText}>{get(matchedData, 'first_name')}</Text>
-                  </View>
-                  {/* Last Name */}
-                  <View style={styles.row}>
-                    <Text style={styles.labelText}>Last Name</Text>
-                    <Text style={styles.valueText}>{get(matchedData, 'last_name')}</Text>
-                  </View>
-                  {/* Employee Code */}
-                  <View style={styles.row}>
-                    <Text style={styles.labelText}>Employee Code</Text>
-                    <Text style={styles.valueText}>{get(matchedData, 'emp_code')}</Text>
-                  </View>
-                  {/* Department */}
-                  <View style={styles.row}>
-                    <Text style={styles.labelText}>Department</Text>
-                    <Text style={styles.valueText}>
-                      {get(matchedData, 'department_info.department_name')}
-                    </Text>
-                  </View>
-                  {/* Position */}
-                  <View style={styles.row}>
-                    <Text style={styles.labelText}>Position</Text>
-                    <Text style={styles.valueText}>
-                      {get(matchedData, 'position_info.position_name')}
-                    </Text>
-                  </View>
-                  {/* Start Time */}
-                  <View style={styles.row}>
-                    <Text style={styles.labelText}>Start Time</Text>
-                    <Text style={styles.valueText}>{dateTimeToShow(matchedData?.start_time)}</Text>
-                  </View>
-                  {/* End Time */}
-                  <View style={styles.row}>
-                    <Text style={styles.labelText}>End Time</Text>
-                    <Text style={styles.valueText}>{dateTimeToShow(matchedData?.end_time)}</Text>
-                  </View>
-                  {/* Paycode */}
-                  <View style={styles.row}>
-                    <Text style={styles.labelText}>Paycode</Text>
-                    <Text style={styles.valueText}>{matchedData?.paycode_details?.name}</Text>
-                  </View>
-                  {/* Reason */}
-                  <View style={styles.row}>
-                    <Text style={styles.labelText}>Reason</Text>
-                    <Text style={styles.valueText}>{matchedData?.apply_reason || '-'}</Text>
-                  </View>
-                </View>
-                <View style={styles.buttonRow}>
-                  {(matchedData?.approval_status === 1 || matchedData?.approval_status === 2) && (
                     <TouchableOpacity
-                      onPress={showRevokeConfirmDialog}
+                      onPress={showDeleteConfirmDialog}
                       style={[
-                        styles.revokeButton,
-                        matchedData?.approval_status === 4 && { backgroundColor: '#B2BEB5' },
-                      ]}
-                    >
-                      <Text style={styles.buttonText}>Revoke</Text>
+                        styles.actionButton,
+                        matchedData?.approval_status === 4 ||
+                        matchedData?.approval_status === 3
+                          ? styles.fullWidthButton
+                          : styles.halfWidthButton,
+                        styles.primaryButton,
+                      ]}>
+                      <Text style={styles.actionButtonText}>
+                        Delete
+                      </Text>
                     </TouchableOpacity>
-                  )}
-                  <TouchableOpacity
-                    onPress={showDeleteConfirmDialog}
-                    style={[
-                      styles.deleteButton,
-                      (matchedData?.approval_status === 4 ||
-                        matchedData?.approval_status === 3) && { flex: 1 },
-                    ]}
-                  >
-                    <Text style={styles.buttonText}>Delete</Text>
-                  </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
-            </ScrollView>
+              </ScrollView>
+            </View>
           </View>
         </MenuProvider>
       )}
-<View>
-  <Modal
-    animationType="fade"
-    visible={modalVisible}
-    transparent
-    onRequestClose={() => setModalVisible(!modalVisible)}
-  >
-    <View style={styles.modalOverlay}>
-      <View style={styles.modalBox}>
-        <Text style={styles.modalTitle}>Edit</Text>
-
-        <View style={styles.formContainer}>
-          <TouchableOpacity onPress={() => setStartDate(true)} style={styles.dateButton}>
-            <Text style={styles.dateText}>
-              {formatStartDate ? dateTimeToShow(formatStartDate) : 'Start Date'}
-            </Text>
-            <Icon name="calendar-check-o" size={20} color="lightgray" />
-                          </TouchableOpacity>
-
-          {startDate && (
-            <DateTimePicker
-              value={dateStart}
-              mode="date"
-              is24Hour={true}
-              maximumDate={new Date()}
-              onChange={onDateChange}
-            />
-          )}
-
-          {showStartDateTime && (
-            <DateTimePicker
-              value={startTime}
-              mode="time"
-              is24Hour={false}
-              onChange={onTimeChange}
-            />
-          )}
-
-          <TouchableOpacity onPress={() => setEndDate(true)} style={styles.dateButton}>
-            <Text style={styles.dateText}>
-              {formatEndDate ? dateTimeToShow(formatEndDate) : 'End Date'}
-            </Text>
-              <Icon name="calendar-check-o" size={20} color="lightgray" />
-                         </TouchableOpacity>
-
-          {endDateError && <Text style={styles.errorText}>{endDateError}</Text>}
-
-          {endDate && (
-            <DateTimePicker
-              value={dateEnd}
-              mode="date"
-              is24Hour={true}
-              maximumDate={new Date()}
-              onChange={onEndDateChange}
-            />
-          )}
-
-          {showEndDateTime && (
-            <DateTimePicker
-              value={endTime}
-              mode="time"
-              is24Hour={false}
-              onChange={onEndTimeChange}
-            />
-          )}
-
-          <View style={styles.dropdownWrapper}>
-            <Dropdown
-              style={styles.dropdown}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              inputSearchStyle={styles.inputSearchStyle}
-              iconStyle={styles.iconStyle}
-              data={payCodesList}
-              search
-              maxHeight={300}
-              labelField="name"
-              valueField="id"
-              placeholder={matchedData?.paycode_details?.name || 'Pay Code'}
-              searchPlaceholder="Search"
-              value={payCode}
-              onChange={(item) => setPayCode(item?.id)}
-              renderItem={renderItem}
-            />
-          </View>
-
-          {payCodeError && <Text style={styles.errorText}>{payCodeError}</Text>}
-
-          <TextInput
-            style={styles.textArea}
-            placeholder="Reason"
-            editable
-            multiline
-            textAlignVertical="top"
-            onChangeText={setApplyReason}
-            numberOfLines={8}
-            value={applyReason}
-          />
-        </View>
-
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            onPress={() => {
-              setModalVisible(false);
-              setEndDateError('');
-            }}
-            style={styles.cancelButton}
-          >
-            <Text style={styles.cancelText}>Cancel</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            disabled={isLoading}
-            onPress={handleOvertimeLeave}
-            style={styles.submitButton}
-          >
-            {isLoading ? (
-              <ActivityIndicator size="large" color="#ffffff" />
-            ) : (
-              <Text style={styles.submitText}>Edit</Text>
-            )}
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
-    <Toast />
-  </Modal>
-</View>
-
-{/* Delete Confirmation Modal */}
-<View>
-  <Modal
-    animationType="fade"
-    visible={deleteConfirmVisible}
-    transparent
-    onRequestClose={() => setDeleteConfirmVisible(!deleteConfirmVisible)}
-  >
-    <View style={styles.modalOverlay}>
-      <View style={styles.confirmBox}>
-        <Text style={styles.confirmTitle}>Delete</Text>
-        <Text style={styles.confirmMessage}>Are you sure you want to delete this item?</Text>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            onPress={() => setDeleteConfirmVisible(false)}
-            style={styles.cancelButton}
-          >
-            <Text style={styles.cancelText}>Cancel</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            disabled={isLoading}
-            onPress={handleDelete}
-            style={styles.deleteButton}
-          >
-            {isLoading ? (
-              <ActivityIndicator size="large" color="#ffffff" />
-            ) : (
-              <Text style={styles.submitText}>Delete</Text>
-            )}
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
-    <Toast />
-  </Modal>
-</View>
-
-{/* Revoke Confirmation Modal */}
-<View>
-  <Modal
-    animationType="fade"
-    visible={revokeConfirmVisible}
-    transparent
-    onRequestClose={() => setRevokeConfirmVisible(!revokeConfirmVisible)}
-  >
-    <View style={styles.modalOverlay}>
-      <View style={styles.confirmBox}>
-        <Text style={styles.confirmTitle}>Revoke</Text>
-        <Text style={styles.confirmMessage}>Are you sure you want to revoke this action?</Text>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            onPress={() => setRevokeConfirmVisible(false)}
-            style={styles.cancelButton}
-          >
-            <Text style={styles.cancelText}>Cancel</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            disabled={isLoading}
-            onPress={handleRevoke}
-            style={styles.submitButton}
-          >
-            {isLoading ? (
-              <ActivityIndicator size="large" color="#ffffff" />
-            ) : (
-              <Text style={styles.submitText}>Revoke</Text>
-            )}
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
-    <Toast />
-  </Modal>
-</View>
-
       <Toast />
+      <Modal
+        animationType={'fade'}
+        visible={modalVisible}
+        transparent
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.editModalContainer}>
+            <Text style={styles.editModalTitle}>Edit</Text>
+            <View style={styles.editModalContent}>
+              <TouchableOpacity
+                onPress={() => setStartDate(true)}
+                style={styles.dateTimeInput}>
+                <Text style={styles.dateTimeInputText}>
+                  {formatStartDate
+                    ? dateTimeToShow(formatStartDate):
+                    "Start Date"}
+                </Text>
+<Icon name="calendar-check-o" size={20} color="lightgray" />
+              </TouchableOpacity>
+              {startDate && (
+                <DateTimePicker
+                  value={dateStart}
+                  mode="date"
+                  is24Hour={true}
+                  maximumDate={new Date()}
+                  onChange={onDateChange}
+                />
+              )}
+              {showStartDateTime && (
+                <DateTimePicker
+                  value={startTime}
+                  mode="time"
+                  is24Hour={false}
+                  onChange={onTimeChange}
+                />
+              )}
 
-      {/* Edit Modal */}
-      {/* Delete Confirmation Modal */}
-      {/* Revoke Confirmation Modal */}
-
-      {/* Modals here remain unchanged; they are long but preserved in structure */}
+              <TouchableOpacity
+                onPress={() => setEndDate(true)}
+                style={styles.dateTimeInput}>
+                <Text style={styles.dateTimeInputText}>
+                  {formatEndDate
+                    ? dateTimeToShow(formatEndDate)
+                    :"End Date"}
+                </Text>
+               <Icon name="calendar-check-o" size={20} color="lightgray" />
+              </TouchableOpacity>
+              {endDateError ? (
+                <Text style={styles.errorText}>{endDateError}</Text>
+              ) : null}
+              {endDate && (
+                <DateTimePicker
+                  value={dateEnd}
+                  mode="date"
+                  is24Hour={true}
+                  maximumDate={new Date()}
+                  onChange={onEndDateChange}
+                />
+              )}
+              {showEndDateTime && (
+                <DateTimePicker
+                  value={endTime}
+                  mode="time"
+                  is24Hour={false}
+                  onChange={onEndTimeChange}
+                />
+              )}
+              <View style={styles.container}>
+                <Dropdown
+                  style={styles.dropdown}
+                  placeholderStyle={styles.placeholderStyle}
+                  selectedTextStyle={styles.selectedTextStyle}
+                  inputSearchStyle={styles.inputSearchStyle}
+                  iconStyle={styles.iconStyle}
+                  data={payCodesList}
+                  search
+                  maxHeight={300}
+                  labelField="name"
+                  valueField="id"
+                  placeholder={
+                    matchedData?.paycode_details?.name ||
+                    "Pay Code"
+                  }
+                  searchPlaceholder={"Search"}
+                  value={payCode}
+                  onChange={item => {
+                    setPayCode(item?.id);
+                  }}
+                  renderItem={renderItem}
+                />
+              </View>
+              {payCodeError ? (
+                <Text style={styles.errorText}>{payCodeError}</Text>
+              ) : null}
+              <TextInput
+                style={styles.reasonInput}
+                placeholder={"Reason"}
+                editable
+                multiline
+                textAlignVertical="top"
+                onChangeText={setApplyReason}
+                numberOfLines={8}
+                value={applyReason}
+              />
+            </View>
+            <View style={styles.modalButtonContainer}>
+              <TouchableOpacity
+                onPress={() => {
+                  setModalVisible(false);
+                  setEndDateError('');
+                }}
+                style={[styles.modalButton, styles.modalCancelButton]}>
+                <Text style={styles.modalCancelButtonText}>
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                disabled={isLoading}
+                onPress={handleOvertimeLeave}
+                style={[styles.modalButton, styles.modalEditButton]}>
+                {isLoading && <ActivityIndicator size="small" color="#fff" />}
+                {!isLoading && (
+                  <Text style={styles.modalEditButtonText}>
+                    Edit
+                  </Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+        <Toast />
+      </Modal>
+      <Modal
+        animationType={'fade'}
+        visible={deleteConfirmVisible}
+        transparent
+        onRequestClose={() => {
+          setDeleteConfirmVisible(!deleteConfirmVisible);
+        }}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.confirmModalContainer}>
+            <Text style={styles.confirmModalTitle}>
+              Delete
+            </Text>
+            <Text style={styles.confirmModalMessage}>
+              Are you sure you want to delete this item?
+            </Text>
+            <View style={styles.modalButtonContainer}>
+              <TouchableOpacity
+                onPress={() => {
+                  setDeleteConfirmVisible(false);
+                }}
+                style={[styles.modalButton, styles.modalCancelButton]}>
+                <Text style={styles.modalCancelButtonText}>
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                disabled={isLoading}
+                onPress={handleDelete}
+                style={[styles.modalButton, styles.modalDeleteButton]}>
+                {isLoading && <ActivityIndicator size="small" color="#fff" />}
+                {!isLoading && (
+                  <Text style={styles.modalEditButtonText}>
+                    Delete
+                  </Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+        <Toast />
+      </Modal>
+      <Modal
+        animationType={'fade'}
+        visible={revokeConfirmVisible}
+        transparent
+        onRequestClose={() => {
+          setRevokeConfirmVisible(!revokeConfirmVisible);
+        }}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.confirmModalContainer}>
+            <Text style={styles.confirmModalTitle}>
+              Revoke
+            </Text>
+            <Text style={styles.confirmModalMessage}>
+              Are you sure you want to revoke this item?
+            </Text>
+            <View style={styles.modalButtonContainer}>
+              <TouchableOpacity
+                onPress={() => {
+                  setRevokeConfirmVisible(false);
+                }}
+                style={[styles.modalButton, styles.modalCancelButton]}>
+                <Text style={styles.modalCancelButtonText}>
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                disabled={isLoading}
+                onPress={handleRevoke}
+                style={[styles.modalButton, styles.modalEditButton]}>
+                {isLoading && <ActivityIndicator size="small" color="#fff" />}
+                {!isLoading && (
+                  <Text style={styles.modalEditButtonText}>
+                  Revoke
+                  </Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+        <Toast />
+      </Modal>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  containerStyle: {
+  activityIndicatorContainer: {
+    height: '100%',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  mainContainer: {
     backgroundColor: '#F1F3F4',
+    height: '100%',
     flex: 1,
+    width: '100%',
   },
   header: {
     flexDirection: 'row',
     paddingTop: 20,
-    paddingBottom: 10,
-    paddingHorizontal: 20,
+    paddingLeft: 20,
+    paddingBottom: 20,
     alignItems: 'center',
+    width: '100%',
     justifyContent: 'space-between',
   },
-  backButton: {
-    paddingLeft: 10,
-  },
-  titleText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
+  headerTitleContainer: {
     flex: 1,
+    alignItems: 'center',
   },
-  menuContainer: {
+  headerTitle: {
+    fontSize: 20,
+    fontFamily: 'PublicSansBold',
+    color: '#000',
+  },
+  headerMenuContainer: {
     position: 'absolute',
-    right: 20,
+    right: 0,
+    paddingRight: 20,
   },
-  scrollView: {
+  detailsContainer: {
     flex: 1,
-    padding: 16,
+    height: '100%',
+    borderRadius: 30,
   },
-  card: {
+  scrollViewContent: {
+    padding: 16,
+    height: '100%',
+    flex: 1,
+  },
+  detailsCard: {
+    flex: 1,
     backgroundColor: '#fff',
-    borderRadius: 20,
+    height: '83%',
     padding: 16,
-    flex: 1,
+    borderRadius: 20,
+    width: '100%',
+    justifyContent: 'space-between',
   },
-  cardContent: {
-    marginBottom: 20,
-  },
-  row: {
-    flexDirection: 'row',
+  detailRow: {
+ 
+        flexDirection: 'row',
     justifyContent: 'space-between',
     borderBottomWidth: 1,
     borderBottomColor: '#f0f0f0',
     paddingBottom: 12,
     marginBottom: 12,
+    borderBottomWidth: 1,
   },
-  labelText: {
+  detailRowNoBorder: {
+   flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+    paddingBottom: 12,
+    marginBottom: 12,
+    borderBottomWidth: 1,
+  },
+  detailLabel: {
     fontSize: 12,
-    color: '#888',
-    fontWeight: 'bold',
+    color: '#A0A0A0', // Assuming gray-400 from tailwind
+    fontFamily: 'PublicSansBold',
   },
-  valueText: {
+  detailValue: {
     fontSize: 12,
-    fontWeight: 'bold',
+    fontFamily: 'PublicSansBold',
+    color: '#000',
   },
-  statusApproved: {
+  rejectedStatus: {
     fontSize: 12,
     borderWidth: 1,
-    borderColor: '#08CA0F',
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    backgroundColor: '#E4030308',
+    borderRadius: 8,
+    borderColor: '#E40303',
+    color: '#E40303',
+    fontFamily: 'PublicSansBold',
+  },
+  approvedStatus: {
+    fontSize: 12,
+    borderWidth: 1,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
     backgroundColor: '#08CA0F08',
+    borderRadius: 8,
+    borderColor: '#08CA0F',
     color: '#08CA0F',
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 8,
+    fontFamily: 'PublicSansBold',
   },
-  statusRejected: {
+  pendingStatus: {
     fontSize: 12,
     borderWidth: 1,
-    borderColor: '#E40303',
-    backgroundColor: '#E4030308',
-    color: '#E40303',
     paddingVertical: 4,
     paddingHorizontal: 8,
-    borderRadius: 8,
-  },
-  statusPending: {
-    fontSize: 12,
-    borderWidth: 1,
-    borderColor: '#D1A404',
     backgroundColor: '#D1A40408',
-    color: '#D1A404',
-    paddingVertical: 4,
-    paddingHorizontal: 8,
     borderRadius: 8,
+    borderColor: '#D1A404',
+    color: '#D1A404',
+    fontFamily: 'PublicSansBold',
   },
-  statusRevoked: {
+  revokedStatus: {
     fontSize: 12,
     borderWidth: 1,
-    borderColor: '#E40303',
-    backgroundColor: '#E4030308',
-    color: '#E40303',
     paddingVertical: 4,
     paddingHorizontal: 8,
+    backgroundColor: '#E4030308',
     borderRadius: 8,
+    borderColor: '#E40303',
+    color: '#E40303',
+    fontFamily: 'PublicSansBold',
   },
-  buttonRow: {
+  actionButtonsContainer: {
     flexDirection: 'row',
+    width: '100%',
     gap: 8,
+    paddingRight: 8,
+    height: 44,
   },
-  revokeButton: {
-    backgroundColor: '#697CE3',
-    padding: 8,
-    borderRadius: 8,
-    flex: 1,
+  actionButton: {
     alignItems: 'center',
-  },
-  deleteButton: {
-    backgroundColor: '#697CE3',
-    padding: 8,
+    justifyContent: 'center',
+    height: 36,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
     borderRadius: 8,
-    flex: 1,
-    alignItems: 'center',
+    width:"50%"
   },
-  buttonText: {
-    color: '#fff',
+  primaryButton: {
+    backgroundColor: '#697CE3',
+  },
+  disabledButton: {
+    backgroundColor: '#B2BEB5',
+  },
+  halfWidthButton: {
+    width: '50%',
+  },
+  fullWidthButton: {
+    width: '100%',
+  },
+  actionButtonText: {
     fontSize: 12,
+    color: '#fff',
+    fontFamily: 'semibold-poppins',
   },
   modalOverlay: {
     flex: 1,
@@ -713,9 +856,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  modalBox: {
+  editModalContainer: {
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
     marginVertical: 60,
     borderWidth: 1,
     borderColor: '#fff',
@@ -724,9 +867,88 @@ const styles = StyleSheet.create({
     elevation: 10,
     padding: 20,
   },
-  confirmBox: {
+  editModalTitle: {
+    fontSize: 16,
+    marginBottom: 12,
+    fontFamily: 'semibold-poppins',
+    marginTop: 8,
+  },
+  editModalContent: {
+    paddingBottom: 8,
+    paddingRight: 8,
+    paddingLeft: 8,
+    rowGap: 16, // space-y-4
+    width: '100%',
+    justifyContent: 'space-between',
+  },
+  dateTimeInput: {
+    height: 56,
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    borderWidth: 1,
     alignItems: 'center',
-    backgroundColor: 'white',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderColor: '#A0A0A0', // gray-400
+    paddingHorizontal: 20,
+  },
+  dateTimeInputText: {
+    fontSize: 14,
+    color: '#333', // gray-800
+    fontFamily: 'PublicSansBold',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    marginLeft: 6,
+  },
+  reasonInput: {
+    width: '100%',
+    borderRadius: 24, // rounded-3xl
+    borderWidth: 1,
+    borderColor: '#697CE3',
+    paddingLeft: 12,
+  },
+  modalButtonContainer: {
+    flexDirection: 'row',
+    marginTop: 20,
+    justifyContent: 'flex-end',
+    width: '100%',
+    gap: 20,
+    padding: 9,
+  },
+  modalButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 48,
+    width: 80,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+  },
+  modalCancelButton: {
+    borderWidth: 1,
+    borderColor: '#697CE3',
+  },
+  modalCancelButtonText: {
+    fontSize: 12,
+    color: '#697CE3',
+    fontFamily: 'semibold-poppins',
+  },
+  modalEditButton: {
+    backgroundColor: '#697CE3',
+  },
+  modalDeleteButton: {
+    backgroundColor: '#cf3636',
+  },
+  modalEditButtonText: {
+    fontSize: 12,
+    color: '#fff',
+    fontFamily: 'semibold-poppins',
+  },
+  confirmModalContainer: {
+    alignItems: 'center',
+    backgroundColor: '#fff',
     marginVertical: 60,
     borderWidth: 1,
     borderColor: '#fff',
@@ -736,129 +958,75 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 10,
+    justifyContent:"center"
   },
-  modalTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 12,
-    marginTop: 8,
+  confirmModalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
-  formContainer: {
-    paddingBottom: 8,
-    paddingHorizontal: 8,
-    width: '100%',
-    justifyContent: 'space-between',
-  },
-  dateButton: {
-    height: 56,
-    backgroundColor: 'white',
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    paddingHorizontal: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  dateText: {
-    fontSize: 14,
-    color: '#333',
-    fontWeight: '600',
-  },
-  errorText: {
-    color: 'red',
-    fontSize: 12,
-    marginLeft: 10,
-  },
-  dropdownWrapper: {
+  confirmModalMessage: {
     marginTop: 10,
+    fontSize: 16,
+  },
+
+  // Existing styles
+  dashedBorder: {
+    height: 80,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderColor: '#000',
+    borderRadius: 20,
+    padding: 10,
+  },
+  container: {
+    padding: 0,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: '#697CE3',
   },
   dropdown: {
     height: 50,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 8,
+    color: '#000',
+    fontSize: 12,
     paddingHorizontal: 8,
-    backgroundColor: 'white',
+  },
+  icon: {
+    marginRight: 5,
+  },
+  item: {
+    padding: 17,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  textItem: {
+    flex: 1,
+    color: '#000',
+    fontSize: 12,
+  },
+  label: {
+    position: 'absolute',
+    left: 22,
+    top: 8,
+    zIndex: 999,
+    paddingHorizontal: 8,
+    fontSize: 12,
   },
   placeholderStyle: {
-    fontSize: 14,
-    color: '#999',
+    fontSize: 12,
+    color: '#000',
   },
   selectedTextStyle: {
-    fontSize: 14,
-    color: '#333',
-  },
-  inputSearchStyle: {
-    height: 40,
-    fontSize: 14,
+    fontSize: 12,
+    color: '#000',
   },
   iconStyle: {
     width: 20,
     height: 20,
   },
-  textArea: {
-    width: '100%',
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#697CE3',
-    paddingLeft: 12,
-    paddingTop: 8,
-    paddingBottom: 8,
-    marginTop: 8,
-  },
-  buttonContainer: {
-    marginTop: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    width: '100%',
-  },
-  cancelButton: {
-    width: 80,
-    height: 48,
-    padding: 8,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#697CE3',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  cancelText: {
+  inputSearchStyle: {
+    height: 40,
     fontSize: 12,
-    color: '#697CE3',
-    fontWeight: '600',
   },
-  submitButton: {
-    width: 80,
-    height: 48,
-    padding: 8,
-    borderRadius: 8,
-    backgroundColor: '#697CE3',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  deleteButton: {
-    width: 80,
-    height: 48,
-    padding: 8,
-    borderRadius: 8,
-    backgroundColor: '#cf3636',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  submitText: {
-    fontSize: 12,
-    color: 'white',
-    fontWeight: '600',
-  },
-  confirmTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  confirmMessage: {
-    marginTop: 10,
-    fontSize: 16,
-    textAlign: 'center',
-  },
-
 });

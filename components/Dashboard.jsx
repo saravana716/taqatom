@@ -872,13 +872,13 @@ const Dashboard = ({navigation}) => {
             <Text style={styles.holiday}>Request</Text>
           </View>
           <View style={styles.hol}>
-            <View style={styles.dash1}>
+            <TouchableOpacity style={styles.dash1} onPress={()=>movepage("ApprovalScreen")}>
               <Image
                 source={require("../assets/images/Assets/reports.png")}
                 style={styles.images}
               />
-            </View>
-            <Text style={styles.holiday}>Holiday</Text>
+            </TouchableOpacity>
+            <Text style={styles.holiday}>Approvals</Text>
           </View>
         </View>
         <View style={styles.activity}>

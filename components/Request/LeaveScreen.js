@@ -27,9 +27,6 @@ export default function LeaveScreen({navigation}) {
    const selectorid=useSelector(function (data) {
     return data.empid
   })
-  console.log(selectorid);
-  
-  
   const {t}=useTranslation()
   const [modalVisible, setModalVisible] = useState(false);
   const [startDatePicker, setStartDatePicker] = useState(false);
@@ -118,7 +115,6 @@ export default function LeaveScreen({navigation}) {
     },
     [endDate],
   );
-  console.log('employee_id', selectorid);
   const renderItem = item => {
     return (
       <View style={styles.item}>
@@ -156,8 +152,6 @@ export default function LeaveScreen({navigation}) {
         pay_code: payCode,
         apply_reason: applyReason,
       }
-      console.log("datas",datas);
-      
       const response = await ProfileServices.addLeaveRequest(datas);
       setIsLoading(false);
       setModalVisible(false);
@@ -166,8 +160,6 @@ export default function LeaveScreen({navigation}) {
       setEndTime();
       setPayCode();
       setApplyReason();
-      console.log("res",response);
-      
       Toast.show({
         type: 'success',
         text1: 'Added Successfully',
@@ -177,7 +169,6 @@ export default function LeaveScreen({navigation}) {
       setIsLoading(false);
       console.log(error,'EEEOOROROOR')
       formatErrorsToToastMessages(error)
-      console.log(error?.errorResponse?.errors[0]?.message, 'ldldldl?.');
     }
   };
 
@@ -187,7 +178,6 @@ export default function LeaveScreen({navigation}) {
       const RecentActivities = await ProfileServices.getLeaveData(selectorid);
       setLeaveData(RecentActivities?.results);
     } catch (error) {
-      console.log('errorrrget', err?.errorResponse?.errors[0]?.message);
      formatErrorsToToastMessages(error)
     } finally {
       setIsLoading(false);
@@ -200,7 +190,6 @@ export default function LeaveScreen({navigation}) {
       const {leave_paycodes} = response;
       setLeavePayCodes(leave_paycodes);
     } catch (err) {
-      console.log('errorrrPay', err?.errorResponse?.errors[0]?.message);
       formatErrorsToToastMessages(err)
     }
   };

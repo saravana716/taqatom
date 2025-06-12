@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Image,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 import get from "lodash/get";
@@ -21,8 +21,6 @@ const Holiday = ({ navigation }) => {
 
   // Redux selector to get empid
   const selector = useSelector((state) => state.empid);
-  console.log("myuserid", selector);
-
   // Fetch holidays for selected year
   const getHolidayDetails = async () => {
     try {
@@ -84,7 +82,6 @@ const Holiday = ({ navigation }) => {
           style={styles.calendar}
           onDayPress={(day) => day}
           onMonthChange={(day) => {
-            console.log("selected month", day);
             setSelectedYear(day?.year.toString());
           }}
           theme={{

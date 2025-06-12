@@ -19,9 +19,6 @@ export default function ResignationScreen({navigation}) {
     const employeeFullDetails=useSelector(function (data) {
         return data.employeeFullDetails
     })
-    console.log("empdetails",employeeFullDetails);
-    
-    
   const [dataCheck, setDataCheck] = useState(false);
   const [recentActivityData, setRecentActivityData] = useState([]);
 
@@ -35,10 +32,8 @@ export default function ResignationScreen({navigation}) {
   const getResignationList = async () => {
     try {
       const RecentActivities = await ProfileServices.getResignations(employeeFullDetails?.id);
-      console.log('RecentActivities', RecentActivities);
       setRecentActivityData(RecentActivities);
     } catch (error) {
-      console.log('Error fetching resignations', error);
     }
   };
 

@@ -27,8 +27,6 @@ const newItem=useSelector(function (data) {
 const route = useRoute();
  const getResignationList = route.params?.getResignationList;
 
-console.log("newitem",newItem);
-
   const [confirmVisible, setConfirmVisible] = useState(false);
 
   const handleWithdraw = async () => {
@@ -37,11 +35,7 @@ console.log("newitem",newItem);
         employee_id: newItem?.employee,
         resign_id: newItem?.id,
       };
-      console.log("kk",options);
-      
       const response = await ResignationService.updateStatus(options);
-console.log("rrrrrrrrrrrrr",options);
-
       Toast.show({
         type: 'success',
         text1: 'Withdraw Successful',
@@ -53,7 +47,6 @@ console.log("rrrrrrrrrrrrr",options);
         navigation.navigate("ResignationScreen")
       }, 1000);
     } catch (error) {
-      console.log(error);
       formatErrorsToToastMessages(error);
     }
   };
