@@ -1,11 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
+
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { dateTimeToShow } from '../../utils/formatDateTime';
-
-import { useTranslation } from 'react-i18next';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
-import tokens from '../../locales/tokens';
 import ProfileServices from '../../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../../utils/error-format';
 
@@ -14,63 +12,27 @@ export default function ApprovalLeaveCard({
   employeeId,
   getLeaveList,
 }) {
-    const navigation=useNavigation()
-  
-const {t}=useTranslation()
+  const navigation = useNavigation();
   const [approveConfirmVisible, setApproveConfirmVisible] = useState(false);
   const [rejectedConfirmVisible, setRejectedConfirmVisible] = useState(false);
 
   const handleFulldetails = () => {
-    Navigation.push(componentId, {
-      component: {
-        name: 'ApprovalLeaveDetails',
-        passProps: {
-          employeeId,
+     navigation.navigate('ApprovalLeaveDetails', {
+      employeeId,
           newItem,
           leaveList: getLeaveList,
-        },
-        options: {
-          animations: {
-            push: {
-              enabled: false,
-            },
-            pop: {
-              enabled: false,
-            },
-          },
-          topBar: {
-            visible: false,
-          },
-          bottomTabs: {
-            visible: false,
-            drawBehind: true,
-          },
-        },
-      },
     });
-  };
 
-  const showApproveConfirmDialog = () => {
-    setApproveConfirmVisible(true);
-  };
-
-  const showRejectedConfirmDialog = () => {
-    setRejectedConfirmVisible(true);
   };
 
   const handleApprove = async () => {
     try {
       const response = await ProfileServices.postLeaveApprove(newItem?.id);
-      Toast.show({
-        type: 'success',
-        text1: 'Approve Success',
-        position: 'bottom',
-      });
+      Toast.show({ type: 'success', text1: 'Approve Success', position: 'bottom' });
       getLeaveList();
       setApproveConfirmVisible(false);
     } catch (error) {
-    formatErrorsToToastMessages(error)
-      
+      formatErrorsToToastMessages(error);
       setApproveConfirmVisible(false);
     }
   };
@@ -78,166 +40,125 @@ const {t}=useTranslation()
   const handleRejected = async () => {
     try {
       const response = await ProfileServices.postLeaveReject(newItem?.id);
-      Toast.show({
-        type: 'success',
-        text1: 'Reject Success',
-        position: 'bottom',
-      });
+      Toast.show({ type: 'success', text1: 'Reject Success', position: 'bottom' });
       getLeaveList();
       setRejectedConfirmVisible(false);
     } catch (error) {
-      formatErrorsToToastMessages(error)
-      
+      formatErrorsToToastMessages(error);
       setRejectedConfirmVisible(false);
     }
   };
+
   return (
     <>
-      <View className="flex-row p-1 bg-white items-center justify-between rounded-xl border-b-4 border-b-[#697CE3] "
-      style={styles.cardContainer}>
-        <TouchableOpacity
-        onPress={handleFulldetails}
-        className="  w-full"
-        activeOpacity={1}>
-      <View className=" h-38 w-full p-4 rounded-2xl">
-        <View className="flex-row justify-between pb-4 items-center">
-          <View>
-          {newItem?.approval_status === 3 && (
-            <Text className="text-xs border p-1 pl-2 pr-2 bg-[#E4030308] rounded-lg border-[#E40303] text-[#E40303] font-PublicSansBold">
-             {t(tokens.actions.reject)}
-            </Text>
-          )}
-          {newItem?.approval_status === 2 && (
-            <Text className="text-xs border p-1 pl-2 pr-2 bg-[#08CA0F08] rounded-lg border-[#08CA0F] text-[#08CA0F] font-PublicSansBold">
-             {t(tokens.actions.approve)}
-            </Text>
-          )}
-          {newItem?.approval_status === 1 && (
-            <Text className="text-xs border p-1 pl-2 pr-2 bg-[#D1A40408] rounded-lg border-[#D1A404] text-[#D1A404] font-PublicSansBold">
-{t(tokens.actions.pending)}
-            </Text>
-          )}
-          {newItem?.approval_status === 4 && (
-            <Text className="text-xs border p-1 pl-2 pr-2 bg-[#E4030308] rounded-lg border-[#E40303] text-[#E40303] font-PublicSansBold">
-              {t(tokens.actions.revoke)}
-            </Text>
-          )}
-          </View>
-          <View>
-            <Text className="text-xs text-gray-400 font-PublicSansBold">
-            {t(tokens.common.startDate)}
-            </Text>
-            <Text className="text-xs font-PublicSansBold">
-              {dateTimeToShow(newItem?.start_time)}
-            </Text>
-          </View>
-        </View>
-        <View className="flex-row justify-between pb-1 items-center">
-            <View>
-              <Text className="text-xs text-gray-400 font-PublicSansBold ">
-              {t(tokens.common.endDate)}
-              </Text>
-              <Text className="text-xs font-PublicSansBold">
-                {dateTimeToShow(newItem?.end_time)}
-              </Text>
+      <View style={styles.cardContainer}>
+        <TouchableOpacity onPress={handleFulldetails} activeOpacity={1} style={{ width: '100%' }}>
+          <View style={styles.innerCard}>
+            <View style={styles.rowBetween}>
+              <View>
+                {newItem?.approval_status === 3 && (
+                  <Text style={[styles.badge, styles.rejectBadge]}>Rejected</Text>
+                )}
+                {newItem?.approval_status === 2 && (
+                  <Text style={[styles.badge, styles.approveBadge]}>Approved</Text>
+                )}
+                {newItem?.approval_status === 1 && (
+                  <Text style={[styles.badge, styles.pendingBadge]}>Pending</Text>
+                )}
+                {newItem?.approval_status === 4 && (
+                  <Text style={[styles.badge, styles.revokeBadge]}>Revoked</Text>
+                )}
+              </View>
+              <View>
+                <Text style={styles.label}>Start Date</Text>
+                <Text style={styles.value}>{dateTimeToShow(newItem?.start_time)}</Text>
+              </View>
             </View>
-            <View>
-              <Text className="text-xs text-gray-400 font-PublicSansBold text-right">
-              {t(tokens.nav.payCode)}
-              </Text>
-              <Text className="text-xs font-PublicSansBold text-right">
-              {newItem?.paycode_details?.name}
-              </Text>
+
+            <View style={styles.rowBetween}>
+              <View>
+                <Text style={styles.label}>End Date</Text>
+                <Text style={styles.value}>{dateTimeToShow(newItem?.end_time)}</Text>
+              </View>
+              <View style={{ alignItems: 'flex-end' }}>
+                <Text style={styles.label}>Paycode</Text>
+                <Text style={styles.value}>{newItem?.paycode_details?.name}</Text>
+              </View>
             </View>
           </View>
-        
+        </TouchableOpacity>
       </View>
-      </TouchableOpacity>
-    </View>
-  </>
+    </>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  dashedBorder: {
-    height: 80,
-    borderWidth: 1,
-    borderStyle: 'dashed',
-    borderColor: '#000',
-    borderRadius: 20,
-    padding: 10,
-  },
-  container: {
-    padding: 0,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: '#697CE3',
-  },
-  dropdown: {
-    height: 50,
-    color: '#000',
-    fontSize: 12,
-    paddingHorizontal: 8,
-  },
-  icon: {
-    marginRight: 5,
-  },
-  item: {
-    padding: 17,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  textItem: {
-    flex: 1,
-    color: '#000',
-    fontSize: 12,
-  },
-  label: {
-    position: 'absolute',
-    left: 22,
-    top: 8,
-    zIndex: 999,
-    paddingHorizontal: 8,
-    fontSize: 12,
-  },
-  placeholderStyle: {
-    fontSize: 12,
-    color: '#000',
-  },
-  selectedTextStyle: {
-    fontSize: 12,
-    color: '#000',
-  },
-  iconStyle: {
-    width: 20,
-    height: 20,
-  },
-  inputSearchStyle: {
-    height: 40,
-    fontSize: 12,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    marginTop: 20,
-    justifyContent: 'flex-end',
-    width: '100%',
-    gap: 20,
-    padding: 9,
-  },
   cardContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    borderBottomWidth: 4,
+    borderBottomColor: '#697CE3',
+    marginVertical: 6,
+    padding: 8,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: -2},
+    shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.25,
     shadowRadius: 3,
     elevation: 4,
     borderTopWidth: 0.1,
-    borderTopColor: '#000',
     borderLeftWidth: 0.1,
-    borderLeftColor: '#000',
     borderRightWidth: 0.1,
+    borderTopColor: '#000',
+    borderLeftColor: '#000',
     borderRightColor: '#000',
   },
+  innerCard: {
+    padding: 16,
+    borderRadius: 16,
+  },
+  rowBetween: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+    alignItems: 'center',
+  },
+  badge: {
+    fontSize: 12,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 6,
+    fontWeight: 'bold',
+    borderWidth: 1,
+    overflow: 'hidden',
+  },
+  approveBadge: {
+    backgroundColor: '#08CA0F08',
+    borderColor: '#08CA0F',
+    color: '#08CA0F',
+  },
+  rejectBadge: {
+    backgroundColor: '#E4030308',
+    borderColor: '#E40303',
+    color: '#E40303',
+  },
+  pendingBadge: {
+    backgroundColor: '#D1A40408',
+    borderColor: '#D1A404',
+    color: '#D1A404',
+  },
+  revokeBadge: {
+    backgroundColor: '#E4030308',
+    borderColor: '#E40303',
+    color: '#E40303',
+  },
+  label: {
+    fontSize: 12,
+    color: '#888',
+    fontWeight: 'bold',
+  },
+  value: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginTop: 2,
+  },
 });
-

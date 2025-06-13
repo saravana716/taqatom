@@ -47,6 +47,7 @@ export default function PaySlipScreen({ navigation }) {
       setIsLoading(false);
     }
   };
+console.log("history",payrollHistory);
 
   const getUserPayroll = async () => {
     setIsLoading(true);
@@ -173,7 +174,6 @@ export default function PaySlipScreen({ navigation }) {
               <View key={newItem.id} style={styles.historyItem}>
                 <PaySlipComponent
                   newItem={newItem}
-                  componentId={componentId}
                   employeeFullDetails={employeeFullDetails}
                   payrollData={payrollData}
                 />

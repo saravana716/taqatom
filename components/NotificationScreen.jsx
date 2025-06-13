@@ -161,7 +161,6 @@ export default function NotificationScreen({ navigation, route }) {
                       notify={notify}
                       mutate={mutate}
                       employeeId={selectorid}
-                      componentId={componentId}
                       setProfilePicUrl={setProfilePicUrl}
                       employeeFullDetails={employeeFullDetails}
                       userDetails={userDetails}

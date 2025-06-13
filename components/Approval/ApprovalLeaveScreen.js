@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Modal,
@@ -10,19 +10,16 @@ import {
   View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
 import isEmpty from 'lodash/isEmpty';
-import {Dropdown} from 'react-native-element-dropdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import {PUNCH_STATE_OPTIONS} from '../../components/PunchStateOptions';
-import {Toast} from 'react-native-toast-message/lib/src/Toast';
-import LeaveCard from '../../components/LeaveCard';
-import ProfileServices from '../../Services/API/ProfileServices';
+import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import ApprovalLeaveCard from '../../components/ApprovalCards/ApprovalLeaveCard';
+import ProfileServices from '../../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../../utils/error-format';
 import { useSelector } from 'react-redux';
+import moment from 'moment';
 
-export default function ApprovalLeaveScreen({navigation}) {
+export default function ApprovalLeaveScreen({ navigation }) {
   const selectorid = useSelector((data) => data.empid);
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -34,7 +31,6 @@ export default function ApprovalLeaveScreen({navigation}) {
   const [date, setDate] = useState();
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [time, setTime] = useState(new Date());
-
   const [LeaveData, setLeaveData] = useState([]);
 
   const handleBack = () => {
@@ -65,13 +61,7 @@ export default function ApprovalLeaveScreen({navigation}) {
     }
   };
 
-  const renderItem = item => (
-    <View style={styles.item}>
-      <Text style={styles.textItem}>{item.label}</Text>
-    </View>
-  );
-
-  const handleNumberChange = text => {
+  const handleNumberChange = (text) => {
     setWorkCode(text);
   };
 
@@ -109,61 +99,67 @@ export default function ApprovalLeaveScreen({navigation}) {
   }, []);
 
   return (
-    <View style={{flex: 1, justifyContent: 'space-between', paddingBottom: 48,backgroundColor:"white"}}>
-      <View style={{paddingBottom: 48}}>
-        <View style={{flexDirection: 'row', paddingBottom: 28, padding: 20, alignItems: 'center'}}>
-          <TouchableOpacity onPress={handleBack} style={{paddingLeft: 4}}>
+    <View style={{ flex: 1, backgroundColor: 'white' }}>
+      <View style={{ padding: 20, paddingBottom: 0 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
+          <TouchableOpacity onPress={handleBack} style={{ paddingRight: 12 }}>
             <Icon name="angle-left" size={30} color="#697ce3" />
           </TouchableOpacity>
-          <Text style={{fontSize: 20, flex: 1, textAlign: 'center', color: 'black', paddingRight: '15%', fontWeight: 'bold'}}>
+          <Text style={{ fontSize: 20, flex: 1, textAlign: 'center', color: 'black', fontWeight: 'bold' }}>
             Leave
           </Text>
         </View>
-        {isLoading ? (
-          <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-            <ActivityIndicator size="large" color="#697CE3" />
-          </View>
-        ) : isEmpty(LeaveData) ? (
-          <View style={{flex: 1}}>
-            <Text style={{fontSize: 20, textAlign: 'center', paddingTop: 160}}>
-              No leave available
-            </Text>
-          </View>
-        ) : (
-          <ScrollView style={{paddingTop: 20, paddingHorizontal: 20, backgroundColor: 'white', borderRadius: 16, flex: 1}}>
-            <View style={{paddingBottom: 40}}>
-              {LeaveData.map(newItem => (
-                <View style={{paddingBottom: 24}} key={newItem?.id}>
-                  <ApprovalLeaveCard
-                    newItem={newItem}
-                    employeeId={selectorid}
-                    getLeaveList={getLeaveList}
-                  />
-                </View>
-              ))}
-            </View>
-          </ScrollView>
-        )}
       </View>
+
+      {isLoading ? (
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <ActivityIndicator size="large" color="#697CE3" />
+        </View>
+      ) : isEmpty(LeaveData) ? (
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 20, textAlign: 'center', paddingTop: 160 }}>
+            No leave available
+          </Text>
+        </View>
+      ) : (
+        <ScrollView
+          style={{ flex: 1, backgroundColor: 'white' }}
+          contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40, paddingTop: 10 }}
+          showsVerticalScrollIndicator={false}
+        >
+          {LeaveData.map((newItem) => (
+            <View style={{ paddingBottom: 24 }} key={newItem?.id}>
+              <ApprovalLeaveCard
+                newItem={newItem}
+                employeeId={selectorid}
+                getLeaveList={getLeaveList}
+              />
+            </View>
+          ))}
+        </ScrollView>
+      )}
 
       {/* Modal */}
       <Modal
-        animationType={'fade'}
+        animationType="fade"
         visible={modalVisible}
         transparent
-        onRequestClose={() => setModalVisible(!modalVisible)}>
+        onRequestClose={() => setModalVisible(!modalVisible)}
+      >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Add Leave</Text>
             <View style={styles.formContainer}>
               <TouchableOpacity
                 onPress={() => setPunchTimeDate(true)}
-                style={styles.datePickerButton}>
+                style={styles.datePickerButton}
+              >
                 <Text style={styles.datePickerText}>
                   {formatExpectDate ? formatExpectDate : 'Start Date'}
                 </Text>
                 <Icon name="calendar-check-o" size={23} color="#919EABD9" />
               </TouchableOpacity>
+
               {punchTimeDate && (
                 <DateTimePicker
                   value={date || new Date()}
@@ -173,6 +169,7 @@ export default function ApprovalLeaveScreen({navigation}) {
                   minDate={new Date()}
                 />
               )}
+
               {showTimePicker && (
                 <DateTimePicker
                   value={time}
@@ -181,14 +178,17 @@ export default function ApprovalLeaveScreen({navigation}) {
                   onChange={onTimeChange}
                 />
               )}
+
               <TouchableOpacity
                 onPress={() => setPunchTimeDate(true)}
-                style={styles.datePickerButton}>
+                style={styles.datePickerButton}
+              >
                 <Text style={styles.datePickerText}>
                   {formatExpectDate ? formatExpectDate : 'End Date'}
                 </Text>
                 <Icon name="calendar-check-o" size={23} color="#919EABD9" />
               </TouchableOpacity>
+
               <TextInput
                 placeholder="Paycode"
                 value={workCode}
@@ -208,13 +208,15 @@ export default function ApprovalLeaveScreen({navigation}) {
             <View style={styles.buttonContainer}>
               <TouchableOpacity
                 onPress={() => setModalVisible(false)}
-                style={styles.cancelButton}>
+                style={styles.cancelButton}
+              >
                 <Text style={styles.cancelButtonText}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 disabled={isLoading}
                 onPress={handleAddLeave}
-                style={styles.addButton}>
+                style={styles.addButton}
+              >
                 {isLoading ? (
                   <ActivityIndicator size="large" color="#697CE3" />
                 ) : (
@@ -225,6 +227,7 @@ export default function ApprovalLeaveScreen({navigation}) {
           </View>
         </View>
       </Modal>
+
       <Toast />
     </View>
   );
@@ -236,31 +239,23 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(52, 52, 52, 0.8)',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor:"white"
   },
   modalContent: {
-    alignItems: 'center',
     backgroundColor: 'white',
-    marginVertical: 60,
-    borderWidth: 1,
-    borderColor: '#fff',
-    borderRadius: 7,
+    borderRadius: 12,
     width: '90%',
-    elevation: 10,
     padding: 20,
+    elevation: 10,
   },
   modalTitle: {
-    fontSize: 16,
-    marginBottom: 12,
+    fontSize: 18,
     fontWeight: 'bold',
-    marginTop: 8,
+    marginBottom: 16,
+    textAlign: 'center',
   },
   formContainer: {
-    paddingBottom: 8,
-    paddingHorizontal: 8,
     gap: 16,
     width: '100%',
-    justifyContent: 'space-between',
   },
   datePickerButton: {
     height: 56,
@@ -282,61 +277,47 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
     borderColor: '#697CE3',
-    paddingHorizontal: 8,
+    paddingHorizontal: 16,
   },
   reasonBox: {
+    height: 150,
     borderRadius: 24,
     borderWidth: 1,
     borderColor: '#697CE3',
     paddingHorizontal: 20,
-    height: 150,
+    paddingVertical: 12,
   },
   buttonContainer: {
     flexDirection: 'row',
-    marginTop: 20,
     justifyContent: 'flex-end',
-    width: '100%',
-    gap: 20,
-    padding: 9,
+    marginTop: 24,
+    gap: 16,
   },
   cancelButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
     width: 80,
     height: 48,
-    padding: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#697CE3',
   },
   cancelButtonText: {
-    fontSize: 12,
+    fontSize: 14,
     color: '#697CE3',
     fontWeight: 'bold',
   },
   addButton: {
+    width: 80,
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
-    height: 48,
-    width: 80,
-    padding: 8,
     borderRadius: 8,
     backgroundColor: '#697CE3',
   },
   addButtonText: {
-    fontSize: 12,
+    fontSize: 14,
     color: 'white',
     fontWeight: 'bold',
-  },
-  item: {
-    padding: 17,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  textItem: {
-    flex: 1,
-    color: '#000',
-    fontSize: 12,
   },
 });

@@ -32,15 +32,15 @@ const Dashboard = () => {
   const selectorid=useSelector(function (data) {
     return data.empid
   })
-  
+  console.log(selectorid);
   const employeeFullDetails=useSelector(function (data) {
     return data.employeeFullDetails
   })
-  
+  console.log("emp",employeeFullDetails);
     const userDetails=useSelector(function (data) {
     return data.userDetails
   })
-  
+  console.log("users",userDetails);
   
   const dispatch = useDispatch();
   const [workCode, setWorkCode] = useState();
@@ -178,7 +178,7 @@ const Dashboard = () => {
 
       return decodedPayload;
     } catch (error) {
-      // 
+      // console.error("Token parsing failed:", error);
       throw error;
     }
   };
@@ -214,7 +214,7 @@ const Dashboard = () => {
         dispatch(myreducers.sendempDetails(fullDetails));
       }
     } catch (err) {
-      // 
+      // console.error("User detail fetch failed", err);
     }
   };
 
@@ -234,6 +234,17 @@ const Dashboard = () => {
       getLocation();
     }
   }, [modalVisible1]);
+  // useEffect(() => {
+  // async function chekc(params) {
+  //   try{
+  //     await logout()
+  //   }
+  //   catch(err){
+
+  //   }
+  // }
+  // chekc()
+  // }, [])
 
   const getRecentActivity = async (id) => {
     try {
@@ -248,7 +259,7 @@ const Dashboard = () => {
       // 
       // 
     } catch (err) {
-      
+      console.error("Fetching recent activity failed", err);
     }
   };
 
@@ -260,25 +271,21 @@ const Dashboard = () => {
     setIsRefreshLoading(false);
   };
 
-  const fetchLatiLong = async () => {
-    try {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        alert("Permission to access location was denied");
-        return;
-      }
-
-      let location = await Location.getCurrentPositionAsync({});
-      const { latitude, longitude } = location.coords;
-
-      setCurrenLatLocation(latitude);
-      setCurrenLongLocation(longitude);
-
-      updateStatus(latitude, longitude); // ✅ Now it's correct
-    } catch (error) {
-      // 
+const fetchLatiLongOnly = async () => {
+  try {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      alert("Permission to access location was denied");
+      return;
     }
-  };
+
+    let location = await Location.getCurrentPositionAsync({});
+    setCurrenLatLocation(location.coords.latitude);
+    setCurrenLongLocation(location.coords.longitude);
+  } catch (error) {
+    console.error("Error fetching location:", error);
+  }
+};
   function toFixedIfNecessary(value, dp) {
     return +parseFloat(value).toFixed(dp);
   }
@@ -304,14 +311,15 @@ const Dashboard = () => {
       
       // 
 
-      // if (!data.employee_id || !data.clock_type || !data.work_code) {
-      //   
-      //   return;
-      // }
-
+     if (!data.employee_id || !data.clock_type || !data.work_code) {
+  console.warn("❌ Missing fields in punch data", data);
+  return;
+}
+      console.log("pppppppppp",data.employee_id,data.clock_type,data.work_code);
       
       const res = await ProfileServices.updateClockStatus(data);
       
+console.log("rrrrrrrrrrrrrrrrr",res);
 
 
       setModalVisible1(false); // close immediately
@@ -326,8 +334,7 @@ const Dashboard = () => {
       setValue(null);
       return data;
     } catch (err) {
-      console.log(err);
-      
+      console.error("Error in updateStatus", err);
       setIsLoading(false);
     }
   };
@@ -353,11 +360,11 @@ const Dashboard = () => {
         return "-";
     }
   };
-  useEffect(() => {
-    if (modalVisible1) {
-      fetchLatiLong();
-    }
-  }, [modalVisible1]);
+useEffect(() => {
+  if (modalVisible1) {
+    fetchLatiLongOnly(); // ✅ only get location
+  }
+}, [modalVisible1]);
   const refreshLocation = async () => {
     setIsRefreshing(true);
     try {
@@ -371,33 +378,26 @@ const Dashboard = () => {
       setCurrenLatLocation(location.coords.latitude);
       setCurrenLongLocation(location.coords.longitude);
     } catch (error) {
-      
+      console.error("Failed to refresh location:", error);
     } finally {
       setIsRefreshing(false);
     }
   };
-  const handlePunchConfirm = async (latitude, longitude) => {
-    
-    
-    if (
-      !(
-        value === 0 ||
-        value === 1 ||
-        value === 2 ||
-        value === 3 ||
-        value === 4 ||
-        value === 5
-      )
-    ) {
-      setPunchStateError("Punch state is required");
-      return;
-    }
+const handlePunchConfirm = async (latitude, longitude) => {
+  if (value === null || value === undefined) {
+    setPunchStateError("Punch type is required");
+    return;
+  }
 
-    await updateStatus(latitude, longitude);
-    await getRecentActivity(empid);
-    setModalVisible(false);
-    // setIsLoading(false);
-  };
+  if (!workCode) {
+    setPunchStateError("Work code is required");
+    return;
+  }
+
+  await updateStatus(latitude, longitude); // call only after valid
+  await getRecentActivity(empid);
+  setModalVisible(false);
+};
 
  
   useEffect(() => {
@@ -484,25 +484,25 @@ const Dashboard = () => {
 
       setgetalldata(result);
     } catch (err) {
-      
+      console.error("getdata error", err);
     }
   }
   useEffect(() => {
     getdata();
   }, [empid, startDate, endDate]);
     const getSubordinateName = async id => {
-      
+      console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");
       
     try {
       const employeeName = await ProfileServices.getEmployeeNameDetails();
-      
+      console.log('employeeName', employeeName);
       console.log(
         "gnfdngjkngjknjkdfngjkdsngjkndjkgnjkdgjkdgjksdbgjksdbgjkb"
       );
       
       setSubordinateName(employeeName);
     } catch (err) {
-      
+      console.warn(err);
     }
   };
 
@@ -555,19 +555,20 @@ useEffect(() => {
   setSubordinateName,
   token: tokenDetail,
 };
-
+console.log("sendadat",dataToSend);
 
 async function handleNotificationScreen() {
   try {
-    
+    console.log("Navigating to NotificationScreen");
 
     navigation.navigate("NotificationScreen", dataToSend)
-    
+    console.log("senddata",);
     
   } catch (err) {
-    
+    console.error('Navigation error:', err);
   }
 }
+console.log("myvalue",value);
 
 
   return (

@@ -1,197 +1,301 @@
-import { useNavigation } from '@react-navigation/native';
-import get from 'lodash/get';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
     ActivityIndicator,
-    StyleSheet,
+    Image,
     Text,
     TouchableOpacity,
-    View
+    View,
+    StyleSheet
 } from 'react-native';
+import get from 'lodash/get';
+import {
+    convertUtcToLocalTime,
+    dateTimeToShow,
+} from '../utils/formatDateTime';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import ProfileServices from '../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../utils/error-format';
-import { convertUtcToLocalTime, dateTimeToShow } from '../utils/formatDateTime';
+import { useNavigation } from '@react-navigation/native';
+import AntDesign from 'react-native-vector-icons/AntDesign'; // Using AntDesign for the close icon
 
 export default function NotificationComponent({
-  status,
-  notify,
-  mutate,
-  componentId,
-  employeeId,
-  setProfilePicUrl,
-  employeeFullDetails,
-  userDetails,
-  profilePicUrl,
-  setUpdateKey,
-  updateKey,
-  setGender,
-  gender,
-  subordinateName,
-  setSubordinateName,
-  token,
+    status,
+    notify,
+    mutate,
+    // Removed componentId as it's not needed with React Navigation's useNavigation hook
+    employeeId,
+    setProfilePicUrl,
+    employeeFullDetails,
+    userDetails,
+    profilePicUrl,
+    setUpdateKey,
+    updateKey,
+    setGender,
+    gender,
+    subordinateName,
+    setSubordinateName,
+    token,
 }) {
-  const [isRemoving, setIsRemoving] = useState(false);
-  const navigation = useNavigation();
+    const [isHovered, setIsHovered] = useState(false);
+    const [isRemoving, setIsRemoving] = useState(false);
+    const navigation = useNavigation(); // Hook to access navigation object
 
-  const handleRemoveOne = async (notificationId) => {
-    setIsRemoving(true);
-    try {
-      const options = {
-        notification_ids: [notificationId],
-      };
-      await ProfileServices.markNotifyAsRead(options);
-      mutate();
-      Toast.show({
-        type: 'success',
-        text1: 'Marked as read',
-        position: 'bottom',
-      });
-    } catch (error) {
-      formatErrorsToToastMessages(error);
-    } finally {
-      setIsRemoving(false);
-    }
-  };
+    const handleRemoveOne = async notificationId => {
+        setIsRemoving(true);
+        try {
+            const options = {
+                notification_ids: [notificationId],
+            };
+            await ProfileServices.markNotifyAsRead(options);
+            mutate();
+            Toast.show({
+                type: 'success',
+                text1: 'Marked as read',
+                position: 'bottom',
+            });
+        } catch (error) {
+            formatErrorsToToastMessages(error);
+        } finally {
+            setIsRemoving(false);
+        }
+    };
 
-  const navigateBasedOnLink = (link) => {
-    const paths = link?.split('/')?.filter(Boolean);
-    if (paths?.includes('employeeApproval')) {
-      if (paths?.includes('manualLog')) handleScreenPush('ApprovalManualLogScreen');
-      else if (paths?.includes('leave')) handleScreenPush('ApprovalLeaveScreen');
-      else if (paths?.includes('overtime')) handleScreenPush('ApprovalOvertimeScreen');
-      else if (paths?.includes('training') || paths?.includes('resign')) handleScreenPush('ApprovalTrainingScreen');
-    } else if (paths?.includes('request')) {
-      if (paths?.includes('manualLog')) handleScreenPush('ManualLogScreen');
-      else if (paths?.includes('leave')) handleScreenPush('LeaveScreen');
-      else if (paths?.includes('overtime')) handleScreenPush('OvertimeScreen');
-      else if (paths?.includes('training')) handleScreenPush('TrainingScreen');
-    } else if (paths?.includes('orgStructure') && paths?.includes('employeeView')) {
-      handleScreenPush('SettingsScreen');
-    } else if (paths?.includes('employeeShift') && paths?.includes('details')) {
-      handleScreenPush('ShiftScreen');
-    } else if (paths?.includes('payroll') && paths?.includes('payslips')) {
-      handleScreenPush('PaySlipScreen');
-    } else {
-      
-    }
-  };
+    // With React Navigation, you don't typically define "common navigation options"
+    // like animations, topBar, bottomTabs here. These are configured in your
+    // Navigator (e.g., Stack.Navigator, Tab.Navigator) itself.
+    // If you need specific screen options, you set them within the Stack.Screen component
+    // or using navigation.setOptions() inside the screen component.
+    // For now, we'll remove this constant as it's not applicable to navigate().
 
-  const handleScreenPush = (screenName) => {
-    Navigation.push(componentId, {
-      component: {
-        name: screenName,
-        passProps: {
-          employeeId,
-          userId: employeeId,
-          setProfilePicUrl,
-          employeeFullDetails,
-          userDetails,
-          profilePicUrl,
-          setUpdateKey,
-          updateKey,
-          setGender,
-          gender,
-          subordinateName,
-          setSubordinateName,
-          token,
-        },
-        options: {
-          animations: { push: { enabled: false }, pop: { enabled: false } },
-          topBar: { visible: false },
-          bottomTabs: { visible: false, drawBehind: true },
-        },
-      },
-    });
-  };
+    const handleManualLogScreen = useCallback(() => {
+        navigation.navigate("ApprovalManualLogScreen", { employeeId });
+    }, [navigation, employeeId]);
 
-  return isRemoving ? (
-    <ActivityIndicator size="small" color="#000" />
-  ) : (
-    <View style={styles.container}>
-      <View style={styles.card}>
-        <View style={styles.cardContent}>
-          <View style={styles.textBlock}>
-            <Text style={styles.sender}>{get(notify, 'system_sender')}</Text>
-            <Text style={styles.message}>{get(notify, 'content')}</Text>
-            <View style={styles.footerRow}>
-              <View style={styles.timeBlock}>
-                <Text style={styles.time}>
-                  {dateTimeToShow(convertUtcToLocalTime(get(notify, 'notification_time')))}
-                </Text>
-              </View>
-              {get(notify, 'link') && (
-                <TouchableOpacity
-                  style={styles.linkButton}
-                  onPress={() => navigateBasedOnLink(get(notify, 'link'))}>
-                  <Text style={styles.linkText}>
-                    {get(notify, 'link') === '/attendance/employeeApproval/resign'
-                      ? 'Check Web'
-                      : 'Go to Screen'}
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          </View>
-        </View>
-        <TouchableOpacity
-          onPress={() => handleRemoveOne(get(notify, 'id'))}
-          style={styles.removeButton}>
-          <Icon name="close" size={16} color="#000" />
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+    const handleLeaveScreen = useCallback(() => {
+        navigation.navigate("ApprovalLeaveScreen", { employeeId });
+    }, [navigation, employeeId]);
+
+    const handleOvertimeScreen = useCallback(() => {
+        navigation.navigate("ApprovalOvertimeScreen", { userId: employeeId });
+    }, [navigation, employeeId]);
+
+    const handleTrainingScreen = useCallback(() => {
+        navigation.navigate("ApprovalTrainingScreen", { userId: employeeId });
+    }, [navigation, employeeId]);
+
+    const handleReqManualLogScreen = useCallback(() => {
+        navigation.navigate("ManualLogScreen", { employeeId });
+    }, [navigation, employeeId]);
+
+    const handleReqLeaveScreen = useCallback(() => {
+        navigation.navigate("LeaveScreen", { employeeId });
+    }, [navigation, employeeId]);
+
+    const handleReqOvertimeScreen = useCallback(() => {
+        navigation.navigate("OvertimeScreen", { userId: employeeId });
+    }, [navigation, employeeId]);
+
+    const handleReqTrainingScreen = useCallback(() => {
+        navigation.navigate("TrainingScreen", { userId: employeeId });
+    }, [navigation, employeeId]);
+
+    const handleProfileScreen = useCallback(() => {
+        navigation.navigate("SettingsScreen", {
+            setProfilePicUrl: val => setProfilePicUrl(val),
+            employeeFullDetails,
+            userDetails,
+            profilePicUrl,
+            setUpdateKey,
+            updateKey,
+            setGender: val => setGender(val),
+            gender,
+            subordinateName,
+            setSubordinateName,
+            token,
+        });
+    }, [
+        navigation,
+        setProfilePicUrl,
+        employeeFullDetails,
+        userDetails,
+        profilePicUrl,
+        setUpdateKey,
+        updateKey,
+        setGender,
+        gender,
+        subordinateName,
+        setSubordinateName,
+        token,
+    ]);
+
+    const handleShiftScreen = useCallback(() => {
+        navigation.navigate("ShiftScreen", { userId: employeeId });
+    }, [navigation, employeeId]);
+
+    const handlePayslipScreen = useCallback(() => {
+        navigation.navigate("PaySlipScreen", { employeeFullDetails: employeeFullDetails });
+    }, [navigation, employeeFullDetails]);
+
+    const navigateBasedOnLink = useCallback(link => {
+        console.log('linkkk', link);
+        const paths = link?.split('/')?.filter(Boolean);
+        console.log('pathspaths', paths);
+
+        if (paths?.includes('employeeApproval')) {
+            if (paths?.includes('manualLog')) {
+                handleManualLogScreen();
+            } else if (paths?.includes('leave')) {
+                handleLeaveScreen();
+            } else if (paths?.includes('overtime')) {
+                handleOvertimeScreen();
+            } else if (paths?.includes('training')) {
+                handleTrainingScreen();
+            } else if (paths?.includes('resign')) {
+                handleTrainingScreen(); // Original code navigates to TrainingScreen for 'resign'
+            }
+        } else if (paths?.includes('request')) {
+            if (paths?.includes('manualLog')) {
+                handleReqManualLogScreen();
+            } else if (paths?.includes('leave')) {
+                handleReqLeaveScreen();
+            } else if (paths?.includes('overtime')) {
+                handleReqOvertimeScreen();
+            } else if (paths?.includes('training')) {
+                handleReqTrainingScreen();
+            }
+        } else if (paths?.includes('orgStructure')) {
+            if (paths?.includes('employeeView')) {
+                handleProfileScreen();
+            }
+        } else if (paths?.includes('employeeShift')) {
+            if (paths?.includes('details')) {
+                handleShiftScreen();
+            }
+        } else if (paths?.includes('payroll')) {
+            if (paths?.includes('payslips')) {
+                handlePayslipScreen();
+            }
+        } else {
+            console.warn('Unhandled link:', link);
+        }
+    }, [
+        handleManualLogScreen,
+        handleLeaveScreen,
+        handleOvertimeScreen,
+        handleTrainingScreen,
+        handleReqManualLogScreen,
+        handleReqLeaveScreen,
+        handleReqOvertimeScreen,
+        handleReqTrainingScreen,
+        handleProfileScreen,
+        handleShiftScreen,
+        handlePayslipScreen
+    ]);
+
+    return (
+        <>
+            {isRemoving ? (
+                <ActivityIndicator size="small" color="#000" />
+            ) : (
+                <View style={styles.container}>
+                    <View style={styles.notificationCard}>
+                        <View style={styles.contentWrapper}>
+                            <View style={styles.textContainer}>
+                                <Text style={styles.senderText}>
+                                    {get(notify, 'system_sender')}
+                                </Text>
+                                <Text style={styles.contentText}>
+                                    {get(notify, 'content')}
+                                </Text>
+                                <View style={styles.bottomRow}>
+                                    <View style={styles.dateContainer}>
+                                        <Text style={styles.dateText}>
+                                            {dateTimeToShow(
+                                                convertUtcToLocalTime(get(notify, 'notification_time')),
+                                            )}
+                                        </Text>
+                                    </View>
+                                    {get(notify, 'link') === '/attendance/employeeApproval/resign' ? (
+                                        <TouchableOpacity style={styles.linkButton}>
+                                            <Text style={styles.linkText}>Check Web</Text>
+                                        </TouchableOpacity>
+                                    ) : get(notify, 'link') ? (
+                                        <TouchableOpacity
+                                            style={styles.linkButton}
+                                            onPress={() => navigateBasedOnLink(get(notify, 'link'))}>
+                                            <Text style={styles.linkText}>
+                                                Go to Screen
+                                            </Text>
+                                        </TouchableOpacity>
+                                    ) : null}
+                                </View>
+                            </View>
+                        </View>
+                        <View>
+                            <TouchableOpacity
+                                onPress={() => handleRemoveOne(get(notify, 'id'))}
+                                style={styles.closeButton}>
+                                <AntDesign name="close" size={16} color="#000" />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            )}
+        </>
+    );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-  },
-  card: {
-    backgroundColor: '#F1F3F4',
-    flexDirection: 'row',
-    padding: 12,
-    borderRadius: 16,
-    alignItems: 'center',
-  },
-  cardContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  textBlock: {
-    flex: 1,
-  },
-  sender: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  message: {
-    fontSize: 12,
-    color: '#919EAB',
-  },
-  footerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 4,
-  },
-  timeBlock: {
-    width: 50,
-  },
-  time: {
-    fontSize: 12,
-  },
-  linkButton: {
-    width: 200,
-  },
-  linkText: {
-    fontSize: 12,
-    color: 'blue',
-  },
-  removeButton: {
-    paddingBottom: 10,
-  },
+    container: {
+        width: '100%',
+    },
+    notificationCard: {
+        backgroundColor: '#F1F3F4',
+        flexDirection: 'row',
+        padding: 12,
+        borderRadius: 8,
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+    },
+    contentWrapper: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flex: 1,
+    },
+    textContainer: {
+        width: '100%',
+        marginLeft: 12,
+    },
+    senderText: {
+        fontSize: 20,
+        // fontFamily: 'PublicSansBold',
+        marginBottom: 4,
+    },
+    contentText: {
+        fontSize: 12,
+        color: '#919EAB',
+        marginBottom: 4,
+    },
+    bottomRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    dateContainer: {
+        width: 'auto',
+    },
+    dateText: {
+        fontSize: 12,
+    },
+    linkButton: {
+        width: 'auto',
+        marginLeft: 4,
+    },
+    linkText: {
+        fontSize: 12,
+        color: '#3B82F6',
+    },
+    closeButton: {
+        paddingBottom: 10,
+    },
 });

@@ -1,7 +1,6 @@
 import find from 'lodash/find';
 import get from 'lodash/get';
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
     ActivityIndicator,
     Modal,
@@ -12,445 +11,570 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import { Iconify } from 'react-native-iconify';
-import { Navigation } from 'react-native-navigation';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
-import tokens from '../../../locales/tokens';
-import ProfileServices from '../../../Services/API/ProfileServices';
-import { formatErrorsToToastMessages } from '../../../utils/error-format';
-import { dateTimeToShow } from '../../../utils/formatDateTime';
-export default function ApprovalTrainingDetails({
-  newItem,
-  employeeId,
-  componentId,
-  getTrainingList,
-}) {
-  const {t} = useTranslation();
-  const [isLoading, setIsLoading] = useState(false);
-  const handleBack = () => {
-    Navigation.pop(componentId);
-  };
-  const [approveConfirmVisible, setApproveConfirmVisible] = useState(false);
-  const [rejectedConfirmVisible, setRejectedConfirmVisible] = useState(false);
-  const [trainingData, setTrainingData] = useState([]);
-  const matchedData = find(trainingData, log => log?.id === newItem?.id);
-  const [approveReason, setApproveReason] = useState('');
-  const [rejectReason, setRejectReason] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+import ProfileServices from '../../Services/API/ProfileServices';
+import { formatErrorsToToastMessages } from '../../utils/error-format';
+import { dateTimeToShow } from '../../utils/formatDateTime';
 
-  const showApproveConfirmDialog = () => {
-    setApproveConfirmVisible(true);
-  };
+export default function ApprovalTrainingDetails({ navigation, route }) {
+    const { newItem, employeeId, componentId, getTrainingList } = route.params;
+    const [isLoading, setIsLoading] = useState(false);
+    const handleBack = () => {
+        Navigation.pop(componentId);
+    };
+    const [approveConfirmVisible, setApproveConfirmVisible] = useState(false);
+    const [rejectedConfirmVisible, setRejectedConfirmVisible] = useState(false);
+    const [trainingData, setTrainingData] = useState([]);
+    const matchedData = find(trainingData, log => log?.id === newItem?.id);
+    const [approveReason, setApproveReason] = useState('');
+    const [rejectReason, setRejectReason] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
-  const showRejectedConfirmDialog = () => {
-    setRejectedConfirmVisible(true);
-  };
+    const showApproveConfirmDialog = () => {
+        setApproveConfirmVisible(true);
+    };
 
-  const handleTrainingScreen = () => {
-    Navigation.pop(componentId);
-  };
-  const handleApprove = async () => {
-    if (!approveReason.trim()) {
-      setErrorMessage('Reason is required');
-      return;
-    }
-    try {
-      const response = await ProfileServices.postTrainingApprove(
-        matchedData?.id,
-        approveReason,
-      );
-      getTrainingData();
-      setApproveConfirmVisible(false);
-      Toast.show({
-        type: 'success',
-        text1: 'Approve Success',
-        position: 'bottom',
-      });
-      getTrainingList();
-      setApproveReason('');
-    } catch (error) {
-      
-      setApproveConfirmVisible(false);
-     formatErrorsToToastMessages(error)
-    }
-  };
+    const showRejectedConfirmDialog = () => {
+        setRejectedConfirmVisible(true);
+    };
 
-  const handleReject = async () => {
-    if (!rejectReason.trim()) {
-      setErrorMessage('Reason is required');
-      return;
-    }
-    try {
-      const response = await ProfileServices.postTrainingReject(
-        matchedData?.id,
-        rejectReason,
-      );
-      getTrainingData();
-      setRejectedConfirmVisible(false);
-      Toast.show({
-        type: 'success',
-        text1: 'Reject Success',
-        position: 'bottom',
-      });
-      getTrainingList();
-      setRejectReason('');
-    } catch (error) {
-      setRejectedConfirmVisible(false);
-      formatErrorsToToastMessages(error)
-    }
-  };
+    const handleTrainingScreen = () => {
+        Navigation.pop(componentId);
+    };
+    const handleApprove = async () => {
+        if (!approveReason.trim()) {
+            setErrorMessage('Reason is required');
+            return;
+        }
+        try {
+            const response = await ProfileServices.postTrainingApprove(
+                matchedData?.id,
+                approveReason,
+            );
+            getTrainingData();
+            setApproveConfirmVisible(false);
+            Toast.show({
+                type: 'success',
+                text1: 'Approve Success',
+                position: 'bottom',
+            });
+            getTrainingList();
+            setApproveReason('');
+        } catch (error) {
+            setApproveConfirmVisible(false);
+            formatErrorsToToastMessages(error);
+        }
+    };
 
-  const getTrainingData = async () => {
-    try {
-      const RecentActivities = await ProfileServices.getApprovalTrainingData(
-        employeeId,
-      );
-      setTrainingData(RecentActivities?.results);
-    } catch (error) {}
-  };
-  useEffect(() => {
-    getTrainingData();
-  }, []);
-  return (
-    <>
-      {!matchedData ? (
-        <View className="h-full w-full justify-center items-center">
-          <ActivityIndicator size="large" color="#697CE3" />
-        </View>
-      ) : (
-        <View className="bg-[#F1F3F4] h-full flex-1">
-          <View className="flex-row pb-7 p-5 items-center">
-            <TouchableOpacity onPress={handleBack} className=" pl-1">
-              <Iconify icon="mingcute:left-line" size={30} color="#000" />
-            </TouchableOpacity>
-            <Text className="text-xl w-full font-PublicSansBold text-black text-center pr-[15%]">
-              {t(tokens.actions.view)}
-            </Text>
-          </View>
-          <View className="p-4 h-full h-[90vh]">
-            <View className="flex-1 h-full bg-white rounded-3xl">
-              <ScrollView className="p-4 h-full flex-1">
-                <View className="flex-1 bg-white h-[83vh] rounded-2xl w-full justify-between">
-                  <View className="flex-1 p-3 rounded-2xl w-full ">
-                    <View className="flex-row justify-between border-b pb-6 border-white items-center w-full">
-                      <Text className="text-xs text-gray-400 font-PublicSansBold">
-                        {t(tokens.charts.approvalStatus)}
-                      </Text>
-                      {matchedData?.approval_status === 3 && (
-                        <Text className="text-xs border p-1 pl-2 pr-2 bg-[#E4030308] rounded-lg border-[#E40303] text-[#E40303] font-PublicSansBold">
-                          {t(tokens.actions.reject)}
-                        </Text>
-                      )}
-                      {matchedData?.approval_status === 2 && (
-                        <Text className="text-xs border p-1 pl-2 pr-2 bg-[#08CA0F08] rounded-lg border-[#08CA0F] text-[#08CA0F] font-PublicSansBold">
-                          {t(tokens.actions.approve)}
-                        </Text>
-                      )}
-                      {matchedData?.approval_status === 1 && (
-                        <Text className="text-xs border p-1 pl-2 pr-2 bg-[#D1A40408] rounded-lg border-[#D1A404] text-[#D1A404] font-PublicSansBold">
-                          {t(tokens.actions.pending)}
-                        </Text>
-                      )}
-                      {matchedData?.approval_status === 4 && (
-                        <Text className="text-xs border p-1 pl-2 pr-2 bg-[#E4030308] rounded-lg border-[#E40303] text-[#E40303] font-PublicSansBold">
-                          {t(tokens.actions.revoke)}
-                        </Text>
-                      )}
-                    </View>
-                    <View className="flex-row justify-between border-b pb-6 border-white items-center w-full">
-                      <Text className="text-xs text-gray-400 font-PublicSansBold">
-                        {t(tokens.common.firstName)}
-                      </Text>
-                      <Text className="text-xs font-PublicSansBold">
-                        {get(matchedData, 'first_name')}
-                      </Text>
-                    </View>
-                    <View className="flex-row justify-between border-b pb-6 border-white items-center w-full">
-                      <Text className="text-xs text-gray-400 font-PublicSansBold">
-                        {t(tokens.common.lastName)}
-                      </Text>
-                      <Text className="text-xs font-PublicSansBold">
-                        {get(matchedData, 'last_name') || '-'}
-                      </Text>
-                    </View>
-                    <View className="flex-row justify-between border-b pb-6 border-white items-center w-full">
-                      <Text className="text-xs text-gray-400 font-PublicSansBold">
-                        {t(tokens.common.employeeCode)}
-                      </Text>
-                      <Text className="text-xs font-PublicSansBold">
-                        {get(matchedData, 'emp_code')}
-                      </Text>
-                    </View>
-                    <View className="flex-row justify-between border-b pb-6 border-white items-center w-full">
-                      <Text className="text-xs text-gray-400 font-PublicSansBold">
-                        {t(tokens.nav.department)}
-                      </Text>
-                      <Text className="text-xs font-PublicSansBold">
-                        {get(matchedData, 'department_info.department_name')}
-                      </Text>
-                    </View>
-                    <View className="flex-row justify-between border-b pb-6 border-white items-center w-full">
-                      <Text className="text-xs text-gray-400 font-PublicSansBold">
-                        {t(tokens.common.startTime)}
-                      </Text>
-                      <Text className="text-xs font-PublicSansBold">
-                        {dateTimeToShow(matchedData?.start_time)}
-                      </Text>
-                    </View>
-                    <View className="flex-row justify-between pb-6 border-white items-center w-full ">
-                      <Text className="text-xs text-gray-400 font-PublicSansBold">
-                        {t(tokens.common.endTime)}
-                      </Text>
-                      <Text className="text-xs font-PublicSansBold">
-                        {dateTimeToShow(matchedData?.end_time)}
-                      </Text>
-                    </View>
-                    <View className="flex-row justify-between pb-6 border-white items-center w-full ">
-                      <Text className="text-xs text-gray-400 font-PublicSansBold">
-                        {t(tokens.nav.payCode)}
-                      </Text>
-                      <Text className="text-xs font-PublicSansBold">
-                        {matchedData?.paycode_details?.name}
-                      </Text>
-                    </View>
-                    <View className="flex-row justify-between pb-6 border-white w-full ">
-                      <Text className="text-xs text-gray-400 font-PublicSansBold">
-                        {t(tokens.common.reason)}
-                      </Text>
-                      <Text className="text-xs font-PublicSansBold">
-                        {matchedData?.apply_reason || '-'}
-                      </Text>
-                    </View>
-                  </View>
+    const handleReject = async () => {
+        if (!rejectReason.trim()) {
+            setErrorMessage('Reason is required');
+            return;
+        }
+        try {
+            const response = await ProfileServices.postTrainingReject(
+                matchedData?.id,
+                rejectReason,
+            );
+            getTrainingData();
+            setRejectedConfirmVisible(false);
+            Toast.show({
+                type: 'success',
+                text1: 'Reject Success',
+                position: 'bottom',
+            });
+            getTrainingList();
+            setRejectReason('');
+        } catch (error) {
+            setRejectedConfirmVisible(false);
+            formatErrorsToToastMessages(error);
+        }
+    };
+
+    const getTrainingData = async () => {
+        try {
+            const RecentActivities = await ProfileServices.getApprovalTrainingData(
+                employeeId,
+            );
+            setTrainingData(RecentActivities?.results);
+        } catch (error) { }
+    };
+    useEffect(() => {
+        getTrainingData();
+    }, []);
+
+    return (
+        <>
+            {!matchedData ? (
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color="#697CE3" />
                 </View>
-              </ScrollView>
-              <View>
-                {matchedData?.approval_status === 1 && (
-                  <View className="flex-row gap-3 justify-between pb-5 pl-3 pr-3">
-                    <TouchableOpacity
-                      onPress={showRejectedConfirmDialog}
-                      className="items-center justify-center h-10 flex-1 p-2 rounded-lg border border-[#FF0000] ">
-                      <Text className="text-xs  text-[#FF0000] font-semibold-poppins ">
-                        {t(tokens.actions.reject)}
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      disabled={isLoading}
-                      onPress={showApproveConfirmDialog}
-                      className="items-center justify-center h-10 flex-1 p-2 rounded-lg bg-[#697CE3]">
-                      {isLoading && (
-                        <ActivityIndicator size="large" color="#697CE3" />
-                      )}
-                      {!isLoading && (
-                        <Text className="text-xs text-white font-semibold-poppins">
-                          {t(tokens.actions.approve)}
+            ) : (
+                <View style={styles.mainContainer}>
+                    <View style={styles.headerContainer}>
+                        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+                            <Icon name="angle-left" size={30} color="#697ce3" />
+                        </TouchableOpacity>
+                        <Text style={styles.headerText}>
+                            View
                         </Text>
-                      )}
-                    </TouchableOpacity>
-                  </View>
-                )}
-              </View>
-              <Toast />
-              <View>
-                <Modal
-                  animationType={'fade'}
-                  visible={approveConfirmVisible}
-                  transparent
-                  onRequestClose={() => {
-                    setApproveConfirmVisible(!approveConfirmVisible);
-                  }}>
-                  <View
-                    style={{
-                      flex: 1,
-                      backgroundColor: 'rgba(52, 52, 52, 0.8)',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}>
-                    <View
-                      style={{
-                        alignItems: 'center',
-                        backgroundColor: 'white',
-                        marginVertical: 60,
-                        borderWidth: 1,
-                        borderColor: '#fff',
-                        borderRadius: 7,
-                        width: '90%',
-                        elevation: 10,
-                        paddingX: 20,
-                        paddingTop: 20,
-                        paddingBottom: 10,
-                      }}>
-                      <Text style={{fontSize: 18, fontWeight: 'bold'}}>
-                        {t(tokens.actions.approve)}
-                      </Text>
-                      <Text style={{marginTop: 10, fontSize: 16}}>
-                        {t(tokens.messages.approveConfirm)}
-                      </Text>
-                      <View className="pl-2 pr-2 w-full">
-                        <TextInput
-                          style={{
-                            height: 50,
-                            borderColor: '#ccc',
-                            borderWidth: 1,
-                            borderRadius: 5,
-                            marginTop: 10,
-                            paddingHorizontal: 10,
-                            width: '100%',
-                          }}
-                          placeholder="Enter reason"
-                          value={approveReason}
-                          onChangeText={text => {
-                            setApproveReason(text);
-                            setErrorMessage('');
-                          }}
-                        />
-                        {errorMessage ? (
-                          <Text
-                            style={{
-                              color: 'red',
-                              marginTop: 5,
-                              paddingLeft: 2,
-                            }}>
-                            {errorMessage}
-                          </Text>
-                        ) : null}
-                      </View>
-                      <View style={styles.buttonContainer}>
-                        <TouchableOpacity
-                          onPress={() => {
-                            setApproveConfirmVisible(false);
-                          }}
-                          className="items-center justify-center w-20 h-10 p-2 rounded-lg border border-[#697CE3] ">
-                          <Text className="text-xs  text-[#697CE3] font-semibold-poppins ">
-                            {t(tokens.actions.cancel)}
-                          </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          disabled={isLoading}
-                          onPress={handleApprove}
-                          className="items-center justify-center h-10 w-20 p-2 rounded-lg bg-[#697CE3]">
-                          {isLoading && (
-                            <ActivityIndicator size="large" color="#697CE3" />
-                          )}
-                          {!isLoading && (
-                            <Text className="text-xs text-white font-semibold-poppins">
-                              {t(tokens.actions.approve)}
-                            </Text>
-                          )}
-                        </TouchableOpacity>
-                      </View>
                     </View>
-                  </View>
-                </Modal>
-              </View>
-              <View>
-                <Modal
-                  animationType={'fade'}
-                  visible={rejectedConfirmVisible}
-                  transparent
-                  onRequestClose={() => {
-                    setRejectedConfirmVisible(!rejectedConfirmVisible);
-                  }}>
-                  <View
-                    style={{
-                      flex: 1,
-                      backgroundColor: 'rgba(52, 52, 52, 0.8)',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}>
-                    <View
-                      style={{
-                        alignItems: 'center',
-                        backgroundColor: 'white',
-                        marginVertical: 60,
-                        borderWidth: 1,
-                        borderColor: '#fff',
-                        borderRadius: 7,
-                        width: '90%',
-                        elevation: 10,
-                        paddingX: 20,
-                        paddingTop: 20,
-                        paddingBottom: 10,
-                      }}>
-                      <Text style={{fontSize: 18, fontWeight: 'bold'}}>
-                        {t(tokens.actions.reject)}
-                      </Text>
-                      <Text style={{marginTop: 10, fontSize: 16}}>
-                        {t(tokens.messages.rejectConfirm)}
-                      </Text>
-                      <View className="pl-2 pr-2 w-full">
-                        <TextInput
-                          style={{
-                            height: 50,
-                            borderColor: '#ccc',
-                            borderWidth: 1,
-                            borderRadius: 5,
-                            marginTop: 10,
-                            paddingHorizontal: 10,
-                            width: '100%',
-                          }}
-                          placeholder="Enter reason"
-                          value={rejectReason}
-                          onChangeText={text => {
-                            setRejectReason(text);
-                            setErrorMessage('');
-                          }}
-                        />
-                        {errorMessage ? (
-                          <Text
-                            style={{
-                              color: 'red',
-                              marginTop: 5,
-                              paddingLeft: 2,
-                            }}>
-                            {errorMessage}
-                          </Text>
-                        ) : null}
-                      </View>
-                      <View style={styles.buttonContainer}>
-                        <TouchableOpacity
-                          onPress={() => {
-                            setRejectedConfirmVisible(false);
-                          }}
-                          className="items-center justify-center w-20 h-10 p-2 rounded-lg border border-[#697CE3] ">
-                          <Text className="text-xs  text-[#697CE3] font-semibold-poppins ">
-                            {t(tokens.actions.cancel)}
-                          </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          disabled={isLoading}
-                          onPress={handleReject}
-                          className="items-center justify-center h-10 w-20 p-2 rounded-lg bg-[#cf3636]">
-                          {isLoading && (
-                            <ActivityIndicator size="large" color="#697CE3" />
-                          )}
-                          {!isLoading && (
-                            <Text className="text-xs text-white font-semibold-poppins">
-                              {t(tokens.actions.reject)}
-                            </Text>
-                          )}
-                        </TouchableOpacity>
-                      </View>
+                    <View style={styles.contentArea}>
+                        <View style={styles.card}>
+                            <ScrollView contentContainerStyle={styles.scrollViewContent}>
+                                <View style={styles.detailsContainer}>
+                                    <View style={styles.detailRow}>
+                                        <Text style={styles.detailLabel}>
+                                            Approval Status
+                                        </Text>
+                                        {matchedData?.approval_status === 3 && (
+                                            <Text style={[styles.statusText, styles.rejectedStatus]}>
+                                                Rejected
+                                            </Text>
+                                        )}
+                                        {matchedData?.approval_status === 2 && (
+                                            <Text style={[styles.statusText, styles.approvedStatus]}>
+                                                Approved
+                                            </Text>
+                                        )}
+                                        {matchedData?.approval_status === 1 && (
+                                            <Text style={[styles.statusText, styles.pendingStatus]}>
+                                                Pending
+                                            </Text>
+                                        )}
+                                        {matchedData?.approval_status === 4 && (
+                                            <Text style={[styles.statusText, styles.revokedStatus]}>
+                                                Revoked
+                                            </Text>
+                                        )}
+                                    </View>
+                                    <View style={styles.detailRow}>
+                                        <Text style={styles.detailLabel}>
+                                            First Name
+                                        </Text>
+                                        <Text style={styles.detailValue}>
+                                            {get(matchedData, 'first_name')}
+                                        </Text>
+                                    </View>
+                                    <View style={styles.detailRow}>
+                                        <Text style={styles.detailLabel}>
+                                            Last Name
+                                        </Text>
+                                        <Text style={styles.detailValue}>
+                                            {get(matchedData, 'last_name') || '-'}
+                                        </Text>
+                                    </View>
+                                    <View style={styles.detailRow}>
+                                        <Text style={styles.detailLabel}>
+                                            Employee Code
+                                        </Text>
+                                        <Text style={styles.detailValue}>
+                                            {get(matchedData, 'emp_code')}
+                                        </Text>
+                                    </View>
+                                    <View style={styles.detailRow}>
+                                        <Text style={styles.detailLabel}>
+                                            Department
+                                        </Text>
+                                        <Text style={styles.detailValue}>
+                                            {get(matchedData, 'department_info.department_name')}
+                                        </Text>
+                                    </View>
+                                    <View style={styles.detailRow}>
+                                        <Text style={styles.detailLabel}>
+                                            Start Time
+                                        </Text>
+                                        <Text style={styles.detailValue}>
+                                            {dateTimeToShow(matchedData?.start_time)}
+                                        </Text>
+                                    </View>
+                                    <View style={styles.detailRow}>
+                                        <Text style={styles.detailLabel}>
+                                            End Time
+                                        </Text>
+                                        <Text style={styles.detailValue}>
+                                            {dateTimeToShow(matchedData?.end_time)}
+                                        </Text>
+                                    </View>
+                                    <View style={styles.detailRow}>
+                                        <Text style={styles.detailLabel}>
+                                            Pay Code
+                                        </Text>
+                                        <Text style={styles.detailValue}>
+                                            {matchedData?.paycode_details?.name}
+                                        </Text>
+                                    </View>
+                                    <View style={styles.detailRow}>
+                                        <Text style={styles.detailLabel}>
+                                            Reason
+                                        </Text>
+                                        <Text style={styles.detailValue}>
+                                            {matchedData?.apply_reason || '-'}
+                                        </Text>
+                                    </View>
+                                </View>
+                            </ScrollView>
+                            <View>
+                                {matchedData?.approval_status === 1 && (
+                                    <View style={styles.actionButtonsContainer}>
+                                        <TouchableOpacity
+                                            onPress={showRejectedConfirmDialog}
+                                            style={[styles.actionButton, styles.rejectButtonBorder]}
+                                        >
+                                            <Text style={styles.rejectButtonText}>
+                                                Reject
+                                            </Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            disabled={isLoading}
+                                            onPress={showApproveConfirmDialog}
+                                            style={[styles.actionButton, styles.approveButtonBackground]}
+                                        >
+                                            {isLoading ? (
+                                                <ActivityIndicator size="large" color="#697CE3" />
+                                            ) : (
+                                                <Text style={styles.approveButtonText}>
+                                                    Approve
+                                                </Text>
+                                            )}
+                                        </TouchableOpacity>
+                                    </View>
+                                )}
+                            </View>
+                            <Toast />
+                            <Modal
+                                animationType={'fade'}
+                                visible={approveConfirmVisible}
+                                transparent
+                                onRequestClose={() => {
+                                    setApproveConfirmVisible(!approveConfirmVisible);
+                                }}>
+                                <View style={styles.modalOverlay}>
+                                    <View style={styles.modalContent}>
+                                        <Text style={styles.modalTitle}>
+                                            Approve
+                                        </Text>
+                                        <Text style={styles.modalMessage}>
+                                            Are you sure you want to approve this training request?
+                                        </Text>
+                                        <View style={styles.modalTextInputContainer}>
+                                            <TextInput
+                                                style={styles.modalTextInput}
+                                                placeholder="Enter reason"
+                                                value={approveReason}
+                                                onChangeText={text => {
+                                                    setApproveReason(text);
+                                                    setErrorMessage('');
+                                                }}
+                                            />
+                                            {errorMessage ? (
+                                                <Text style={styles.errorMessageText}>
+                                                    {errorMessage}
+                                                </Text>
+                                            ) : null}
+                                        </View>
+                                        <View style={styles.buttonContainer}>
+                                            <TouchableOpacity
+                                                onPress={() => {
+                                                    setApproveConfirmVisible(false);
+                                                }}
+                                                style={[styles.modalButton, styles.modalCancelButtonBorder]}
+                                            >
+                                                <Text style={styles.modalCancelButtonText}>
+                                                    Cancel
+                                                </Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity
+                                                disabled={isLoading}
+                                                onPress={handleApprove}
+                                                style={[styles.modalButton, styles.modalApproveButtonBackground]}
+                                            >
+                                                {isLoading ? (
+                                                    <ActivityIndicator size="large" color="#697CE3" />
+                                                ) : (
+                                                    <Text style={styles.modalApproveButtonText}>
+                                                        Approve
+                                                    </Text>
+                                                )}
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                </View>
+                            </Modal>
+
+                            <Modal
+                                animationType={'fade'}
+                                visible={rejectedConfirmVisible}
+                                transparent
+                                onRequestClose={() => {
+                                    setRejectedConfirmVisible(!rejectedConfirmVisible);
+                                }}>
+                                <View style={styles.modalOverlay}>
+                                    <View style={styles.modalContent}>
+                                        <Text style={styles.modalTitle}>
+                                            Reject
+                                        </Text>
+                                        <Text style={styles.modalMessage}>
+                                            Are you sure you want to reject this training request?
+                                        </Text>
+                                        <View style={styles.modalTextInputContainer}>
+                                            <TextInput
+                                                style={styles.modalTextInput}
+                                                placeholder="Enter reason"
+                                                value={rejectReason}
+                                                onChangeText={text => {
+                                                    setRejectReason(text);
+                                                    setErrorMessage('');
+                                                }}
+                                            />
+                                            {errorMessage ? (
+                                                <Text style={styles.errorMessageText}>
+                                                    {errorMessage}
+                                                </Text>
+                                            ) : null}
+                                        </View>
+                                        <View style={styles.buttonContainer}>
+                                            <TouchableOpacity
+                                                onPress={() => {
+                                                    setRejectedConfirmVisible(false);
+                                                }}
+                                                style={[styles.modalButton, styles.modalCancelButtonBorder]}
+                                            >
+                                                <Text style={styles.modalCancelButtonText}>
+                                                    Cancel
+                                                </Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity
+                                                disabled={isLoading}
+                                                onPress={handleReject}
+                                                style={[styles.modalButton, styles.modalRejectButtonBackground]}
+                                            >
+                                                {isLoading ? (
+                                                    <ActivityIndicator size="large" color="#697CE3" />
+                                                ) : (
+                                                    <Text style={styles.modalApproveButtonText}>
+                                                        Reject
+                                                    </Text>
+                                                )}
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                </View>
+                            </Modal>
+                        </View>
                     </View>
-                  </View>
-                  <Toast />
-                </Modal>
-              </View>
-            </View>
-          </View>
-        </View>
-      )}
-    </>
-  );
+                </View>
+            )}
+        </>
+    );
 }
 
 const styles = StyleSheet.create({
-  buttonContainer: {
-    flexDirection: 'row',
-    marginTop: 20,
-    justifyContent: 'flex-end',
-    width: '100%',
-    gap: 20,
-    padding: 9,
-  },
+    loadingContainer: {
+        height: '100%',
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    mainContainer: {
+        backgroundColor: '#F1F3F4',
+        height: '100%',
+        flex: 1,
+    },
+    headerContainer: {
+        flexDirection: 'row',
+        paddingBottom: 28, // pb-7 * 4
+        paddingHorizontal: 20, // p-5 * 4
+        alignItems: 'center',
+    },
+    backButton: {
+        paddingLeft: 4, // pl-1 * 4
+    },
+    headerText: {
+        fontSize: 20, // text-xl
+        width: '100%',
+        // fontFamily: 'PublicSansBold', // Assuming you have this font linked
+        color: 'black',
+        textAlign: 'center',
+        paddingRight: '15%', // pr-[15%]
+    },
+    contentArea: {
+        padding: 16, // p-4
+        height: '100%', // h-full
+        maxHeight: '90%', // h-[90vh] - approximated for RN
+    },
+    card: {
+        flex: 1,
+        height: '100%', // h-full
+        backgroundColor: 'white',
+        borderRadius: 24, // rounded-3xl
+    },
+    scrollViewContent: {
+        padding: 16, // p-4
+        flexGrow: 1, // h-full flex-1
+    },
+    detailsContainer: {
+        flex: 1,
+        backgroundColor: 'white',
+        borderRadius: 16, // rounded-2xl
+        width: '100%',
+        justifyContent: 'flex-start',
+        padding: 12, // p-3
+    },
+    detailRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        borderBottomWidth: 1,
+        borderColor: '#F1F3F4', // border-white (this might be a slight approximation as Tailwind's border-white usually means a white border, which might not be visible on a white background unless it's a subtle shade)
+        alignItems: 'center',
+        width: '100%',
+        paddingVertical:20
+    },
+    detailLabel: {
+        fontSize: 12, // text-xs
+        color: '#A0A0A0', // text-gray-400
+        // fontFamily: 'PublicSansBold',
+    },
+    detailValue: {
+        fontSize: 12, // text-xs
+        // fontFamily: 'PublicSansBold',
+    },
+    statusText: {
+        fontSize: 12, // text-xs
+        borderWidth: 1,
+        padding: 4, // p-1
+        paddingHorizontal: 8, // pl-2 pr-2
+        borderRadius: 8, // rounded-lg
+        // fontFamily: 'PublicSansBold',
+    },
+    rejectedStatus: {
+        backgroundColor: 'rgba(228, 3, 3, 0.031)', // bg-[#E4030308]
+        borderColor: '#E40303', // border-[#E40303]
+        color: '#E40303', // text-[#E40303]
+    },
+    approvedStatus: {
+        backgroundColor: 'rgba(8, 202, 15, 0.031)', // bg-[#08CA0F08]
+        borderColor: '#08CA0F', // border-[#08CA0F]
+        color: '#08CA0F', // text-[#08CA0F]
+    },
+    pendingStatus: {
+        backgroundColor: 'rgba(209, 164, 4, 0.031)', // bg-[#D1A40408]
+        borderColor: '#D1A404', // border-[#D1A404]
+        color: '#D1A404', // text-[#D1A404]
+    },
+    revokedStatus: {
+        backgroundColor: 'rgba(228, 3, 3, 0.031)', // bg-[#E4030308]
+        borderColor: '#E40303', // border-[#E40303]
+        color: '#E40303', // text-[#E40303]
+    },
+    actionButtonsContainer: {
+        flexDirection: 'row',
+        gap: 12, // gap-3
+        justifyContent: 'space-between',
+        paddingBottom: 20, // pb-5
+        paddingHorizontal: 12, // pl-3 pr-3
+    },
+    actionButton: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 40, // h-10
+        flex: 1,
+        padding: 8, // p-2
+        borderRadius: 8, // rounded-lg
+    },
+    rejectButtonBorder: {
+        borderWidth: 1,
+        borderColor: '#FF0000', // border-[#FF0000]
+    },
+    rejectButtonText: {
+        fontSize: 12, // text-xs
+        color: '#FF0000', // text-[#FF0000]
+        // fontFamily: 'semibold-poppins',
+    },
+    approveButtonBackground: {
+        backgroundColor: '#697CE3', // bg-[#697CE3]
+    },
+    approveButtonText: {
+        fontSize: 12, // text-xs
+        color: 'white', // text-white
+        // fontFamily: 'semibold-poppins',
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(52, 52, 52, 0.8)',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    modalContent: {
+        alignItems: 'center',
+        backgroundColor: 'white',
+        marginVertical: 60,
+        borderWidth: 1,
+        borderColor: '#fff',
+        borderRadius: 7,
+        width: '90%',
+        elevation: 10,
+        paddingHorizontal: 20, // paddingX: 20
+        paddingTop: 20,
+        paddingBottom: 10,
+    },
+    modalTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    modalMessage: {
+        marginTop: 10,
+        fontSize: 16,
+    },
+    modalTextInputContainer: {
+        paddingHorizontal: 8, // pl-2 pr-2
+        width: '100%',
+    },
+    modalTextInput: {
+        height: 50,
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 5,
+        marginTop: 10,
+        paddingHorizontal: 10,
+        width: '100%',
+    },
+    errorMessageText: {
+        color: 'red',
+        marginTop: 5,
+        paddingLeft: 2,
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        marginTop: 20,
+        justifyContent: 'flex-end',
+        width: '100%',
+        gap: 20,
+        padding: 9,
+    },
+    modalButton: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 80, // w-20
+        height: 40, // h-10
+        padding: 8, // p-2
+        borderRadius: 8, // rounded-lg
+    },
+    modalCancelButtonBorder: {
+        borderWidth: 1,
+        borderColor: '#697CE3', // border-[#697CE3]
+    },
+    modalCancelButtonText: {
+        fontSize: 12, // text-xs
+        color: '#697CE3', // text-[#697CE3]
+        // fontFamily: 'semibold-poppins',
+    },
+    modalApproveButtonBackground: {
+        backgroundColor: '#697CE3', // bg-[#697CE3]
+    },
+    modalRejectButtonBackground: {
+        backgroundColor: '#cf3636', // bg-[#cf3636]
+    },
 });
