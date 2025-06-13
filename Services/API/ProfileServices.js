@@ -1,5 +1,7 @@
 import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
+
+import * as Sharing from 'expo-sharing';
 import { Platform } from 'react-native';
 import useSWR from 'swr';
 import APIService, { getUrlForHeaders } from '../APIService';
@@ -199,7 +201,7 @@ const ProfileServices = {
   //     //   (error, data) => {
   //     //     
   //     //     if (error) {
-  //     //       
+  //     //       console.error('Error downloading payslip:', error);
   //     //       reject(error);
   //     //       return;
   //     //     }
@@ -253,87 +255,67 @@ const ProfileServices = {
   //         success: true,
   //       });
   //     } catch (error) {
-  //       
+  //       console.error('Error downloading payslip:', error.message);
   //       reject(error);
   //     }
   //   });
   // },
   
- downloadPaySlip(pay_run_id, employee_id) {
-    
 
-    return new Promise((resolve, reject) => {
-      let sessionToken = '';
-      let token = '';
-      let domainName = '';
-      let downloadUri = '';
 
-      AuthService.getSessionToken()
-        .then((session) => {
-          sessionToken = session;
-          return AuthService.getToken();
-        })
-        .then((tok) => {
-          token = tok;
-          return getUrlForHeaders();
-        })
-        .then((domain) => {
-          domainName = domain;
-          const pdfUrl = `${API_URL}/file/get_all_payslips/?pay_run_id=${pay_run_id}&employee_id=${employee_id}`;
-          
+downloadPaySlip(pay_run_id, employee_id) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const sessionToken = await AuthService.getSessionToken();
+      const token = await AuthService.getToken();
+      const domainName = await getUrlForHeaders();
 
-          downloadUri = `${FileSystem.documentDirectory}payslip_${pay_run_id}_${employee_id}.pdf`;
+      const pdfUrl = `${API_URL}/file/get_all_payslips/?pay_run_id=${pay_run_id}&employee_id=${employee_id}`;
+      const downloadUri = `${FileSystem.documentDirectory}payslip_${pay_run_id}_${employee_id}.pdf`;
 
-          const downloadResumable = FileSystem.createDownloadResumable(
-            pdfUrl,
-            downloadUri,
-            {
-              headers: {
-                sessionToken: sessionToken,
-                Authorization: `Bearer ${token}`,
-                hostName: domainName,
-              },
-            }
-          );
+      const downloadResumable = FileSystem.createDownloadResumable(
+        pdfUrl,
+        downloadUri,
+        {
+          headers: {
+            sessionToken,
+            Authorization: `Bearer ${token}`,
+            hostName: domainName,
+          },
+        }
+      );
 
-          return downloadResumable.downloadAsync();
-        })
-        .then(({ uri }) => {
-          
+      const { uri } = await downloadResumable.downloadAsync();
+      const fileInfo = await FileSystem.getInfoAsync(uri);
 
-          if (Platform.OS === 'android') {
-            return MediaLibrary.requestPermissionsAsync().then((permission) => {
-              if (permission.granted) {
-                return MediaLibrary.createAssetAsync(uri).then((asset) => {
-                  return MediaLibrary.getAlbumAsync('Download').then((album) => {
-                    if (album == null) {
-                      return MediaLibrary.createAlbumAsync('Download', asset, false);
-                    } else {
-                      return MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
-                    }
-                  });
-                });
-              } else {
-                
-                return Promise.resolve(); // Continue without saving
-              }
-            });
-          }
+      if (!fileInfo.exists || fileInfo.size === 0) {
+        throw new Error('Downloaded file is missing or empty');
+      }
 
-          return Promise.resolve();
-        })
-        .then(() => {
-          resolve({
-            path: downloadUri,
-            success: true,
-          });
-        })
-        .catch((error) => {
-          
-          reject(error);
+      if (Platform.OS === 'android') {
+        const { granted } = await MediaLibrary.requestPermissionsAsync();
+        if (!granted) throw new Error('Permission denied');
+
+        const canShare = await Sharing.isAvailableAsync();
+        if (canShare) {
+          await Sharing.shareAsync(uri);
+        }
+
+        return resolve({
+          path: uri,
+          success: true,
         });
-    });
-  },
+      }
+
+      // iOS: Just return the file path
+      resolve({ path: uri, success: true });
+    } catch (error) {
+      console.error('Error in downloadPaySlip:', error);
+      reject(error);
+    }
+  });
+}
+,
   updateClockStatus(options) {
     
     return new Promise((resolve, reject) => {

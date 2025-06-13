@@ -1,5 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
 import { get } from 'lodash';
+import * as FileSystem from 'expo-file-system';
+import * as MediaLibrary from 'expo-media-library';
+import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import React from 'react';
 import {
     ScrollView,
@@ -10,7 +13,6 @@ import {
 } from 'react-native';
 import { G, Rect, Text as SvgText } from 'react-native-svg';
 import { PieChart } from 'react-native-svg-charts';
-import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ProfileServices from '../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../utils/error-format';
@@ -27,7 +29,10 @@ export default function PayslipPreview({
   const handleBack = () => {
     navigation.navigate("PaySlipComponent");
   };
-
+const getMediaPermission = async () => {
+  const { status } = await MediaLibrary.requestPermissionsAsync();
+  return status === 'granted';
+};
   const earnings = get(newItem, 'earnings');
   const deductions = get(newItem, 'deductions');
 
@@ -39,26 +44,33 @@ export default function PayslipPreview({
     }).format(date);
   }
 
-  const downloadPDF = async () => {
-    try {
-      const response = await ProfileServices.downloadPaySlip(
-        newItem?.payrun_id,
-        employeeFullDetails?.id
-      );
-      console.log("ressssssssssssssssssssssssssssssssssss",response);
-      
-      if (response?.success) {
-        Toast.show({
-          type: 'success',
-          text1: `Successfully downloaded to ${response.path}`,
-          position: 'bottom',
-        });
-      }
-    } catch (error) {
-      console.error('Error downloading PDF: ', error.message);
-      formatErrorsToToastMessages(error);
+ const downloadPDF = async () => {
+  try {
+    const response = await ProfileServices.downloadPaySlip(
+      newItem?.payrun_id,
+      employeeFullDetails?.id
+    );
+
+    console.log("Download response:", response);
+
+    if (response?.success) {
+      Toast.show({
+        type: 'success',
+        text1: `Payslip downloaded to ${response.path}`,
+        position: 'bottom',
+      });
     }
-  };
+  } catch (error) {
+    console.error('Error downloading PDF: ', error.message);
+    Toast.show({
+      type: 'error',
+      text1: 'Failed to download payslip',
+      text2: error.message,
+      position: 'bottom',
+    });
+  }
+};
+
 
   const data = [
     {
