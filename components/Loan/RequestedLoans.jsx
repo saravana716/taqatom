@@ -33,7 +33,7 @@ export default function RequestedLoans({ navigation }) {
       }
     } catch (err) {
       
-      console.warn(err);
+      
     }
   };
 

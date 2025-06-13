@@ -3,24 +3,24 @@ import isEmpty from 'lodash/isEmpty';
 import moment from 'moment';
 import { useCallback, useEffect, useState } from 'react';
 import {
-  ActivityIndicator,
-  Modal,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Modal,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useSelector } from 'react-redux';
 import ManualLogCard from '../../components/ManualLogCard';
 import { PUNCH_STATE_OPTIONS } from '../../components/PunchStateOption';
 import ProfileServices from '../../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../../utils/error-format';
 import { dateTimeToShow, formatDateTime } from '../../utils/formatDateTime';
-import { useSelector } from 'react-redux';
 
 export default function ManualLogScreen({navigation}) {
   const selectorid=useSelector(function (data) {
@@ -32,9 +32,9 @@ export default function ManualLogScreen({navigation}) {
    const selectorempdetails=useSelector(function (data) {
     return data.employeeFullDetails
   })
-  console.log("emopid",selectorid);
-  console.log("emopidedails",selectorempdetails);
-  console.log("emouserDetails",selectordetils);
+  
+  
+  
   
   const [modalVisible, setModalVisible] = useState(false);
   const [formatExpectDate, setFormatExpectDate] = useState(null);

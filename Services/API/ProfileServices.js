@@ -199,7 +199,7 @@ const ProfileServices = {
   //     //   (error, data) => {
   //     //     
   //     //     if (error) {
-  //     //       console.error('Error downloading payslip:', error);
+  //     //       
   //     //       reject(error);
   //     //       return;
   //     //     }
@@ -253,7 +253,7 @@ const ProfileServices = {
   //         success: true,
   //       });
   //     } catch (error) {
-  //       console.error('Error downloading payslip:', error.message);
+  //       
   //       reject(error);
   //     }
   //   });
@@ -314,7 +314,7 @@ const ProfileServices = {
                   });
                 });
               } else {
-                console.warn('Permission denied for media library.');
+                
                 return Promise.resolve(); // Continue without saving
               }
             });
@@ -329,7 +329,7 @@ const ProfileServices = {
           });
         })
         .catch((error) => {
-          console.error('Error downloading payslip:', error.message);
+          
           reject(error);
         });
     });

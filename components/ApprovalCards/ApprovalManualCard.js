@@ -1,23 +1,14 @@
-import moment from 'moment';
-import React, {useState} from 'react';
-import {ActivityIndicator, Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import {dateTimeToShow} from '../../utils/formatDateTime';
-import {getPunchStateLabel} from '../../utils/getPunchStateLabel';
-import {
-  Menu,
-  MenuOptions,
-  MenuOption,
-  MenuTrigger,
-  MenuProvider,
-} from 'react-native-popup-menu';
-import {Iconify} from 'react-native-iconify';
-import ProfileServices from '../../Services/API/ProfileServices';
-import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import { useTranslation } from 'react-i18next';
+import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import tokens from '../../locales/tokens';
+import ProfileServices from '../../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../../utils/error-format';
+import { dateTimeToShow } from '../../utils/formatDateTime';
+import { getPunchStateLabel } from '../../utils/getPunchStateLabel';
 
 export default function ApprovalManualCard({newItem, employeeId, componentId, getManualLogList}) {
   const navigation=useNavigation()
@@ -64,11 +55,11 @@ const {t}=useTranslation()
         text1: 'Approve Success',
         position: 'bottom',
       });
-      console.log('responseee', response);
+      
       getManualLogList();
       setApproveConfirmVisible(false);
     } catch (error) {
-      console.log(error?.errorResponse, 'err');
+      
     formatErrorsToToastMessages(error)
       setApproveConfirmVisible(false);
     }
@@ -82,11 +73,11 @@ const {t}=useTranslation()
         text1: 'Reject Success',
         position: 'bottom',
       });
-      console.log('responseee', response);
+      
       getManualLogList();
       setRejectedConfirmVisible(false);
     } catch (error) {
-      console.log(error?.errorResponse, 'err');
+      
      formatErrorsToToastMessages(error)
       setRejectedConfirmVisible(false);
     }

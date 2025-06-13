@@ -28,7 +28,7 @@ export default function AllLoansDetails({ navigation }) {
       setLoanDetails(allLoansList);
     } catch (err) {
       
-      console.warn(err);
+      
     }
   };
 

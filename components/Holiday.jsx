@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import {
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 import get from "lodash/get";
@@ -27,7 +27,7 @@ const Holiday = ({ navigation }) => {
       const RecentActivities = await ProfileServices.getHolidayDetails(selector, selectedYear);
       setHolidayDetails(RecentActivities);
     } catch (err) {
-      console.warn("Request failed:", err);
+      
     }
   };
 

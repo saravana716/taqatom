@@ -1,24 +1,23 @@
+import isEmpty from 'lodash/isEmpty';
 import { useEffect, useState } from 'react';
 import {
-  ActivityIndicator,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import moment from 'moment';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
-import isEmpty from 'lodash/isEmpty';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { useSelector } from 'react-redux';
 import ProfileServices from '../../Services/API/ProfileServices';
 import ApprovalManualCard from '../../components/ApprovalCards/ApprovalManualCard';
-import { useSelector } from 'react-redux';
 import { formatErrorsToToastMessages } from '../../utils/error-format';
 
 export default function ApprovalManualLogScreen({ navigation }) {
   const selectorid = useSelector((data) => data.empid);
-  console.log("sele",selectorid);
+  
   
   const [workCode, setWorkCode] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -34,7 +33,7 @@ export default function ApprovalManualLogScreen({ navigation }) {
       const RecentActivities = await ProfileServices.getApprovalManualLogData(
         selectorid
       );
-      console.log("recentActivites",RecentActivities);
+      
       
       setManualLogData(RecentActivities?.results);
     } catch (error) {

@@ -1,22 +1,12 @@
-import moment from 'moment';
-import React, { useState } from 'react';
-import {Text, TouchableOpacity, View, ActivityIndicator, Modal, StyleSheet} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import {dateTimeToShow} from '../../utils/formatDateTime';
-import {getPunchStateLabel} from '../../utils/getPunchStateLabel';
+import React, { useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { dateTimeToShow } from '../../utils/formatDateTime';
 
-import {
-  Menu,
-  MenuOptions,
-  MenuOption,
-  MenuTrigger,
-  MenuProvider,
-} from 'react-native-popup-menu';
-import {Iconify} from 'react-native-iconify';
-import ProfileServices from '../../Services/API/ProfileServices';
-import {Toast} from 'react-native-toast-message/lib/src/Toast';
 import { useTranslation } from 'react-i18next';
+import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import tokens from '../../locales/tokens';
+import ProfileServices from '../../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../../utils/error-format';
 
 export default function ApprovalLeaveCard({
@@ -80,7 +70,7 @@ const {t}=useTranslation()
       setApproveConfirmVisible(false);
     } catch (error) {
     formatErrorsToToastMessages(error)
-      console.log(error?.errorResponse?.errors[0]?.message,'1122',error?.errorResponse, 'err');
+      
       setApproveConfirmVisible(false);
     }
   };
@@ -97,7 +87,7 @@ const {t}=useTranslation()
       setRejectedConfirmVisible(false);
     } catch (error) {
       formatErrorsToToastMessages(error)
-      console.log(error?.errorResponse?.errors[0]?.message, 'err');
+      
       setRejectedConfirmVisible(false);
     }
   };

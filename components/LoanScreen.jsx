@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from 'react-native';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -35,7 +35,7 @@ const selectorid=useSelector(function (data) {
       const totalOutstanding = await LoanServices.getOutstandinBalance(selectorid);
       setOutstandinBalance(totalOutstanding);
     } catch (err) {
-      console.warn(err);
+      
     }
   };
   const getTotalEmiBalance = async () => {
@@ -43,7 +43,7 @@ const selectorid=useSelector(function (data) {
       const totalEMI = await LoanServices.getTotalEmiBalance(selectorid);
       setEmiBalance(totalEMI);
     } catch (err) {
-      console.warn(err);
+      
     }
   };
   const getTotalEmiPaid = async () => {
@@ -51,7 +51,7 @@ const selectorid=useSelector(function (data) {
       const totalEmiPaid = await LoanServices.getTotalEmiPaid(selectorid);
       setEmiPaid(totalEmiPaid);
     } catch (err) {
-      console.warn(err);
+      
     }
   };
   const getTotalLoanAmount = async () => {
@@ -59,7 +59,7 @@ const selectorid=useSelector(function (data) {
       const totalLoanAmount = await LoanServices.getTotalLoanAmount(selectorid);
       setLoanAmount(totalLoanAmount);
     } catch (err) {
-      console.warn(err);
+      
     }
   };
 

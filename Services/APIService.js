@@ -5,8 +5,8 @@ import isString from 'lodash/isString';
 import noop from 'lodash/noop';
 import { Platform } from 'react-native';
 import packageJSON from '../package.json';
+import { triggerGlobalLogout } from '../utils/globalLogoutHandler';
 import AuthService from './AuthService';
-
 const DEFAULT_TIMEOUT = 40000;
 const TYPE_JSON = 'application/json';
 const API_URL="https://api.hr-ms.com"
@@ -18,7 +18,7 @@ export const getUrlForHeaders=async()=>{
   return `${domain}.${get(urlArray,'1','')}`
   }
   catch(err){
-    console.error(err)
+    
   }
 }
 
@@ -265,7 +265,7 @@ export default {
             response.status,
           )
         ) {
-          console.error(parsedResponse.message);
+          
         }
         if (status === 403) {
         }
@@ -276,16 +276,11 @@ export default {
         //   return;
         // }
 
-        if (status === 401) {
-          console.error('Unauthorized access, logging out...');
-          AuthService.logout()
-            .then(() => {
-          Navigation.navigate("Login")
-            })
-            .catch(error => console.error('Logout error:', error));
-
-          return cb({detail: 'Please login to continue'});
-        }
+if (status === 401) {
+  
+  triggerGlobalLogout(); // This will call AuthContext's logout
+  return cb({ detail: 'Session expired. Please log in again.' });
+}
 
         return cb(
           {
@@ -396,7 +391,7 @@ export default {
           resolve(blob); // Resolve the promise with the blob
         })
         .catch(error => {
-          console.error('Error downloading payslip:', error.message);
+          
           reject(error); // Reject the promise with the error
         });
     });

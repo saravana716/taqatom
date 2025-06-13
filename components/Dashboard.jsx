@@ -3,10 +3,12 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { decode as atob } from "base-64";
 import * as Location from "expo-location";
+
 import moment from "moment";
 // import { LANG_CODES } from '../locales/translations/languages';
 import { myreducers } from "@/Store/Store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 import { useContext, useEffect, useState } from "react";
 import {
   Image,
@@ -23,9 +25,22 @@ import MapView, { Marker } from "react-native-maps";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AuthContext } from "./AuthContext";
-const Dashboard = ({navigation}) => {
+const Dashboard = () => {
+  const navigation=useNavigation()
+  const selectorid=useSelector(function (data) {
+    return data.empid
+  })
+  
+  const employeeFullDetails=useSelector(function (data) {
+    return data.employeeFullDetails
+  })
+  
+    const userDetails=useSelector(function (data) {
+    return data.userDetails
+  })
+  
   
   const dispatch = useDispatch();
   const [workCode, setWorkCode] = useState();
@@ -36,10 +51,12 @@ const Dashboard = ({navigation}) => {
   const [recent, setrecent] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible1, setModalVisible1] = useState(false);
-  const [Gender, setGender] = useState("");
+  const [gender, setGender] = useState("");
   const [showPicker, setShowPicker] = useState(false);
   const [formatdate, setformatdate] = useState("");
   const [formattime, setformattime] = useState("");
+  const [subordinateName, setSubordinateName] = useState();
+
   const [getalldata, setgetalldata] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -52,6 +69,8 @@ const Dashboard = ({navigation}) => {
   const [currentField, setCurrentField] = useState(null); // "start" or "end"
   const [empid, setempid] = useState("");
   const [recentactivity, setrecentactivity] = useState([]);
+  const [updateKey, setUpdateKey] = useState(0);
+
   const options = [
     {
       id: 0,
@@ -159,7 +178,7 @@ const Dashboard = ({navigation}) => {
 
       return decodedPayload;
     } catch (error) {
-      // console.error("Token parsing failed:", error);
+      // 
       throw error;
     }
   };
@@ -195,7 +214,7 @@ const Dashboard = ({navigation}) => {
         dispatch(myreducers.sendempDetails(fullDetails));
       }
     } catch (err) {
-      // console.error("User detail fetch failed", err);
+      // 
     }
   };
 
@@ -215,17 +234,6 @@ const Dashboard = ({navigation}) => {
       getLocation();
     }
   }, [modalVisible1]);
-  // useEffect(() => {
-  // async function chekc(params) {
-  //   try{
-  //     await logout()
-  //   }
-  //   catch(err){
-
-  //   }
-  // }
-  // chekc()
-  // }, [])
 
   const getRecentActivity = async (id) => {
     try {
@@ -240,7 +248,7 @@ const Dashboard = ({navigation}) => {
       // 
       // 
     } catch (err) {
-      console.error("Fetching recent activity failed", err);
+      
     }
   };
 
@@ -268,7 +276,7 @@ const Dashboard = ({navigation}) => {
 
       updateStatus(latitude, longitude); // ✅ Now it's correct
     } catch (error) {
-      // console.error("Error fetching location:", error);
+      // 
     }
   };
   function toFixedIfNecessary(value, dp) {
@@ -297,7 +305,7 @@ const Dashboard = ({navigation}) => {
       // 
 
       // if (!data.employee_id || !data.clock_type || !data.work_code) {
-      //   console.warn("❌ Missing fields in punch data", data);
+      //   
       //   return;
       // }
 
@@ -318,7 +326,8 @@ const Dashboard = ({navigation}) => {
       setValue(null);
       return data;
     } catch (err) {
-      console.error("Error in updateStatus", err);
+      console.log(err);
+      
       setIsLoading(false);
     }
   };
@@ -362,7 +371,7 @@ const Dashboard = ({navigation}) => {
       setCurrenLatLocation(location.coords.latitude);
       setCurrenLongLocation(location.coords.longitude);
     } catch (error) {
-      console.error("Failed to refresh location:", error);
+      
     } finally {
       setIsRefreshing(false);
     }
@@ -475,12 +484,31 @@ const Dashboard = ({navigation}) => {
 
       setgetalldata(result);
     } catch (err) {
-      console.error("getdata error", err);
+      
     }
   }
   useEffect(() => {
     getdata();
   }, [empid, startDate, endDate]);
+    const getSubordinateName = async id => {
+      
+      
+    try {
+      const employeeName = await ProfileServices.getEmployeeNameDetails();
+      
+      console.log(
+        "gnfdngjkngjknjkdfngjkdsngjkndjkgnjkdgjkdgjksdbgjksdbgjkb"
+      );
+      
+      setSubordinateName(employeeName);
+    } catch (err) {
+      
+    }
+  };
+
+useEffect(() => {
+ getSubordinateName()
+}, [])
 
   const today = moment().format("YYYY-MM-DD");
   // useEffect(() => {
@@ -513,6 +541,34 @@ const Dashboard = ({navigation}) => {
   //     await i18n.changeLanguage(language);
   //     setCurrentLang(language); // Trigger re-render
   //   }, []);
+  const dataToSend = {
+  selectorid,
+  setProfilePicUrl: val => setProfilePicUrl(val),
+  employeeFullDetails,
+  userDetails,
+  ProfilePicUrl,
+  setUpdateKey,
+  updateKey,
+  setGender: val => setGender(val),
+  gender,
+  subordinateName,
+  setSubordinateName,
+  token: tokenDetail,
+};
+
+
+async function handleNotificationScreen() {
+  try {
+    
+
+    navigation.navigate("NotificationScreen", dataToSend)
+    
+    
+  } catch (err) {
+    
+  }
+}
+
 
   return (
     <>
@@ -776,7 +832,7 @@ const Dashboard = ({navigation}) => {
               <TouchableOpacity>
                 <Icon name="language" size={22} color="white" />
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity  onPress={handleNotificationScreen}>
                 <Icon name="bell" size={22} color="white" />
               </TouchableOpacity>
             </View>
@@ -880,6 +936,18 @@ const Dashboard = ({navigation}) => {
             </TouchableOpacity>
             <Text style={styles.holiday}>Approvals</Text>
           </View>
+            
+        </View>
+         <View style={styles.dash121}>
+            <View style={styles.hol}>
+            <TouchableOpacity style={styles.dash1} onPress={()=>movepage("ReportScreen")}>
+              <Image
+                source={require("../assets/images/Assets/reports.png")}
+                style={styles.images}
+              />
+            </TouchableOpacity>
+            <Text style={styles.holiday}>Reports</Text>
+          </View>
         </View>
         <View style={styles.activity}>
           <View style={styles.activitytop}>
@@ -954,7 +1022,7 @@ const styles = StyleSheet.create({
   },
     images12: {
     width: "100%",
-    height: "65%",
+    height: "60%",
     objectFit: "cover",
     borderBottomRightRadius: 30,
     borderBottomLeftRadius: 30,
@@ -1007,7 +1075,7 @@ const styles = StyleSheet.create({
     height: 160,
     backgroundColor: "white",
     position: "absolute",
-    bottom:0,
+    bottom:30,
     padding: 15,
     borderRadius: 20,
     zIndex: 1,
@@ -1049,24 +1117,35 @@ const styles = StyleSheet.create({
   },
   dash: {
     width: "100%",
-    padding: 20,
+    paddingHorizontal: 20,
     display: "flex",
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between",
     flexWrap: "wrap",
-    paddingTop: 20,
+    paddingBottom:20,
     gap: 40,
   },
   dash12: {
     width: "100%",
-    padding: 20,
+    paddingHorizontal:20,
     display: "flex",
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between",
     flexWrap: "wrap",
     gap: 40,
+  },
+    dash121: {
+    width: "100%",
+    paddingHorizontal:20,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    flexWrap: "wrap",
+    gap: 40,
+    marginVertical:20
   },
   hol: {
     display: "flex",
@@ -1093,7 +1172,7 @@ const styles = StyleSheet.create({
   },
   activity: {
     width: "90%",
-    height: "35%",
+    height: "40%",
     backgroundColor: "white",
     borderTopRightRadius: 25,
     borderTopLeftRadius: 25,

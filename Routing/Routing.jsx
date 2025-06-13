@@ -41,6 +41,7 @@ import LeaveScreen from "../components/Request/LeaveScreen";
 import LeaveRequestDetails from "../components/Request/LeaveRequestDetails";
 import Shift from "../components/Shift";
 import ApprovalScreen from "../components/ApprovalScreen";
+import ReportScreen from "../components/ReportScreen";
 import ApprovalManualLogScreen from "../components/Approval/ApprovalManualLogScreen";
 import ApprovalLeaveScreen from "../components/Approval/ApprovalLeaveScreen";
 import ApprovalOvertimeScreen from "../components/Approval/ApprovalOvertimeScreen";
@@ -49,6 +50,8 @@ import ApprovalManualCard from "../components/ApprovalCards/ApprovalManualCard";
 import ApprovalOvertimeCard from "../components/ApprovalCards/ApprovalOvertimeCard";
 import ApprovalTrainingCard from "../components/ApprovalCards/ApprovalTrainingCard";
 import SwitchOrganization from "../components/SwitchOrganization";
+import NotificationScreen from "../components/NotificationScreen";
+import NotificationComponent from "../components/NotificationComponent";
 const Stack = createNativeStackNavigator();
 
 const Routing = () => {
@@ -104,6 +107,9 @@ const Routing = () => {
           <Stack.Screen name="ApprovalTrainingScreen" component={ApprovalTrainingScreen} />
           <Stack.Screen name="ApprovalOvertimeCard" component={ApprovalOvertimeCard} />
           <Stack.Screen name="ApprovalTrainingCard" component={ApprovalTrainingCard} />
+          <Stack.Screen name="ReportScreen" component={ReportScreen} />
+          <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
+          <Stack.Screen name="NotificationComponent" component={NotificationComponent} />
           
         </>
       ) : (

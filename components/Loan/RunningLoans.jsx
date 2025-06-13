@@ -1,18 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  StyleSheet,
-} from 'react-native';
 import isEmpty from 'lodash/isEmpty';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+} from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { useSelector } from 'react-redux';
 import LoanCard from '../../components/LoanCart';
 import LoanServices from '../../Services/API/LoanServices';
-import { useTranslation } from 'react-i18next';
-import tokens from '../../locales/tokens';
-import { useSelector } from 'react-redux';
 
 export default function RunningLoans({ navigation }) {
   const selectid = useSelector(data => data.empid);
@@ -28,7 +27,7 @@ export default function RunningLoans({ navigation }) {
       const allLoansList = await LoanServices.getRunningLoan(selectid);
       setLoanDetails(allLoansList);
     } catch (err) {
-      console.warn(err);
+      
     }
   };
 

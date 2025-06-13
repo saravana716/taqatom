@@ -3,14 +3,14 @@ import moment from 'moment';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  ActivityIndicator,
-  Modal,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Modal,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import { PieChart } from 'react-native-gifted-charts';
@@ -167,7 +167,7 @@ export default function LeaveScreen({navigation}) {
       });
     } catch (error) {
       setIsLoading(false);
-      console.log(error,'EEEOOROROOR')
+      
       formatErrorsToToastMessages(error)
     }
   };

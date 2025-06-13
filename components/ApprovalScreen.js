@@ -1,17 +1,17 @@
 import React from 'react';
 import {
+  StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  StyleSheet,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { useSelector } from 'react-redux';
 
 export default function ApprovalScreen({ navigation, employeeId }) {
   const selectorid = useSelector(data => data.empid);
-  console.log('selectorid', selectorid);
+  
 
   const handleBack = () => {
     navigation.navigate('Dashboard');
@@ -89,15 +89,17 @@ const styles = StyleSheet.create({
   },
   contentOuter: {
     padding: 8,
-    height: '80%',
+    height: '100%',
+    display:"flex",
+    flexDirection:"column",
   },
   cardContainer: {
     backgroundColor: 'white',
     padding: 12,
-    height: '90%',
-    paddingBottom: 96,
     borderRadius: 24,
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
+    gap:10
+
   },
   card: {
     height: 80,

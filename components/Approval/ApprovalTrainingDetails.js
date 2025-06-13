@@ -1,24 +1,24 @@
-import {useEffect, useState} from 'react';
-import {
-  ActivityIndicator,
-  Modal,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import {Iconify} from 'react-native-iconify';
-import {Navigation} from 'react-native-navigation';
-import ProfileServices from '../../../Services/API/ProfileServices';
-import {Toast} from 'react-native-toast-message/lib/src/Toast';
-import {dateTimeToShow} from '../../../utils/formatDateTime';
-import get from 'lodash/get';
 import find from 'lodash/find';
-import {useTranslation} from 'react-i18next';
+import get from 'lodash/get';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+    ActivityIndicator,
+    Modal,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from 'react-native';
+import { Iconify } from 'react-native-iconify';
+import { Navigation } from 'react-native-navigation';
+import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import tokens from '../../../locales/tokens';
+import ProfileServices from '../../../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../../../utils/error-format';
+import { dateTimeToShow } from '../../../utils/formatDateTime';
 export default function ApprovalTrainingDetails({
   newItem,
   employeeId,
@@ -69,7 +69,7 @@ export default function ApprovalTrainingDetails({
       getTrainingList();
       setApproveReason('');
     } catch (error) {
-      console.log(error?.errorResponse, 'err');
+      
       setApproveConfirmVisible(false);
      formatErrorsToToastMessages(error)
     }

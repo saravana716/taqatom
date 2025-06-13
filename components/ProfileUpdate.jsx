@@ -39,7 +39,7 @@ const ProfileUpdate = () => {
 
       return true;
     } catch (err) {
-      console.error('S3 Upload Error:', err);
+      
       throw err;
     }
   };
@@ -112,7 +112,7 @@ const handleFilePick = useCallback(async () => {
       // setIsLoading(false);
     }
   } catch (error) {
-    console.error('Upload error', error);
+    
     // setIsLoading(false);
     Toast.show({
       type: 'error',

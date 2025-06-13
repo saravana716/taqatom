@@ -2,12 +2,12 @@ import AuthServices from "@/Services/API/AuthServices";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import Toast from "react-native-toast-message";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -26,7 +26,7 @@ const OtpVerification = ({ navigation }) => {
         const email = await AsyncStorage.getItem("email");
         if (email) setGetmail(email);
       } catch (err) {
-        console.error('Failed to fetch email', err);
+        
       }
     };
     getEmail();
@@ -91,7 +91,7 @@ const OtpVerification = ({ navigation }) => {
         navigation.navigate('Login');
       }, 1500);
     } catch (error) {
-      console.error('OTP Error:', error);
+      
       Toast.show({
         type: 'error',
         text1: 'Invalid OTP or Network Error',
@@ -119,7 +119,7 @@ const OtpVerification = ({ navigation }) => {
         position: 'bottom',
       });
     } catch (error) {
-      console.error('Resend OTP Error:', error);
+      
       Toast.show({
         type: 'error',
         text1: 'Failed to resend OTP',

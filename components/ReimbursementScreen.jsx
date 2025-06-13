@@ -68,7 +68,7 @@ const dispatch=useDispatch()
       const totalRejectedExpense = await ProfileServices.getTotalRejectedExpense(selectorid);
       setTotalRejectedDetails(totalRejectedExpense);
     } catch (err) {
-      console.warn(err);
+      
     }
   };
 

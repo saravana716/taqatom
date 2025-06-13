@@ -2,13 +2,13 @@ import AuthServices from '@/Services/API/AuthServices';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState } from 'react';
 import {
-  ActivityIndicator,
-  Image,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Image,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 
@@ -69,7 +69,7 @@ AsyncStorage.setItem("email",forgot)
         });
       }
     } catch (err) {
-      console.error('OTP sending error:', err);
+      
       Toast.show({
         type: 'error',
         text1: 'Error',

@@ -31,7 +31,7 @@ const Login = ({ navigation }) => {
         const domainName1 = await AuthService.getDomainName();
         setDomainName(domainName1);
       } catch (err) {
-        console.error("Failed to fetch domain name", err);
+        
       }
     }
 
@@ -100,7 +100,7 @@ const Login = ({ navigation }) => {
       }, 2000);
 
     } catch (err) {
-      console.error(err);
+      
       Toast.show({
         type: 'error',
         text1: 'Login failed',

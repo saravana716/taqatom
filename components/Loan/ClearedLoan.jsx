@@ -1,11 +1,11 @@
 import isEmpty from 'lodash/isEmpty';
 import React, { useEffect, useState } from 'react';
 import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -32,7 +32,7 @@ export default function ClearedLoan({ navigation }) {
       setLoanDetails(allLoansList);
     } catch (err) {
       
-      console.warn(err);
+      
     }
   };
 

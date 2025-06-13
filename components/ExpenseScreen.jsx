@@ -72,7 +72,7 @@ const handleFilePick = async () => {
       
     }
   } catch (error) {
-    console.error('Document pick error:', error);
+    
   }
 };
 
