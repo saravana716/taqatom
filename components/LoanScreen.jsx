@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
     ScrollView,
     StyleSheet,
@@ -12,9 +11,11 @@ import Icon from "react-native-vector-icons/FontAwesome";
 // import {Iconify} from 'react-native-iconify';
 import { useSelector } from 'react-redux';
 import LoanServices from '../Services/API/LoanServices';
-
+import { useTranslation } from 'react-i18next';
+import tokens from '@/locales/tokens';
 export default function LoanScreen({navigation}) {
-  const { t } = useTranslation();
+  const {t,i18n} = useTranslation();
+  const isRTL = i18n.language === 'ar';
   const [outstandinBalance, setOutstandinBalance] = useState('');
   const [emiBalance, setEmiBalance] = useState('');
   const [emiPaid, setEmiPaid] = useState('');
@@ -91,7 +92,7 @@ const selectorid=useSelector(function (data) {
           <TouchableOpacity style={styles.backButton}>
             {/* <Iconify icon="mingcute:left-line" size={30} color="#000" /> */}
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Loan</Text>
+          <Text style={styles.headerTitle}>{t(tokens.nav.loan)}</Text>
         </View>
       </View>
 
@@ -100,8 +101,8 @@ const selectorid=useSelector(function (data) {
           <View style={styles.cardWrapper}>
             <View style={[styles.card, styles.shadow]}>
               <View style={[styles.cardBorder, { borderLeftColor: '#FF0000' }]}>
-                <Text style={styles.cardTitle}>
-                  Outstanding Principle Balance
+                <Text style={[styles.cardTitle, { textAlign: isRTL ? 'right' : 'left' }]}>
+                   {t(tokens.charts.outstandingPrincipleBalance)}
                 </Text>
                 <Text style={styles.cardValue}>
                   SAR 0
@@ -113,13 +114,13 @@ const selectorid=useSelector(function (data) {
           <View style={styles.cardWrapper}>
             <View style={[styles.card, styles.shadow]}>
               <View style={[styles.cardBorder, { borderLeftColor: '#FF00C7' }]}>
-                <Text style={styles.cardTitle}>Total EMI</Text>
+                <Text style={[styles.cardTitle, { textAlign: isRTL ? 'right' : 'left' }]}> {t(tokens.charts.totalEMI)}</Text>
                 <View style={styles.flexRowAlignEnd}>
                   <Text style={styles.cardValue}>
                     SAR 0
                   </Text>
                   <Text style={styles.cardSmallText}>
-                    / perMonth
+                    {t(tokens.messages.perMonth)}
                   </Text>
                 </View>
               </View>
@@ -129,7 +130,7 @@ const selectorid=useSelector(function (data) {
           <View style={styles.cardWrapper}>
             <View style={[styles.card, styles.shadow]}>
               <View style={[styles.cardBorder, { borderLeftColor: '#DD8C12' }]}>
-                <Text style={styles.cardTitle}>Total EMI Paid</Text>
+                <Text style={[styles.cardTitle, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.charts.totalEMIPaid)}</Text>
                 <Text style={styles.cardValue}>SAR 0</Text>
               </View>
             </View>
@@ -138,7 +139,7 @@ const selectorid=useSelector(function (data) {
           <View style={styles.cardWrapper}>
             <View style={[styles.card, styles.shadow]}>
               <View style={[styles.cardBorder, { borderLeftColor: '#DD8C12' }]}>
-                <Text style={styles.cardTitle}>Total Loan Amount</Text>
+                <Text style={[styles.cardTitle, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.charts.totalLoanAmount)}</Text>
                 <Text style={styles.cardValue}>SAR 0</Text>
               </View>
             </View>
@@ -156,7 +157,7 @@ const selectorid=useSelector(function (data) {
                 onPress={()=>handleApplyLoanScreen("ApplyLoanScreen")}
                 style={[styles.listItem, { backgroundColor: '#F7F2FE' }]}
               >
-                <Text style={styles.listItemText}>Apply Loan</Text>
+                <Text style={styles.listItemText}> {t(tokens.nav.applyLoan)}</Text>
                                     <Icon name="angle-right" size={30} color="black" />
 
                 {/* <Iconify icon="mingcute:right-fill" size={25} color="#000" /> */}
@@ -166,7 +167,7 @@ const selectorid=useSelector(function (data) {
                 onPress={()=>handleApplyLoanScreen("RunningLoans")}
                 style={[styles.listItem, { backgroundColor: '#EFF4FF' }]}
               >
-                <Text style={styles.listItemText}>Running Loans</Text>
+                <Text style={styles.listItemText}> {t(tokens.nav.runningLoans)}</Text>
                                     <Icon name="angle-right" size={30} color="black" />
 
                 {/* <Iconify icon="mingcute:right-fill" size={25} color="#000" /> */}
@@ -176,7 +177,7 @@ const selectorid=useSelector(function (data) {
                 onPress={()=>handleApplyLoanScreen("ClearedLoans")}
                 style={[styles.listItem, { backgroundColor: '#F0FAF9' }]}
               >
-                <Text style={styles.listItemText}>Cleared Loans</Text>
+                <Text style={styles.listItemText}>{t(tokens.nav.clearedLoans)}</Text>
                                     <Icon name="angle-right" size={30} color="black" />
 
                 {/* <Iconify icon="mingcute:right-fill" size={25} color="#000" /> */}
@@ -186,7 +187,7 @@ const selectorid=useSelector(function (data) {
                 onPress={()=>handleApplyLoanScreen("AllLoansDetails")}
                 style={[styles.listItem, { backgroundColor: '#64A5F10D' }]}
               >
-                <Text style={styles.listItemText}>All Loan Details</Text>
+                <Text style={styles.listItemText}>{t(tokens.nav.allLoanDetails)}</Text>
                                     <Icon name="angle-right" size={30} color="black" />
 
                 {/* <Iconify icon="mingcute:right-fill" size={25} color="#000" /> */}
@@ -196,7 +197,7 @@ const selectorid=useSelector(function (data) {
                 onPress={()=>handleApplyLoanScreen("RequestedLoans")}
                 style={[styles.listItem, { backgroundColor: '#FFFAEB' }]}
               >
-                <Text style={styles.listItemText}>Requested Loans</Text>
+                <Text style={styles.listItemText}>{t(tokens.nav.requestedLoans)}</Text>
                                     <Icon name="angle-right" size={30} color="black" />
                 
                 {/* <Iconify icon="mingcute:right-fill" size={25} color="#000" /> */}

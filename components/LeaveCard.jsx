@@ -24,7 +24,8 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import ProfileServices from '../Services/API/ProfileServices';
 import {Toast} from 'react-native-toast-message/lib/src/Toast';
 import {formatErrorsToToastMessages} from '../utils/error-format';
-
+import { useTranslation } from 'react-i18next';
+import tokens from '../locales/tokens';
 export default function LeaveCard({
   newItem,
   componentId,
@@ -32,6 +33,10 @@ export default function LeaveCard({
   leaveList,
   leavePayCodes,
 }) {
+    const {t,i18n}=useTranslation()
+  const isRTL = i18n.language === 'ar';
+  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+  
     const navigation=useNavigation()
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
   const [revokeConfirmVisible, setRevokeConfirmVisible] = useState(false);
@@ -189,30 +194,51 @@ export default function LeaveCard({
           <View style={styles.topRow}>
             <View>
               {newItem?.approval_status === 3 && (
-                <Text style={[styles.statusText, styles.rejectStatus]}>Rejected</Text>
+                <Text style={[styles.statusText, styles.rejectStatus]}>
+             {t(tokens.actions.reject)}
+
+                </Text>
               )}
               {newItem?.approval_status === 2 && (
-                <Text style={[styles.statusText, styles.approveStatus]}>Approved</Text>
+                <Text style={[styles.statusText, styles.approveStatus]}>
+               {t(tokens.actions.approve)}
+
+                </Text>
               )}
               {newItem?.approval_status === 1 && (
-                <Text style={[styles.statusText, styles.pendingStatus]}>Pending</Text>
+                <Text style={[styles.statusText, styles.pendingStatus]}>
+               {t(tokens.actions.pending)}
+
+                </Text>
               )}
               {newItem?.approval_status === 4 && (
-                <Text style={[styles.statusText, styles.revokeStatus]}>Revoked</Text>
+                <Text style={[styles.statusText, styles.revokeStatus]}>
+               {t(tokens.actions.revoke)}
+
+                </Text>
               )}
             </View>
             <View>
-              <Text style={styles.labelGray}>Start Date</Text>
+              <Text style={styles.labelGray}>
+            {t(tokens.common.startDate)}
+
+              </Text>
               <Text style={styles.labelBold}>{dateTimeToShow(newItem?.start_time)}</Text>
             </View>
           </View>
           <View style={styles.bottomRow}>
             <View>
-              <Text style={styles.labelGray}>End Date</Text>
+              <Text style={styles.labelGray}>
+              {t(tokens.common.endDate)}
+
+              </Text>
               <Text style={styles.labelBold}>{dateTimeToShow(newItem?.end_time)}</Text>
             </View>
             <View style={{alignItems: 'flex-end'}}>
-              <Text style={styles.labelGray}>Pay Code</Text>
+              <Text style={styles.labelGray}>
+              {t(tokens.nav.payCode)}
+
+              </Text>
               <Text style={styles.labelBold}>{newItem?.paycode_details?.name}</Text>
             </View>
           </View>

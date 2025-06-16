@@ -19,8 +19,12 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import { useSelector } from 'react-redux';
 import ProfileServices from '../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../utils/error-format';
-
+import { useTranslation } from 'react-i18next';
+import tokens from '@/locales/tokens';
 export default function ExpenseScreen({navigation}) {
+    const {t,i18n}=useTranslation()
+    const isRTL = i18n.language === 'ar';
+    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
   const handleBack = () => {
     navigation.navigate("Dashboard")
   };
@@ -131,7 +135,7 @@ const handleFilePick = async () => {
             <Icon name="angle-left" size={30} color="white" />
 
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Expense</Text>
+          <Text style={styles.headerTitle}>{t(tokens.nav.expense)}</Text>
         </View>
       </View>
 
@@ -142,7 +146,7 @@ const handleFilePick = async () => {
               onPress={() => setFromDateShow(true)}
               style={styles.datePicker}>
               <Text style={styles.dateText}>
-                {formatExpectDate || 'Select Expense Date'}
+                 {formatExpectDate ? formatExpectDate : t(tokens.common.expenseDate)}
               </Text>
 <Icon name="calendar-alt" size={23} color="#697CE3" />
             </TouchableOpacity>
@@ -167,8 +171,8 @@ const handleFilePick = async () => {
                 maxHeight={300}
                 labelField="label"
                 valueField="layoutDescriptionName"
-                placeholder="Select Expense Category"
-                searchPlaceholder="Search..."
+                placeholder={t(tokens.common.expenseCategory)}
+                searchPlaceholder={t(tokens.common.search)}
                 value={layoutDescriptionName}
                 onChange={item => setLayoutDescriptionName(item.layoutDescriptionName)}
                 renderItem={renderItem}
@@ -176,7 +180,7 @@ const handleFilePick = async () => {
             </View>
 
             <TextInput
-              placeholder="Amount"
+             placeholder={t(tokens.common.amount)}
               value={amount}
               onChangeText={handleNumberChange}
               style={styles.input}
@@ -184,7 +188,7 @@ const handleFilePick = async () => {
             />
 
             <TextInput
-              placeholder="Description"
+                    placeholder={t(tokens.common.description)}
               style={styles.textArea}
               multiline
               numberOfLines={8}
@@ -193,7 +197,7 @@ const handleFilePick = async () => {
             />
 
             <TouchableOpacity onPress={handleSubmit} style={styles.submitButton}>
-              <Text style={styles.submitText}>Submit Report</Text>
+              <Text style={styles.submitText}>{t(tokens.actions.submitReport)}</Text>
             </TouchableOpacity>
           </View>
         </View>

@@ -1,5 +1,8 @@
 import { myreducers } from "@/Store/Store";
 import { useContext, useEffect, useState } from "react";
+import { useTranslation } from 'react-i18next';
+import tokens from '../locales/tokens';
+
 import {
   Image,
   Modal,
@@ -13,7 +16,36 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { useDispatch, useSelector } from "react-redux";
 import ProfileServices from "../Services/API/ProfileServices";
 import { AuthContext } from "./AuthContext";
-const Profile = ({ navigation }) => {
+const Profile = ({ navigation,route}) => {
+    const {
+    selectorid,
+    setProfilePicUrl,
+    employeeFullDetails,
+    userDetails,
+    profilePicUrl,
+    setUpdateKey,
+    updateKey,
+   
+    subordinateName,
+    setSubordinateName,
+  } = route.params;
+  const {t,i18n} = useTranslation();
+  const isRTL = i18n.language === 'ar';
+  
+    console.log('NotificationScreen Props:', {
+    selectorid,
+    setProfilePicUrl,
+    employeeFullDetails,
+    userDetails,
+    profilePicUrl,
+    setUpdateKey,
+    updateKey,
+    setGender,
+    gender,
+    subordinateName,
+    setSubordinateName,
+    token,
+  });
    const { logout } = useContext(AuthContext);
   const dispatch = useDispatch();
   
@@ -117,16 +149,16 @@ const Profile = ({ navigation }) => {
         <SafeAreaView>
           <View style={styles.modalOverlay}>
             <View style={styles.modalview}>
-              <Text style={styles.logout}>Are You Sure to Logout ? </Text>
+              <Text style={styles.logout}> {t(tokens.messages.areSureLogout)}</Text>
               <View style={styles.modalbtn}>
                 <TouchableOpacity
                   style={styles.modalbtn1}
                   onPress={() => setModalVisible(false)}
                 >
-                  <Text style={styles.modaltext}>No</Text>
+                  <Text style={styles.modaltext}>{t(tokens.common.no)}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.modalbtn2} onPress={Logout}>
-                  <Text style={styles.modaltext1}>Yes</Text>
+                  <Text style={styles.modaltext1}> {t(tokens.common.yes)}</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -148,7 +180,9 @@ const Profile = ({ navigation }) => {
               >
                 <Icon name="angle-left" size={30} color="white" />
               </TouchableOpacity>
-              <Text style={styles.modalText}>My Profile</Text>
+              <Text style={styles.modalText}>
+                  {t(tokens.nav.myProfile)}
+              </Text>
             </View>
           </View>
 
@@ -171,10 +205,10 @@ const Profile = ({ navigation }) => {
 })}
             </View>
             <View style={styles.between}>
-              <Text style={styles.rep}>Reports To </Text>
+              <Text style={styles.rep}> {t(tokens.common.reportsTo)}</Text>
               <Icon name="angle-right" size={25} color="gray" />
 
-              <Text style={styles.rep1}>Not Assigned</Text>
+              <Text style={styles.rep1}>  {t(tokens.messages.notAssigned)}</Text>
             </View>
           </View>
         </View>
@@ -186,11 +220,17 @@ const Profile = ({ navigation }) => {
             <View style={styles.profileleft}>
               
               <Icon name="user" size={25} color="black" />
-              <Text style={styles.my}>My Profile</Text>
+              <Text style={styles.my}>
+                  {t(tokens.nav.myProfile)}
+
+              </Text>
             </View>
             <Icon name="angle-right" size={30} color="#697ce3" />
           </TouchableOpacity>
-          <Text style={styles.ptotitle}>App Setting</Text>
+          <Text style={[styles.ptotitle, { textAlign: isRTL ? 'right' : 'left' }]}>
+              {t(tokens.nav.appSetting)}
+
+          </Text>
           <TouchableOpacity
             style={styles.profileinfo}
             onPress={() => opennavigate("Password")}
@@ -198,7 +238,10 @@ const Profile = ({ navigation }) => {
             <View style={styles.profileleft}>
               
               <Icon name="lock" size={25} color="black" />
-              <Text style={styles.pass}>Change Password</Text>
+              <Text style={styles.pass}>
+                  {t(tokens.common.changePassword)}
+
+              </Text>
             </View>
             <Icon name="angle-right" size={30} color="#697ce3" />
           </TouchableOpacity>
@@ -209,24 +252,27 @@ const Profile = ({ navigation }) => {
             <View style={styles.profileleft}>
               
               <Icon name="sign-out" size={25} color="white" />
-              <Text style={styles.log}>Logout</Text>
+              <Text style={styles.log}>  {t(tokens.nav.logout)}</Text>
             </View>
             <Icon name="angle-right" size={30} color="white" />
           </TouchableOpacity>
           <View style={styles.about}>
-            <Text style={styles.abouttitle}>About App</Text>
+            <Text style={styles.abouttitle}> {t(tokens.nav.aboutApp)}</Text>
             <View style={styles.aboutme}>
               <View style={styles.version}>
                 <View style={styles.profileleft}>
                   <Icon name="exclamation-circle" size={25} color="black" />
-                  <Text style={styles.my}>Latest Version</Text>
+                  <Text style={styles.my}>
+                        {t(tokens.nav.appVersion)}
+
+                  </Text>
                 </View>
                 <Text>0.1.4</Text>
               </View>
               <View style={styles.version}>
                 <View style={styles.profileleft}>
                   <Icon name="android" size={25} color="black" />
-                  <Text style={styles.my}>android Version</Text>
+                  <Text style={styles.my}>{t(tokens.nav.androidVersion)}</Text>
                 </View>
                 <Text>15</Text>
               </View>

@@ -22,7 +22,8 @@ import ProfileServices from '../Services/API/ProfileServices';
 import { Dropdown } from 'react-native-element-dropdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
-
+import tokens from '@/locales/tokens';
+import { useTranslation } from 'react-i18next';
 export default function OverTimeCard({
   newItem,
   componentId,
@@ -32,7 +33,9 @@ export default function OverTimeCard({
   overtimeList
 }) {
   const navigation = useNavigation();
-
+  const {t,i18n}=useTranslation()
+  const isRTL = i18n.language === 'ar';
+  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
   const handleFulldetails = () => {
     navigation.navigate("OvertimeRequestDetails",{ employeeId,
           newItem,
@@ -57,27 +60,33 @@ export default function OverTimeCard({
             <View>
               {newItem?.approval_status === 3 && (
                 <Text style={[styles.statusText, styles.reject]}>
-                  Rejected
+              {t(tokens.actions.reject)}
+                  
                 </Text>
               )}
               {newItem?.approval_status === 2 && (
                 <Text style={[styles.statusText, styles.approve]}>
-                  Approved
+                    {t(tokens.actions.approve)}
                 </Text>
               )}
               {newItem?.approval_status === 1 && (
                 <Text style={[styles.statusText, styles.pending]}>
-                  Pending
+                                 {t(tokens.actions.pending)}
+
                 </Text>
               )}
               {newItem?.approval_status === 4 && (
                 <Text style={[styles.statusText, styles.revoke]}>
-                  Revoked
+                               {t(tokens.actions.revoke)}
+
                 </Text>
               )}
             </View>
             <View>
-              <Text style={styles.labelSmall}>Start Date</Text>
+              <Text style={styles.labelSmall}>
+            {t(tokens.common.startDate)}
+
+              </Text>
               <Text style={styles.valueSmall}>
                 {dateTimeToShow(newItem?.start_time)}
               </Text>
@@ -86,13 +95,19 @@ export default function OverTimeCard({
 
           <View style={styles.rowBetween}>
             <View>
-              <Text style={styles.labelSmall}>End Date</Text>
+              <Text style={styles.labelSmall}>
+              {t(tokens.common.endDate)}
+
+              </Text>
               <Text style={styles.valueSmall}>
                 {dateTimeToShow(newItem?.end_time)}
               </Text>
             </View>
             <View style={{ alignItems: 'flex-end' }}>
-              <Text style={styles.labelSmall}>Pay Code</Text>
+              <Text style={styles.labelSmall}>
+              {t(tokens.nav.payCode)}
+
+              </Text>
               <Text style={styles.valueSmall}>
                 {newItem?.paycode_details?.name}
               </Text>

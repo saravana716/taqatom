@@ -1,10 +1,15 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import Icon from "react-native-vector-icons/FontAwesome";
-
+import tokens from '@/locales/tokens';
+import { useTranslation } from 'react-i18next';
 export default function RequestScreen({navigation,
 
 }) {
+    const {t,i18n}=useTranslation()
+    const isRTL = i18n.language === 'ar';
+    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+    
   const handleBack = () => {
     navigation.navigate("Dashboard")
   };
@@ -36,27 +41,42 @@ export default function RequestScreen({navigation,
           <TouchableOpacity onPress={handleBack} style={styles.backButton}>
             <Icon name="angle-left" size={30} color="#697ce3" />
                     </TouchableOpacity>
-          <Text style={styles.headerText}>Request</Text>
+          <Text style={styles.headerText}>
+            {t(tokens.nav.request)}
+
+          </Text>
         </View>
         <View style={styles.cardWrapper}>
           <View style={styles.card}>
             <TouchableOpacity onPress={handleManualLogScreen} style={[styles.item, {backgroundColor: '#F7F2FE'}]}>
-              <Text style={styles.itemText}>Manual Log</Text>
+              <Text style={styles.itemText}>
+              {t(tokens.nav.manualLog)}
+
+              </Text>
                <Icon name="angle-right" size={30} color="#697ce3" />
            </TouchableOpacity>
 
             <TouchableOpacity onPress={handleLeaveScreen} style={[styles.item, {backgroundColor: '#EFF4FF'}]}>
-              <Text style={styles.itemText}>Leave</Text>
+              <Text style={styles.itemText}>
+              {t(tokens.nav.leave)}
+
+              </Text>
              <Icon name="angle-right" size={30} color="#697ce3" />
                </TouchableOpacity>
 
             <TouchableOpacity onPress={handleOvertimeScreen} style={[styles.item, {backgroundColor: '#F0FAF9'}]}>
-              <Text style={styles.itemText}>Overtime</Text>
+              <Text style={styles.itemText}>
+              {t(tokens.nav.overtime)}
+
+              </Text>
                 <Icon name="angle-right" size={30} color="#697ce3" />
                 </TouchableOpacity>
 
             <TouchableOpacity onPress={handleTrainingScreen} style={[styles.item, {backgroundColor: '#64A5F10D'}]}>
-              <Text style={styles.itemText}>Training</Text>
+              <Text style={styles.itemText}>
+              {t(tokens.nav.training)}
+
+              </Text>
                 <Icon name="angle-right" size={30} color="#697ce3" />
                 </TouchableOpacity>
           </View>

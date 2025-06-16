@@ -2,12 +2,18 @@ import ProfileServices from '@/Services/API/ProfileServices'; // Your API servic
 import * as ImagePicker from 'expo-image-picker';
 import get from 'lodash/get';
 import React, { useCallback, useState } from 'react';
+import {useTranslation} from 'react-i18next';
+import tokens from '@/locales/tokens';
 import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-toast-message'; // Assuming you're using this Toast lib
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useSelector } from 'react-redux';
 
 const ProfileUpdate = () => {
+
+  const {t,i18n} = useTranslation();
+  const isRTL = i18n.language === 'ar';
+  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
   const [isLoading, setIsLoading] = useState(false);
   const selector = useSelector((data) => data.employeedetails);
   
@@ -135,7 +141,9 @@ const handleFilePick = useCallback(async () => {
           <View key={data.id} style={styles.updatepro}>
             <View style={styles.updatetop}>
               <Icon name="angle-left" size={30} color="white" />
-              <Text style={styles.modalText}>My Profile</Text>
+              <Text style={styles.modalText}>
+                  {t(tokens.nav.myProfile)}
+              </Text>
             </View>
 
             <ScrollView
@@ -180,49 +188,49 @@ const handleFilePick = useCallback(async () => {
               </View>
 
               <View style={styles.updatename}>
-                <Text style={styles.titles}>Name</Text>
+                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.common.name)}</Text>
                 <Text style={styles.titlename}>
                   {data.first_name} {data.last_name}
                 </Text>
               </View>
               <View style={styles.updatename}>
-                <Text style={styles.titles}>Employee Code</Text>
+                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.common.employeeCode)}</Text>
                 <Text style={styles.titlename}>{data.emp_code}</Text>
               </View>
               <View style={styles.updatename}>
-                <Text style={styles.titles}>Employee Type</Text>
+                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.common.employeeType)}</Text>
                 <Text style={styles.titlename}>{data.emp_type}</Text>
               </View>
               <View style={styles.updatename}>
-                <Text style={styles.titles}>Mobile Number</Text>
+                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.common.mobileNumber)}</Text>
                 <Text style={styles.titlename}>{data.mobile}</Text>
               </View>
               <View style={styles.updatename}>
-                <Text style={styles.titles}>Office Contact Number</Text>
+                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.common.officeContactNumber)}</Text>
                 <Text style={styles.titlename}>{data.office_tel}</Text>
               </View>
               <View style={styles.updatename}>
-                <Text style={styles.titles}>Office Email</Text>
+                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.common.officeEmail)}</Text>
                 <Text style={styles.titlename}>{data.email}</Text>
               </View>
               <View style={styles.updatename}>
-                <Text style={styles.titles}>Position</Text>
+                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.nav.position)}</Text>
                 <Text style={styles.titlename}>{data.position_name}</Text>
               </View>
               <View style={styles.updatename}>
-                <Text style={styles.titles}>Department</Text>
+                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.nav.department)}</Text>
                 <Text style={styles.titlename}>{data.department_name}</Text>
               </View>
               <View style={styles.updatename}>
-                <Text style={styles.titles}>Date Of joining</Text>
+                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.common.dateOfJoining)}</Text>
                 <Text style={styles.titlename}>{data.hire_date}</Text>
               </View>
               <View style={styles.updatename}>
-                <Text style={styles.titles}>Date Of Birth</Text>
+                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.common.dateOfBirth)}</Text>
                 <Text style={styles.titlename}>{data.birthday}</Text>
               </View>
               <View style={styles.updatename}>
-                <Text style={styles.titles}>Country</Text>
+                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.common.country)}</Text>
                 <Text style={styles.titlename}>{data.national}</Text>
               </View>
             </ScrollView>

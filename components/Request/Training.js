@@ -2,7 +2,6 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import isEmpty from 'lodash/isEmpty';
 import moment from 'moment';
 import { useCallback, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import {
@@ -22,8 +21,12 @@ import TrainingCard from '../../components/TrainingCard';
 import ProfileServices from '../../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../../utils/error-format';
 import { dateTimeToShow, formatDateTime } from '../../utils/formatDateTime';
-
+import { useTranslation } from 'react-i18next';
+import tokens from '../../locales/tokens';
 export default function TrainingScreen({navigation}) {
+    const {i18n}=useTranslation()
+  const isRTL = i18n.language === 'ar';
+  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
    const selectorid= useSelector(function (data) {
         return data.empid
     })
@@ -199,7 +202,8 @@ export default function TrainingScreen({navigation}) {
               <Icon name="angle-left" size={30} color="#697ce3" />
           </TouchableOpacity>
           <Text style={styles.headerText}>
-            Training
+            {t(tokens.nav.training)}
+            
           </Text>
         </View>
         {isLoading ? (
@@ -209,7 +213,8 @@ export default function TrainingScreen({navigation}) {
         ) : isEmpty(trainingData) ? (
           <View style={styles.noTrainingView}>
             <Text style={styles.noTrainingText}>
-              No Training Available
+              {t(tokens.messages.noTraining)}
+              
             </Text>
           </View>
         ) : (
@@ -254,14 +259,15 @@ export default function TrainingScreen({navigation}) {
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>
-                Add
+              {t(tokens.actions.add)}
+                
               </Text>
               <View style={styles.formSection}>
                 <TouchableOpacity
                   onPress={() => setStartDatePicker(true)}
                   style={styles.dateTimeInput}>
                   <Text style={styles.dateTimeInputText}>
-                    {startTime ? dateTimeToShow(startTime) : 'Start Date'}
+                     {startTime ? dateTimeToShow(startTime) : t(tokens.common.startDate)}
                   </Text>
                  <Icon name="calendar" size={24} color="#919EABD9" />
                 </TouchableOpacity>
@@ -291,7 +297,8 @@ export default function TrainingScreen({navigation}) {
                   onPress={() => setEndDatePicker(true)}
                   style={styles.dateTimeInput}>
                   <Text style={styles.dateTimeInputText}>
-                    {endTime ? dateTimeToShow(endTime) : 'End Date'}
+                                    {endTime ? dateTimeToShow(endTime) : t(tokens.common.endDate)}
+
                   </Text>
                 <Icon name="calendar" size={24} color="#919EABD9" />
                 </TouchableOpacity>
@@ -334,8 +341,8 @@ export default function TrainingScreen({navigation}) {
                     maxHeight={300}
                     labelField="name"
                     valueField="id"
-                    placeholder={'Pay Code'}
-                    searchPlaceholder={'Search...'}
+                    placeholder={t(tokens.nav.payCode)}
+                    searchPlaceholder={t(tokens.common.search)}
                     value={payCode}
                     onChange={item => {
                       setPayCode(item?.id);
@@ -350,7 +357,8 @@ export default function TrainingScreen({navigation}) {
                 ) : null}
                 <TextInput
                   style={styles.reasonInput}
-                  placeholder={'Reason'}
+                                   placeholder={t(tokens.common.reason)}
+
                   editable
                   multiline
                   textAlignVertical="top"
@@ -369,7 +377,8 @@ export default function TrainingScreen({navigation}) {
                   }}
                   style={styles.cancelModalButton}>
                   <Text style={styles.cancelModalButtonText}>
-                    Cancel
+                  {t(tokens.actions.cancel)}
+                   
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -380,7 +389,8 @@ export default function TrainingScreen({navigation}) {
                     <ActivityIndicator size="large" color="#FFFFFF" />
                   ) : (
                     <Text style={styles.addModalButtonText}>
-                      Add
+                      {t(tokens.actions.add)}
+                      
                     </Text>
                   )}
                 </TouchableOpacity>

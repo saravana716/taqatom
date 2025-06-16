@@ -3,11 +3,16 @@ import React, { useState } from "react";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
+import tokens from "@/locales/tokens";
 export default function PayslipComponent({
   newItem,
   employeeFullDetails,
   payrollData,
 }) {
+    const {t,i18n}=useTranslation()
+    const isRTL = i18n.language === 'ar';
+    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
   const navigation = useNavigation();
 console.log("newwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww",newItem);
 
@@ -51,7 +56,8 @@ console.log("newwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww",newItem);
             {newItem?.net_pay} SAR
           </Text>
           <Text style={styles.daysText}>
-            Paid for {newItem?.total_days ?? "-"} days
+       {t(tokens.messages.paidFor)} {newItem?.total_days??'-'}
+            {t(tokens.common.days)}
           </Text>
         </View>
         <Icon name="angle-right" size={30} color="#697ce3" />

@@ -3,6 +3,7 @@ import find from 'lodash/find';
 import moment from 'moment';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import tokens from '@/locales/tokens';
 import {
   ActivityIndicator,
   Modal,
@@ -31,8 +32,10 @@ import { formatDateTime } from '../../utils/formatDateTime';
 export default function LeaveRequestDetails({
 navigation,route
 }) {
+  const {t,i18n}=useTranslation()
+  const isRTL = i18n.language === 'ar';
   const { employeeId, newItem, leavePayCodes,leaveList } = route.params;
-  const {t}=useTranslation()
+  
   const [isLoading, setIsLoading] = useState(false);
   const [leaveData, setLeaveData] = useState([]);
   const matchedLeaveData = find(leaveData, log => log.id === newItem?.id);
@@ -266,7 +269,10 @@ navigation,route
               <Icon name="angle-left" size={30} color="black" />
                       </TouchableOpacity>
               <View style={styles.titleContainer}>
-                <Text style={styles.titleText}>View</Text>
+                <Text style={styles.titleText}>
+                  {t(tokens.actions.view)}
+                  
+                </Text>
               </View>
               <View style={styles.menuContainer}>
                 {matchedLeaveData?.approval_status === 1 && (
@@ -295,7 +301,7 @@ navigation,route
                         <MenuOption onSelect={() => setModalVisible(true)}>
                           <View style={styles.menuOptionRow}>
                            <Icon icon="mdi:edit" size={20} color="#000" />
-                            <Text style={styles.menuOptionText}>Edit</Text>
+                            <Text style={styles.menuOptionText}>{t(tokens.actions.edit)}</Text>
                           </View>
                         </MenuOption>
                       )}
@@ -311,42 +317,69 @@ navigation,route
               <View style={styles.cardContent}>
                 {/* Approval Status */}
                 <View style={styles.row}>
-                  <Text style={styles.label}>Approval Status</Text>
+                  <Text style={styles.label}>
+{t(tokens.charts.approvalStatus)}
+
+                  </Text>
                   {matchedLeaveData.approval_status === 3 && (
-                    <Text style={styles.statusRejected}>Reject</Text>
+                    <Text style={styles.statusRejected}>
+                          {t(tokens.actions.reject)}
+
+                    </Text>
                   )}
                   {matchedLeaveData.approval_status === 2 && (
-                    <Text style={styles.statusApproved}>Approve</Text>
+                    <Text style={styles.statusApproved}>
+ {t(tokens.actions.approve)}
+
+                    </Text>
                   )}
                   {matchedLeaveData.approval_status === 1 && (
-                    <Text style={styles.statusPending}>Pending</Text>
+                    <Text style={styles.statusPending}>
+                           {t(tokens.actions.pending)}
+
+                    </Text>
                   )}
                   {matchedLeaveData.approval_status === 4 && (
-                    <Text style={styles.statusRevoked}>Revoke</Text>
+                    <Text style={styles.statusRevoked}>
+                           {t(tokens.actions.revoke)}
+
+                    </Text>
                   )}
                 </View>
 
                 {/* First Name */}
                 <View style={styles.row}>
-                  <Text style={styles.label}>First Name</Text>
+                  <Text style={styles.label}>
+                      {t(tokens.common.firstName)}
+
+                  </Text>
                   <Text style={styles.value}>{matchedLeaveData.first_name || '-'}</Text>
                 </View>
 
                 {/* Last Name */}
                 <View style={styles.row}>
-                  <Text style={styles.label}>Last Name</Text>
+                  <Text style={styles.label}>
+                      {t(tokens.common.lastName)}
+
+                  </Text>
                   <Text style={styles.value}>{matchedLeaveData.last_name || '-'}</Text>
                 </View>
 
                 {/* Employee Code */}
                 <View style={styles.row}>
-                  <Text style={styles.label}>Employee Code</Text>
+                  <Text style={styles.label}>
+                      {t(tokens.common.employeeCode)}
+
+                  </Text>
                   <Text style={styles.value}>{matchedLeaveData.emp_code || '-'}</Text>
                 </View>
 
                 {/* Department */}
                 <View style={styles.row}>
-                  <Text style={styles.label}>Department</Text>
+                  <Text style={styles.label}>
+                      {t(tokens.nav.department)}
+
+                  </Text>
                   <Text style={styles.value}>
                     {matchedLeaveData.department_info?.department_name || '-'}
                   </Text>
@@ -354,7 +387,10 @@ navigation,route
 
                 {/* Position */}
                 <View style={styles.row}>
-                  <Text style={styles.label}>Position</Text>
+                  <Text style={styles.label}>
+                      {t(tokens.nav.position)}
+
+                  </Text>
                   <Text style={styles.value}>
                     {matchedLeaveData.position_info?.position_name || '-'}
                   </Text>
@@ -362,19 +398,28 @@ navigation,route
 
                 {/* Start Time */}
                 <View style={styles.row}>
-                  <Text style={styles.label}>Start Time</Text>
+                  <Text style={styles.label}>
+                      {t(tokens.common.startTime)}
+
+                  </Text>
                   <Text style={styles.value}>{matchedLeaveData.start_time || '-'}</Text>
                 </View>
 
                 {/* End Time */}
                 <View style={styles.row}>
-                  <Text style={styles.label}>End Time</Text>
+                  <Text style={styles.label}>
+                      {t(tokens.common.endTime)}
+
+                  </Text>
                   <Text style={styles.value}>{matchedLeaveData.end_time || '-'}</Text>
                 </View>
 
                 {/* Paycode */}
                 <View style={styles.row}>
-                  <Text style={styles.label}>Paycode</Text>
+                  <Text style={styles.label}>
+                      {t(tokens.nav.payCode)}
+
+                  </Text>
                   <Text style={styles.value}>
                     {matchedLeaveData.paycode_details?.name || '-'}
                   </Text>
@@ -382,7 +427,10 @@ navigation,route
 
                 {/* Reason */}
                 <View style={styles.row}>
-                  <Text style={styles.label}>Reason</Text>
+                  <Text style={styles.label}>
+                      {t(tokens.common.reason)}
+
+                  </Text>
                   <Text style={styles.value}>{matchedLeaveData.apply_reason || '-'}</Text>
                 </View>
               </View>
@@ -397,7 +445,10 @@ navigation,route
                       matchedLeaveData.approval_status === 4 && { backgroundColor: '#B2BEB5' },
                     ]}
                   >
-                    <Text style={styles.buttonText}>Revoke</Text>
+                    <Text style={styles.buttonText}>
+                        {t(tokens.actions.revoke)}
+
+                    </Text>
                   </TouchableOpacity>
                 )}
 
@@ -409,7 +460,10 @@ navigation,route
                       matchedLeaveData.approval_status === 3) && { flex: 1 },
                   ]}
                 >
-                  <Text style={styles.buttonText}>Delete</Text>
+                  <Text style={styles.buttonText}>
+                      {t(tokens.actions.delete)}
+
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -421,12 +475,17 @@ navigation,route
       <Modal animationType="fade" transparent visible={modalVisible}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Edit</Text>
+            <Text style={styles.modalTitle}>
+              {t(tokens.actions.edit)}
+
+            </Text>
             <View style={styles.modalBody}>
               {/* Start Date Picker */}
               <TouchableOpacity onPress={() => setStartDate(true)} style={styles.dateInput}>
                 <Text style={styles.dateText}>
-                  {formatStartDate || 'Start Date'}
+                {formatStartDate
+                      ? (formatStartDate)
+                      : t(tokens.common.startDate)}
                 </Text>
               <Icon name="calendar-check-o" size={20} color="lightgray" />
                                         </TouchableOpacity>
@@ -450,7 +509,8 @@ navigation,route
 
               {/* End Date Picker */}
               <TouchableOpacity onPress={() => setEndDate(true)} style={styles.dateInput}>
-                <Text style={styles.dateText}>{formatEndDate || 'End Date'}</Text>
+                <Text style={styles.dateText}>                    {formatEndDate ? (formatEndDate) : t(tokens.common.endDate)}
+</Text>
                <Icon name="calendar-check-o" size={20} color="lightgray" />
                                           </TouchableOpacity>
               {endError && <Text style={styles.errorText}>{endError}</Text>}
@@ -477,10 +537,14 @@ navigation,route
                 data={leavePayCodes}
                 labelField="name"
                 valueField="id"
-                placeholder={matchedLeaveData?.paycode_details?.name || 'Paycode'}
+   placeholder={
+                      matchedLeaveData?.paycode_details?.name || t(tokens.nav.payCode)
+                    }
+                    searchPlaceholder={t(tokens.common.search)}
                 value={payCode}
                 onChange={item => setPayCode(item.id)}
                 renderItem={renderItem}
+                
                 style={styles.dropdown}
                 placeholderStyle={styles.dropdownPlaceholder}
                 selectedTextStyle={styles.dropdownSelectedText}
@@ -491,7 +555,8 @@ navigation,route
               <TextInput
                 multiline
                 numberOfLines={8}
-                placeholder="Enter reason"
+                                 placeholder={t(tokens.common.reason)}
+
                 onChangeText={setApplyReason}
                 value={applyReason}
                 style={styles.reasonInput}
@@ -503,7 +568,10 @@ navigation,route
                   onPress={() => setModalVisible(false)}
                   style={styles.cancelButton}
                 >
-                  <Text style={styles.modalButtonText}>Cancel</Text>
+                  <Text style={styles.modalButtonText}>
+                  {t(tokens.actions.cancel)}
+
+                  </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   disabled={isLoading}
@@ -513,7 +581,10 @@ navigation,route
                   {isLoading ? (
                     <ActivityIndicator size="small" color="#697CE3" />
                   ) : (
-                    <Text style={styles.modalButtonText}>Edit</Text>
+                    <Text style={styles.modalButtonText}>
+                      {t(tokens.actions.edit)}
+
+                    </Text>
                   )}
                 </TouchableOpacity>
               </View>
@@ -551,21 +622,33 @@ navigation,route
       <Modal animationType="fade" transparent visible={revokeConfirmVisible}>
         <View style={styles.modalOverlay}>
           <View style={styles.confirmationModal}>
-            <Text style={styles.confirmationTitle}>Revoke</Text>
-            <Text style={styles.confirmationMessage}>Are you sure you want to revoke this?</Text>
+            <Text style={styles.confirmationTitle}>
+              {t(tokens.actions.revoke)}
+
+            </Text>
+            <Text style={styles.confirmationMessage}>
+              {t(tokens.messages.revokeConfirm)}
+
+            </Text>
             <View style={styles.modalButtons}>
               <TouchableOpacity
                 onPress={() => setRevokeConfirmVisible(false)}
                 style={styles.cancelButton}
               >
-                <Text style={styles.modalButtonText1}>Cancel</Text>
+                <Text style={styles.modalButtonText1}>
+                  {t(tokens.actions.cancel)}
+
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 disabled={isLoading}
                 onPress={handleRevoke}
                 style={styles.saveButton}
               >
-                <Text style={styles.modalButtonText}>Revoke</Text>
+                <Text style={styles.modalButtonText}>
+                      {t(tokens.actions.revoke)}
+
+                </Text>
               </TouchableOpacity>
             </View>
           </View>

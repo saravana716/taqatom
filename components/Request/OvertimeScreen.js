@@ -9,6 +9,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {useTranslation} from 'react-i18next';
+import tokens from '../../../locales/tokens';
 import {Iconify} from 'react-native-iconify';
 import {Navigation} from 'react-native-navigation';
 import isEmpty from 'lodash/isEmpty';
@@ -26,7 +28,9 @@ import tokens from '../../../locales/tokens';
 import { formatErrorsToToastMessages } from '../../../utils/error-format';
 
 export default function OvertimeScreen({componentId, userId}) {
-  const {t} = useTranslation();
+   const {t,i18n}=useTranslation()
+  const isRTL = i18n.language === 'ar';
+  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
   const [modalVisible, setModalVisible] = useState(false);
   const [startDatePicker, setStartDatePicker] = useState(false);
   const [startTimePicker, setStartTimePicker] = useState(false);

@@ -7,12 +7,15 @@ import ProfileServices from '../../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../../utils/error-format';
 import { dateTimeToShow } from '../../utils/formatDateTime';
 import { getPunchStateLabel } from '../../utils/getPunchStateLabel';
-
+import { useTranslation } from 'react-i18next';
+import tokens from '../../locales/tokens';
 export default function ApprovalManualCard({ newItem, employeeId, componentId, getManualLogList }) {
   const navigation = useNavigation();
   const [approveConfirmVisible, setApproveConfirmVisible] = useState(false);
   const [rejectedConfirmVisible, setRejectedConfirmVisible] = useState(false);
-
+  const {t,i18n}=useTranslation()
+    const isRTL = i18n.language === 'ar';
+    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
   const handleFulldetails = () => {
      navigation.navigate('ApprovalManualLogDetails', {
        employeeId,
@@ -64,13 +67,14 @@ export default function ApprovalManualCard({ newItem, employeeId, componentId, g
   const getStatusText = (status) => {
     switch (status) {
       case 1:
-        return 'Pending';
+        return  t(tokens.actions.pending);
       case 2:
-        return 'Approved';
+        return  t(tokens.actions.approve)
+
       case 3:
-        return 'Rejected';
+        return   t(tokens.actions.reject)  
       case 4:
-        return 'Revoked';
+       return    t(tokens.actions.revoke)
       default:
         return '-';
     }
@@ -87,17 +91,26 @@ export default function ApprovalManualCard({ newItem, employeeId, componentId, g
               </Text>
             </View>
             <View style={styles.alignRight}>
-              <Text style={styles.label}>Punch Time</Text>
+              <Text style={styles.label}>
+                {t(tokens.common.punchTime)}
+
+              </Text>
               <Text style={styles.value}>{dateTimeToShow(newItem?.punch_time)}</Text>
             </View>
           </View>
           <View style={[styles.flexRow, styles.justifyBetween]}>
             <View>
-              <Text style={styles.label}>Punch State</Text>
+              <Text style={styles.label}>
+                {t(tokens.common.punchState)}
+
+              </Text>
               <Text style={styles.value}>{getPunchStateLabel(newItem?.punch_state)}</Text>
             </View>
             <View style={styles.alignRight}>
-              <Text style={styles.label}>Work Code</Text>
+              <Text style={styles.label}>
+                {t(tokens.common.workCode)}
+
+              </Text>
               <Text style={styles.value}>{newItem?.work_code}</Text>
             </View>
           </View>

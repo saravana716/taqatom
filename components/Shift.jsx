@@ -12,8 +12,11 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useSelector } from "react-redux";
 import { formatErrorsToToastMessages } from "../utils/error-format";
-
+import { useTranslation } from "react-i18next";
+import tokens from "@/locales/tokens";
 const Shift = ({ navigation }) => {
+    const {t,i18n} = useTranslation();
+    const isRTL = i18n.language === 'ar';
   const selector = useSelector((state) => state.empid);
   
 
@@ -119,7 +122,7 @@ const Shift = ({ navigation }) => {
             <TouchableOpacity onPress={navigatePage} style={styles.closeButton}>
               <Icon name="angle-left" size={30} color="black" />
             </TouchableOpacity>
-            <Text style={styles.modalText}>Holiday</Text>
+            <Text style={styles.modalText}>{t(tokens.nav.shift)}</Text>
           </View>
         </View>
       </View>
@@ -129,14 +132,14 @@ const Shift = ({ navigation }) => {
           style={hide ? styles.touchbtn1 : styles.touchbtn}
           onPress={toggleBtn}
         >
-          <Text style={hide ? styles.btn1 : styles.btn}>Today shift</Text>
+          <Text style={hide ? styles.btn1 : styles.btn}>{t(tokens.nav.todayShift)}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={hide ? styles.touchbtn : styles.touchbtn1}
           onPress={toggleBtn}
         >
-          <Text style={hide ? styles.btn : styles.btn1}>Custom Date</Text>
+          <Text style={hide ? styles.btn : styles.btn1}>{t(tokens.nav.customDate)}</Text>
         </TouchableOpacity>
       </View>
 
@@ -174,7 +177,7 @@ const Shift = ({ navigation }) => {
                               : "-"}
                           </Text>
                         )}
-                        <Text style={styles.Shift1text2}>Break Time</Text>
+                        <Text style={styles.Shift1text2}> {t(tokens.nav.breakTime)}</Text>
                       </View>
                     </View>
                   </View>
@@ -252,7 +255,7 @@ const Shift = ({ navigation }) => {
                               : "-"}
                           </Text>
                         )}
-                        <Text style={styles.Shift1text2}>Break Time</Text>
+                        <Text style={styles.Shift1text2}> {t(tokens.nav.breakTime)}</Text>
                       </View>
                     </View>
                   </View>

@@ -11,6 +11,8 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import isEmpty from 'lodash/isEmpty';
+import tokens from '../../locales/tokens';
+import { useTranslation } from 'react-i18next';
 import { Dropdown } from 'react-native-element-dropdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { PUNCH_STATE_OPTIONS } from '../../components/PunchStateOptions';
@@ -25,7 +27,9 @@ import { useSelector } from 'react-redux';
 
 export default function ApprovalOvertimeScreen({ navigation }) {
   const selectorid = useSelector((data) => data.empid);
-
+   const {t,i18n}=useTranslation()
+    const isRTL = i18n.language === 'ar';
+    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
   const [modalVisible, setModalVisible] = useState(false);
   const [punchTimeDate, setPunchTimeDate] = useState(false);
   const [formatExpectDate, setFormatExpectDate] = useState(null);

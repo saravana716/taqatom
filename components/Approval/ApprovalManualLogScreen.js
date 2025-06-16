@@ -8,6 +8,8 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import tokens from '../../locales/tokens';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useSelector } from 'react-redux';
@@ -17,7 +19,9 @@ import { formatErrorsToToastMessages } from '../../utils/error-format';
 
 export default function ApprovalManualLogScreen({ navigation }) {
   const selectorid = useSelector((data) => data.empid);
-  
+    const {t,i18n}=useTranslation()
+    const isRTL = i18n.language === 'ar';
+    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
   
   const [workCode, setWorkCode] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -54,7 +58,10 @@ export default function ApprovalManualLogScreen({ navigation }) {
           <TouchableOpacity onPress={handleBack}>
             <Icon name="angle-left" size={30} color="#697ce3" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Manual Log</Text>
+          <Text style={styles.headerTitle}>
+{t(tokens.nav.manualLog)}
+
+          </Text>
         </View>
 
         {isLoading ? (
@@ -63,7 +70,10 @@ export default function ApprovalManualLogScreen({ navigation }) {
           </View>
         ) : isEmpty(manualLogData) ? (
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>No manual log available</Text>
+            <Text style={styles.emptyText}>
+          {t(tokens.messages.noManualLog)}
+
+            </Text>
           </View>
         ) : (
           <ScrollView

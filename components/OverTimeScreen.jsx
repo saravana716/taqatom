@@ -9,6 +9,8 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import {useTranslation} from 'react-i18next';
+import tokens from '../locales/tokens';
 import Icon from "react-native-vector-icons/FontAwesome";
 
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -26,6 +28,9 @@ export default function OvertimeScreen({ navigation }) {
     const selectorid= useSelector(function (data) {
         return data.empid
     })
+     const {t,i18n}=useTranslation()
+  const isRTL = i18n.language === 'ar';
+  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
   const [modalVisible, setModalVisible] = useState(false);
   const [startDatePicker, setStartDatePicker] = useState(false);
   const [startTimePicker, setStartTimePicker] = useState(false);
@@ -182,7 +187,10 @@ export default function OvertimeScreen({ navigation }) {
           <TouchableOpacity onPress={handleBack} style={styles.backButton}>
             <Icon name="angle-left" size={30} color="#697ce3" />
           </TouchableOpacity>
-          <Text style={styles.headerText}>Overtime</Text>
+          <Text style={styles.headerText}>
+            {t(tokens.nav.overtime)}
+
+          </Text>
         </View>
         {isLoading ? (
           <View style={styles.loader}>
@@ -190,7 +198,10 @@ export default function OvertimeScreen({ navigation }) {
           </View>
         ) : isEmpty(OvertimeData) ? (
           <View style={styles.empty}>
-            <Text style={styles.emptyText}>No overtime data</Text>
+            <Text style={styles.emptyText}>
+              {t(tokens.messages.noOvertime)}
+
+            </Text>
           </View>
         ) : (
           <ScrollView
@@ -230,14 +241,17 @@ export default function OvertimeScreen({ navigation }) {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalView}>
-            <Text style={styles.modalTitle}>Add</Text>
+            <Text style={styles.modalTitle}>
+                {t(tokens.actions.add)}
+
+            </Text>
             <View style={styles.form}>
               <TouchableOpacity
                 onPress={() => setStartDatePicker(true)}
                 style={styles.dateButton}
               >
                 <Text style={styles.dateText}>
-                  {startTime ? dateTimeToShow(startTime) : "Start Date"}
+                  {startTime ? dateTimeToShow(startTime) : t(tokens.common.startDate)}
                 </Text>
                 <Icon name="calendar-check-o" size={23} color="#919EABD9" />
               </TouchableOpacity>
@@ -263,7 +277,8 @@ export default function OvertimeScreen({ navigation }) {
                 style={styles.dateButton}
               >
                 <Text style={styles.dateText}>
-                  {endTime ? dateTimeToShow(endTime) : "End Date"}
+                             {endTime ? dateTimeToShow(endTime) : t(tokens.common.endDate)}
+
                 </Text>
                 <Icon name="calendar-check-o" size={23} color="#919EABD9" />
               </TouchableOpacity>
@@ -299,8 +314,8 @@ export default function OvertimeScreen({ navigation }) {
                   maxHeight={300}
                   labelField="name"
                   valueField="id"
-                  placeholder="Select Paycode"
-                  searchPlaceholder="Search..."
+                     placeholder={t(tokens.nav.payCode)}
+                    searchPlaceholder={t(tokens.common.search)}
                   value={payCode}
                   onChange={(item) => setPayCode(item?.id)}
                   renderItem={renderItem}
@@ -311,7 +326,8 @@ export default function OvertimeScreen({ navigation }) {
               )}
               <TextInput
                 style={styles.textInput}
-                placeholder="Reason"
+                                 placeholder={t(tokens.common.reason)}
+
                 editable
                 multiline
                 textAlignVertical="top"
@@ -325,7 +341,9 @@ export default function OvertimeScreen({ navigation }) {
                 onPress={() => setModalVisible(false)}
                 style={styles.cancelBtn}
               >
-                <Text style={styles.cancelText}>Cancel</Text>
+                <Text style={styles.cancelText}>
+                    {t(tokens.actions.cancel)}
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 disabled={isLoading}
@@ -335,7 +353,10 @@ export default function OvertimeScreen({ navigation }) {
                 {isLoading ? (
                   <ActivityIndicator size="small" color="#fff" />
                 ) : (
-                  <Text style={styles.submitText}>Add</Text>
+                  <Text style={styles.submitText}>
+                      {t(tokens.actions.add)}
+
+                  </Text>
                 )}
               </TouchableOpacity>
             </View>

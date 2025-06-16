@@ -1,10 +1,15 @@
 import { myreducers } from '@/Store/Store';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-
+import tokens from '@/locales/tokens';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 export default function RecentResignationComponent({newItem,getResignationList}) {
+    const {t,i18n}=useTranslation()
+  const isRTL = i18n.language === 'ar';
+  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+  
     const dispatch=useDispatch()
   const date = new Date(newItem?.updated_at);
 const navigation=useNavigation()
@@ -59,21 +64,39 @@ const navigation=useNavigation()
         <View style={styles.card}>
           <View style={styles.row}>
             <View>
-              <Text style={styles.label}>Resignation Date</Text>
+              <Text style={styles.label}>
+                {t(tokens.actions.resignDate)}
+
+              </Text>
               <Text style={styles.value}>{newItem?.resign_date}</Text>
             </View>
             <View>
-              <Text style={styles.label}>Last Working Date</Text>
+              <Text style={styles.label}>{t(tokens.actions.lastWorkingDate)}</Text>
               <Text style={styles.value}>{newItem?.lwd_date}</Text>
             </View>
-            {newItem?.status && (
-              <Text style={[styles.statusText, getStatusStyle(newItem.status)]}>
-                {getStatusLabel(newItem.status)}
-              </Text>
-            )}
+            {newItem?.status === 'reject' && (
+  <Text style={[styles.statusText, styles.rejectStatus]}>
+    {t(tokens.actions.reject)}
+  </Text>
+)}
+{newItem?.status === 'approve' && (
+  <Text style={[styles.statusText, styles.approveStatus]}>
+    {t(tokens.actions.approve)}
+  </Text>
+)}
+{newItem?.status === 'pending' && (
+  <Text style={[styles.statusText, styles.pendingStatus]}>
+    {t(tokens.actions.pending)}
+  </Text>
+)}
+{newItem?.status === 'withdraw' && (
+  <Text style={[styles.statusText, styles.rejectStatus]}>
+    {t(tokens.actions.cancelled)}
+  </Text>
+)}
           </View>
 
-          <View style={styles.rowBottom}>
+          {/* <View style={styles.rowBottom}>
             <View>
               <Text style={styles.label}>Reason</Text>
               <Text style={styles.value}>{truncateString(newItem?.reason, 13)}</Text>
@@ -82,7 +105,8 @@ const navigation=useNavigation()
               <Text style={styles.label}>LWD Reason</Text>
               <Text style={styles.value}>{truncateString(newItem?.lwd_reason, 13)}</Text>
             </View>
-          </View>
+          </View> */}
+         
         </View>
       </View>
     </TouchableOpacity>
@@ -157,5 +181,28 @@ const styles = StyleSheet.create({
     backgroundColor: '#E4030308',
     borderColor: '#E40303',
     color: '#E40303',
+  },
+   statusText: {
+    fontSize: 12,
+    paddingVertical: 4,    // p-1
+    paddingHorizontal: 8,  // pl-2 pr-2
+    borderRadius: 8,       // rounded-lg
+    borderWidth: 1,
+    fontFamily: 'PublicSans-Bold',
+  },
+  rejectStatus: {
+    backgroundColor: '#E4030308',
+    borderColor: '#E40303',
+    color: '#E40303',
+  },
+  approveStatus: {
+    backgroundColor: '#08CA0F08',
+    borderColor: '#08CA0F',
+    color: '#08CA0F',
+  },
+  pendingStatus: {
+    backgroundColor: '#D1A40408',
+    borderColor: '#D1A404',
+    color: '#D1A404',
   },
 });

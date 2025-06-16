@@ -7,15 +7,20 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
+import tokens from "@/locales/tokens";
 import get from "lodash/get";
 import { Calendar } from "react-native-calendars";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useSelector } from "react-redux";
 
 import ProfileServices from "@/Services/API/ProfileServices";
+import { useTranslation } from "react-i18next";
+
 
 const Holiday = ({ navigation }) => {
+    const {t,i18n}=useTranslation()
+    const isRTL = i18n.language === 'ar';
+    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
   const [holidayDetails, setHolidayDetails] = useState([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
 
@@ -74,7 +79,7 @@ const Holiday = ({ navigation }) => {
             <TouchableOpacity style={styles.closeButton} onPress={navigateBack}>
               <Icon name="angle-left" size={30} color="white" />
             </TouchableOpacity>
-            <Text style={styles.modalText}>Holiday</Text>
+            <Text style={styles.modalText}>  {t(tokens.nav.holiday)}</Text>
           </View>
         </View>
         <Calendar
@@ -112,7 +117,7 @@ const Holiday = ({ navigation }) => {
 
       <View style={styles.HolidayBottom}>
         <View style={styles.HolidayText}>
-          <Text style={styles.Texttitle}>Holiday</Text>
+          <Text style={[styles.Texttitle, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.nav.holiday)}</Text>
         </View>
 
         <ScrollView style={styles.HolidayContainer}>
@@ -130,7 +135,7 @@ const Holiday = ({ navigation }) => {
                   </View>
                 </View>
                 <Text style={styles.perday}>
-                  {data.duration_day} {data.duration_day > 1 ? "Days" : "Day"}
+                  {data.duration_day} {data.duration_day > 1 ?  t(tokens.common.days) :t(tokens.common.day)}
                 </Text>
               </View>
             ))
@@ -220,6 +225,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
   Texttitle: {
+    width:"100%",
     fontSize: 18,
     fontWeight: "800",
   },

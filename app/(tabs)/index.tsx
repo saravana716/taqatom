@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import { AuthProvider } from "../../components/AuthContext";
 import Routing from "../../Routing/Routing";
 import Store from "../../Store/Store";
+import "../../locales/i18n";
 export default function HomeScreen() {
   useEffect(() => {
     (async () => {

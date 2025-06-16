@@ -1,45 +1,117 @@
 import React from 'react';
-import { Text, View } from 'react-native';
-import { Iconify } from 'react-native-iconify';
+import { Text, View, StyleSheet } from 'react-native';
+import Icon from "react-native-vector-icons/FontAwesome";
 
 export default function RequestLoanCard({ requestLoan, newItem }) {
-  
-
   return (
-    <View className="bg-[#6466F10D] rounded-2xl">
-      <View className="bg-[#6466F1] h-18 p-4 rounded-2xl pl-4 pr-4 items-center space-x-3 flex-row rounded-b-none">
-        <View className="bg-white p-1 rounded-full">
-          <Iconify icon="majesticons:money-line" size={30} color="#6466F1" />
+    <View style={styles.cardContainer}>
+      <View style={styles.headerContainer}>
+        <View style={styles.iconWrapper}>
+          <Icon name="money" size={30} color="#6466F1" />
         </View>
-        <View className="flex-row justify-between items-center">
-          <View className="space-y-1">
-            <Text className="text-base font-PublicSansBold  text-white ">
+        <View style={styles.headerTextContainer}>
+          <View style={styles.headerTextBlock}>
+            <Text style={styles.amountText}>
               SAR {newItem?.loan_amount}
             </Text>
-            <Text className="text-xs  text-white ">
-               {newItem?.loan_category ? `${newItem?.loan_category}` : ''}
+            <Text style={styles.categoryText}>
+              {newItem?.loan_category ? `${newItem?.loan_category}` : ''}
             </Text>
-            
           </View>
         </View>
       </View>
-      <View className="p-2">
-        <View className="flex-row justify-between p-2 items-center">
-          <View className="space-y-1">
-            <Text className="text-xs  text-black ">
-              Interest Rate
-            </Text>
-            <Text className="text-md font-PublicSansBold  text-black ">
+
+      <View style={styles.bodyContainer}>
+        <View style={styles.rowBetween}>
+          <View style={styles.interestRateContainer}>
+            <Text style={styles.labelText}>Interest Rate</Text>
+            <Text style={styles.interestRateText}>
               {newItem?.interest_rate}
             </Text>
           </View>
-          <View className="bg-[#E4E4E4] flex-row items-center rounded-xl justify-center p-1">
-          <Iconify icon="radix-icons:dot-filled" size={20} color="#3F3748" />
-          <Text className="text-[10px] pr-2 text-[#3F3748]">{newItem?.status}</Text>
-        </View>
+          <View style={styles.statusContainer}>
+            <Icon name="circle" size={12} color="#3F3748" />
+            <Text style={styles.statusText}>{newItem?.status}</Text>
+          </View>
         </View>
       </View>
-     
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  cardContainer: {
+    backgroundColor: '#6466F10D',
+    borderRadius: 16,
+  },
+  headerContainer: {
+    backgroundColor: '#6466F1',
+    height: 72, // h-18 = 18 * 4 = 72px
+    padding: 16,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  iconWrapper: {
+    backgroundColor: 'white',
+    padding: 4,
+    borderRadius: 9999, // fully rounded
+  },
+  headerTextContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flex: 1,
+  },
+  headerTextBlock: {
+    gap: 2,
+  },
+  amountText: {
+    fontSize: 16,
+    fontFamily: 'PublicSans-Bold',
+    color: 'white',
+  },
+  categoryText: {
+    fontSize: 12,
+    color: 'white',
+  },
+  bodyContainer: {
+    padding: 8,
+  },
+  rowBetween: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 8,
+    alignItems: 'center',
+  },
+  interestRateContainer: {
+    gap: 2,
+  },
+  labelText: {
+    fontSize: 12,
+    color: 'black',
+  },
+  interestRateText: {
+    fontSize: 14,
+    fontFamily: 'PublicSans-Bold',
+    color: 'black',
+  },
+  statusContainer: {
+    backgroundColor: '#E4E4E4',
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 12,
+    justifyContent: 'center',
+    padding: 4,
+    paddingRight: 8,
+  },
+  statusText: {
+    fontSize: 10,
+    color: '#3F3748',
+    marginLeft: 4,
+  },
+});

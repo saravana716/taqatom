@@ -21,8 +21,12 @@ import { PUNCH_STATE_OPTIONS } from '../../components/PunchStateOption';
 import ProfileServices from '../../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../../utils/error-format';
 import { dateTimeToShow, formatDateTime } from '../../utils/formatDateTime';
-
+import tokens from '@/locales/tokens';
+import { useTranslation } from 'react-i18next';
 export default function ManualLogScreen({navigation}) {
+    const {t,i18n}=useTranslation()
+    const isRTL = i18n.language === 'ar';
+    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
   const selectorid=useSelector(function (data) {
     return data.empid
   })
@@ -134,7 +138,10 @@ export default function ManualLogScreen({navigation}) {
           <TouchableOpacity onPress={handleBack}>
             <Icon name="angle-left" size={30} color="#697ce3" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Manual Log</Text>
+          <Text style={styles.headerTitle}>
+            {t(tokens.nav.manualLog)}
+
+          </Text>
         </View>
         {isLoading ? (
           <View style={styles.loadingContainer}>
@@ -142,7 +149,10 @@ export default function ManualLogScreen({navigation}) {
           </View>
         ) : isEmpty(manualLogData) ? (
           <View style={{flex: 1}}>
-            <Text style={styles.noDataText}>No manual log available</Text>
+            <Text style={styles.noDataText}>
+              {t(tokens.messages.noManualLog)}
+
+            </Text>
           </View>
         ) : (
           <ScrollView style={styles.scrollContainer}>
@@ -173,11 +183,16 @@ export default function ManualLogScreen({navigation}) {
         onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalView}>
-            <Text style={styles.modalTitle}>Add Manual Log</Text>
+            <Text style={styles.modalTitle}>
+{t(tokens.actions.add)}
+
+            </Text>
             <View style={styles.formContainer}>
               <TouchableOpacity onPress={() => setPickerMode('date')} style={styles.inputBox}>
-                <Text style={styles.inputText}>{
-                  formatExpectDate ? dateTimeToShow(formatExpectDate) : 'Select Punch Time'}
+                <Text style={styles.inputText}>
+                 {formatExpectDate
+                      ? dateTimeToShow(formatExpectDate)
+                      : t(tokens.common.punchTime)}
                 </Text>
                 <Icon name="calendar" size={24} color="#697ce3" />
               </TouchableOpacity>
@@ -213,21 +228,23 @@ export default function ManualLogScreen({navigation}) {
                   maxHeight={300}
                   labelField="label"
                   valueField="id"
-                  placeholder="Select State"
-                  searchPlaceholder="Search..."
+              placeholder={ t(tokens.common.punchTime)}
+                    searchPlaceholder={ t(tokens.common.search)}
                   value={punchStateList}
                   onChange={item => setPunchStateList(item?.id)}
                   renderItem={renderItem}
                 />
               </View>
               <TextInput
-                placeholder="Work Code"
+                               placeholder={ t(tokens.common.workCode)}
+
                 value={workCode}
                 onChangeText={handleNumberChange}
                 style={styles.inputBox}
               />
               <TextInput
-                placeholder="Reason"
+                                 placeholder={t(tokens.common.reason)}
+
                 editable
                 multiline
                 numberOfLines={4}
@@ -246,7 +263,10 @@ export default function ManualLogScreen({navigation}) {
                   setApplyReason();
                 }}
                 style={styles.cancelButton}>
-                <Text style={styles.cancelText}>Cancel</Text>
+                <Text style={styles.cancelText}>
+                    {t(tokens.actions.cancel)}
+
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 disabled={isLoading}
@@ -255,7 +275,10 @@ export default function ManualLogScreen({navigation}) {
                 {isLoading ? (
                   <ActivityIndicator size="small" color="#fff" />
                 ) : (
-                  <Text style={styles.submitText}>Add</Text>
+                  <Text style={styles.submitText}>
+                      {t(tokens.actions.add)}
+
+                  </Text>
                 )}
               </TouchableOpacity>
             </View>

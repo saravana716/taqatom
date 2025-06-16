@@ -3,13 +3,18 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { decode as atob } from "base-64";
 import * as Location from "expo-location";
-
+import get from 'lodash/get';
+import map from 'lodash/map';
 import moment from "moment";
+import { useTranslation } from 'react-i18next';
+import tokens from '../locales/tokens';
+import { LANG_CODES } from '../locales/translations/languages';
+import { FEATURE_CODES } from '../utils/feature-constants';
 // import { LANG_CODES } from '../locales/translations/languages';
 import { myreducers } from "@/Store/Store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
   Image,
   Modal,
@@ -20,6 +25,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
 import { Dropdown } from "react-native-element-dropdown";
 import MapView, { Marker } from "react-native-maps";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -28,23 +34,28 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { useDispatch, useSelector } from "react-redux";
 import { AuthContext } from "./AuthContext";
 const Dashboard = () => {
-  const navigation=useNavigation()
-  const selectorid=useSelector(function (data) {
-    return data.empid
-  })
-  console.log(selectorid);
-  const employeeFullDetails=useSelector(function (data) {
-    return data.employeeFullDetails
-  })
-  console.log("emp",employeeFullDetails);
-    const userDetails=useSelector(function (data) {
-    return data.userDetails
-  })
-  console.log("users",userDetails);
+  const {i18n, t} = useTranslation();
   
+  const navigation = useNavigation();
+  const selectorid = useSelector(function (data) {
+    return data.empid;
+  });
+  console.log(selectorid);
+  const employeeFullDetails = useSelector(function (data) {
+    return data.employeeFullDetails;
+  });
+  console.log("emp", employeeFullDetails);
+  const userDetails = useSelector(function (data) {
+    return data.userDetails;
+  });
+  console.log("users", userDetails);
+
   const dispatch = useDispatch();
   const [workCode, setWorkCode] = useState();
   const [tokenDetail, setTokenDetail] = useState(null);
+  const currentTime = new Date();
+
+  const currentHour = currentTime.getHours();
 
   const [punchStateError, setPunchStateError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -70,6 +81,17 @@ const Dashboard = () => {
   const [empid, setempid] = useState("");
   const [recentactivity, setrecentactivity] = useState([]);
   const [updateKey, setUpdateKey] = useState(0);
+  const {
+    notifications,
+    isError,
+    isNotifyLoading,
+    notificationsCount,
+    mutate,
+  } = ProfileServices.getNotifications();
+  const unread = useMemo(() => {
+    return notificationsCount;
+  }, [notificationsCount]);
+  console.log("rrrrrrrrrrrrrrrrrr", unread);
 
   const options = [
     {
@@ -110,7 +132,7 @@ const Dashboard = () => {
     return null;
   };
 
-  // 
+  //
 
   const handleDateChange = (event, date) => {
     if (date) {
@@ -130,9 +152,9 @@ const Dashboard = () => {
   async function navigateprofile(params) {
     try {
       let userid = await AsyncStorage.getItem("token");
-      // 
+      //
 
-      navigation.navigate("Profile");
+      navigation.navigate("Profile",dataToSend);
     } catch (err) {}
   }
   async function movepage(event) {
@@ -141,7 +163,7 @@ const Dashboard = () => {
     } catch (err) {}
   }
 
-  // 
+  //
 
   //
 
@@ -153,7 +175,7 @@ const Dashboard = () => {
   const parseAccessToken = async () => {
     try {
       const accessToken = await AsyncStorage.getItem("token");
-      // 
+      //
 
       if (!accessToken || typeof accessToken !== "string") {
         throw new Error("Access token is missing or invalid");
@@ -167,14 +189,14 @@ const Dashboard = () => {
       const encodedPayload = tokenParts[1];
       const decodedPayload = JSON.parse(atob(encodedPayload)); // ✅ Use base-64
 
-      // 
+      //
       let ids = decodedPayload.user_id;
-      // 
+      //
 
       setTokenDetail(decodedPayload);
       getUserDetails(decodedPayload.user_id);
       dispatch(myreducers.senddetails(decodedPayload));
-      // 
+      //
 
       return decodedPayload;
     } catch (error) {
@@ -184,21 +206,20 @@ const Dashboard = () => {
   };
 
   const getUserDetails = async (user_id) => {
-    // 
-    
+    //
+
     try {
-      // 
+      //
 
       const userDetails = await ProfileServices.getUserDetailsData(user_id);
-      
-      
+
       setUserDetails([userDetails]);
-      // 
+      //
 
       const employee = await ProfileServices.getEmployeeDetailsData(
         userDetails?.username
       );
-      // 
+      //
 
       const empID = employee?.id;
 
@@ -206,7 +227,7 @@ const Dashboard = () => {
         setempid(empID); // Set for future use
         await getRecentActivity(empID); // ✅ immediate use
         const fullDetails = await ProfileServices.getEmployeeFullDetails(empID);
-        // 
+        //
 
         setProfilePicUrl(fullDetails?.profile_url);
         setGender(fullDetails?.gender);
@@ -248,16 +269,16 @@ const Dashboard = () => {
 
   const getRecentActivity = async (id) => {
     try {
-      // 
+      //
 
       const recents = await ProfileServices.getRecentActivityData(id);
-      // 
-      // 
+      //
+      //
 
       const graph = await ProfileServices.getExpenseGraph(id);
       setrecent(recents);
-      // 
-      // 
+      //
+      //
     } catch (err) {
       console.error("Fetching recent activity failed", err);
     }
@@ -271,32 +292,29 @@ const Dashboard = () => {
     setIsRefreshLoading(false);
   };
 
-const fetchLatiLongOnly = async () => {
-  try {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
-      alert("Permission to access location was denied");
-      return;
-    }
+  const fetchLatiLongOnly = async () => {
+    try {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        alert("Permission to access location was denied");
+        return;
+      }
 
-    let location = await Location.getCurrentPositionAsync({});
-    setCurrenLatLocation(location.coords.latitude);
-    setCurrenLongLocation(location.coords.longitude);
-  } catch (error) {
-    console.error("Error fetching location:", error);
-  }
-};
+      let location = await Location.getCurrentPositionAsync({});
+      setCurrenLatLocation(location.coords.latitude);
+      setCurrenLongLocation(location.coords.longitude);
+    } catch (error) {
+      console.error("Error fetching location:", error);
+    }
+  };
   function toFixedIfNecessary(value, dp) {
     return +parseFloat(value).toFixed(dp);
   }
 
   const updateStatus = async (latitude, longitude) => {
     try {
-      
-      
       const currentTime = moment(new Date());
-      
-      
+
       const data = {
         latitude: toFixedIfNecessary(latitude, 6),
         longitude: toFixedIfNecessary(longitude, 6),
@@ -305,22 +323,25 @@ const fetchLatiLongOnly = async () => {
         clock_type: value,
         work_code: workCode,
       };
-      
-      
-      // 
-      
-      // 
 
-     if (!data.employee_id || !data.clock_type || !data.work_code) {
-  console.warn("❌ Missing fields in punch data", data);
-  return;
-}
-      console.log("pppppppppp",data.employee_id,data.clock_type,data.work_code);
-      
+      //
+
+      //
+
+      if (!data.employee_id || !data.clock_type || !data.work_code) {
+        console.warn("❌ Missing fields in punch data", data);
+        return;
+      }
+      console.log(
+        "pppppppppp",
+        data.employee_id,
+        data.clock_type,
+        data.work_code
+      );
+
       const res = await ProfileServices.updateClockStatus(data);
-      
-console.log("rrrrrrrrrrrrrrrrr",res);
 
+      console.log("rrrrrrrrrrrrrrrrr", res);
 
       setModalVisible1(false); // close immediately
       Toast.show({
@@ -338,10 +359,9 @@ console.log("rrrrrrrrrrrrrrrrr",res);
       setIsLoading(false);
     }
   };
-  
-  
+
   const getClockType = (value) => {
-    // 
+    //
     const num = Number(value);
     switch (num) {
       case 0:
@@ -360,11 +380,11 @@ console.log("rrrrrrrrrrrrrrrrr",res);
         return "-";
     }
   };
-useEffect(() => {
-  if (modalVisible1) {
-    fetchLatiLongOnly(); // ✅ only get location
-  }
-}, [modalVisible1]);
+  useEffect(() => {
+    if (modalVisible1) {
+      fetchLatiLongOnly(); // ✅ only get location
+    }
+  }, [modalVisible1]);
   const refreshLocation = async () => {
     setIsRefreshing(true);
     try {
@@ -383,23 +403,22 @@ useEffect(() => {
       setIsRefreshing(false);
     }
   };
-const handlePunchConfirm = async (latitude, longitude) => {
-  if (value === null || value === undefined) {
-    setPunchStateError("Punch type is required");
-    return;
-  }
+  const handlePunchConfirm = async (latitude, longitude) => {
+    if (value === null || value === undefined) {
+      setPunchStateError("Punch type is required");
+      return;
+    }
 
-  if (!workCode) {
-    setPunchStateError("Work code is required");
-    return;
-  }
+    if (!workCode) {
+      setPunchStateError("Work code is required");
+      return;
+    }
 
-  await updateStatus(latitude, longitude); // call only after valid
-  await getRecentActivity(empid);
-  setModalVisible(false);
-};
+    await updateStatus(latitude, longitude); // call only after valid
+    await getRecentActivity(empid);
+    setModalVisible(false);
+  };
 
- 
   useEffect(() => {
     if (recent.length > 0) {
       const formatted = recent.map((data, index) => {
@@ -424,10 +443,10 @@ const handlePunchConfirm = async (latitude, longitude) => {
         const formattedDate = `${day} ${months[monthIndex]} ${year}`;
 
         const minutes = dateObj.getMinutes();
-        // 
+        //
 
         const seconds = dateObj.getSeconds();
-        // 
+        //
 
         const ampm = dateObj.getHours() >= 12 ? "PM" : "AM";
         let hours = dateObj.getHours() % 12;
@@ -435,7 +454,7 @@ const handlePunchConfirm = async (latitude, longitude) => {
         const formattedTime = `${hours}:${
           minutes < 10 ? `0${minutes}` : minutes
         }:${seconds < 10 ? `0${seconds}` : seconds} ${ampm}`;
-        // 
+        //
 
         return {
           formattedDate,
@@ -447,8 +466,8 @@ const handlePunchConfirm = async (latitude, longitude) => {
       // Just set the latest (first) one
       setformatdate(formatted[0].formattedDate);
       setformattime(formatted[0].formattedTime);
-      // 
-      // 
+      //
+      //
     }
   }, [recent]); // ✅ only runs when `recent` updates
 
@@ -459,8 +478,8 @@ const handlePunchConfirm = async (latitude, longitude) => {
     );
   }
 
-  // 
-  // 
+  //
+  //
   async function getdata() {
     try {
       if (!empid) return;
@@ -490,25 +509,25 @@ const handlePunchConfirm = async (latitude, longitude) => {
   useEffect(() => {
     getdata();
   }, [empid, startDate, endDate]);
-    const getSubordinateName = async id => {
-      console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");
-      
+  const getSubordinateName = async (id) => {
+    console.log(
+      "uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu"
+    );
+
     try {
       const employeeName = await ProfileServices.getEmployeeNameDetails();
-      console.log('employeeName', employeeName);
-      console.log(
-        "gnfdngjkngjknjkdfngjkdsngjkndjkgnjkdgjkdgjksdbgjksdbgjkb"
-      );
-      
+      console.log("employeeName", employeeName);
+      console.log("gnfdngjkngjknjkdfngjkdsngjkndjkgnjkdgjkdgjksdbgjksdbgjkb");
+
       setSubordinateName(employeeName);
     } catch (err) {
       console.warn(err);
     }
   };
 
-useEffect(() => {
- getSubordinateName()
-}, [])
+  useEffect(() => {
+    getSubordinateName();
+  }, []);
 
   const today = moment().format("YYYY-MM-DD");
   // useEffect(() => {
@@ -516,7 +535,7 @@ useEffect(() => {
   //     try {
   //      await logout()
   //     } catch (err) {
-  //       
+  //
   //     }
   //   }
   //   Logout()
@@ -529,47 +548,75 @@ useEffect(() => {
     } catch (err) {}
   }
   // const handleLanguageChange = useCallback(async () => {
-  //     
+  //
 
   //     const language =
   //       i18n.language === LANG_CODES.ARABIC
   //         ? LANG_CODES.ENGLISH
   //         : LANG_CODES.ARABIC;
 
-  //     
+  //
 
   //     await i18n.changeLanguage(language);
   //     setCurrentLang(language); // Trigger re-render
   //   }, []);
   const dataToSend = {
-  selectorid,
-  setProfilePicUrl: val => setProfilePicUrl(val),
-  employeeFullDetails,
-  userDetails,
-  ProfilePicUrl,
-  setUpdateKey,
-  updateKey,
-  setGender: val => setGender(val),
-  gender,
-  subordinateName,
-  setSubordinateName,
-  token: tokenDetail,
-};
-console.log("sendadat",dataToSend);
+    selectorid,
+    setProfilePicUrl: (val) => setProfilePicUrl(val),
+    employeeFullDetails,
+    userDetails,
+    ProfilePicUrl,
+    setUpdateKey,
+    updateKey,
+    setGender: (val) => setGender(val),
+    gender,
+    subordinateName,
+    setSubordinateName,
+    token: tokenDetail,
+  };
+  console.log("sendadat", dataToSend);
 
-async function handleNotificationScreen() {
-  try {
-    console.log("Navigating to NotificationScreen");
+  async function handleNotificationScreen() {
+    try {
+      console.log("Navigating to NotificationScreen");
 
-    navigation.navigate("NotificationScreen", dataToSend)
-    console.log("senddata",);
-    
-  } catch (err) {
-    console.error('Navigation error:', err);
+      navigation.navigate("NotificationScreen", dataToSend);
+      console.log("senddata");
+    } catch (err) {
+      console.error("Navigation error:", err);
+    }
   }
-}
-console.log("myvalue",value);
+  console.log("myvalue", value);
+   const FEATURES_ARRAY = map(get(userDetails, 'features', []), el => {
+    return get(el, 'name');
+  });
+  const IS_PAYROLL_ENABLED = FEATURES_ARRAY.includes(FEATURE_CODES.PAYROLL);
 
+  const handleLanguageChange = useCallback(async () => {
+    console.log("pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp");
+    console.log("dddkgl;",LANG_CODES);
+    console.log("mylanduajbds",i18n.language);
+    
+    const language =
+      i18n.language === LANG_CODES.ARABIC
+        ? LANG_CODES.ENGLISH
+        : LANG_CODES.ARABIC;
+    await i18n.changeLanguage(language);
+    console.log("gkngkndkfkgnknhghkkdfnkknknknkgndfkhnklfnhkfnhkfnkhnlkdfnhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
+    
+    console.log(i18n.language, 'CURRENT LAGNNGG');
+  }, [i18n, t]);
+  let greeting;
+  console.log({"data":{i18n,t}});
+
+  if (currentHour < 12) {
+    greeting = t(tokens.common.goodMorning);
+  } else if (currentHour < 18) {
+    greeting = t(tokens.common.goodafternoon);
+  } else {
+    greeting = t(tokens.common.goodevening);
+  }
+  
 
   return (
     <>
@@ -594,7 +641,7 @@ console.log("myvalue",value);
                     style={styles.modalText}
                     onPress={() => setModalVisible(false)}
                   >
-                    Recent Activity
+                      {t(tokens.common.recentActivity)}
                   </Text>
                 </View>
                 <View style={styles.search}>
@@ -610,7 +657,7 @@ console.log("myvalue",value);
                   <TouchableOpacity
                     style={styles.models}
                     onPress={() => {
-                      // 
+                      //
 
                       setCurrentField("start");
                       setShowPicker(true);
@@ -821,7 +868,7 @@ console.log("myvalue",value);
               {UserDetails.map(function (data, index) {
                 return (
                   <View style={styles.leftcontent} key={index}>
-                    <Text style={styles.lefttitle}>Good Evening</Text>
+                    <Text style={styles.lefttitle}>{greeting}</Text>
                     <Text style={styles.leftpara}>
                       {data.first_name} {data.last_name}
                     </Text>
@@ -830,18 +877,31 @@ console.log("myvalue",value);
               })}
             </View>
             <View style={styles.icons}>
-              <TouchableOpacity>
-                <Icon name="language" size={22} color="white" />
-              </TouchableOpacity>
-              <TouchableOpacity  onPress={handleNotificationScreen}>
+              <TouchableOpacity onPress={handleLanguageChange}>
+  {i18n.language === LANG_CODES.ARABIC ? (
+    <Icon name="font" size={25} color="#fff" />
+  ) : (
+    <Icon name="globe" size={25} color="#fff" />
+  )}
+</TouchableOpacity>
+             
+              <TouchableOpacity
+                onPress={handleNotificationScreen}
+                style={styles.notificationbar}
+              >
                 <Icon name="bell" size={22} color="white" />
+                {unread > 0 && (
+                  <View style={styles.notification}>
+                    <Text style={styles.notificationText}>{unread}</Text>
+                  </View>
+                )}
               </TouchableOpacity>
             </View>
           </View>
 
           <View style={styles.punch}>
             <View style={styles.punchtitle}>
-              <Text style={styles.punchday}>Today Overview</Text>
+              <Text style={styles.punchday}>{t(tokens.common.todayOverview)}</Text>
               <Text style={styles.punchday1}>
                 {moment().format("MMMM D, YYYY")}
               </Text>
@@ -865,7 +925,7 @@ console.log("myvalue",value);
                 style={styles.images1}
               />
             </TouchableOpacity>
-            <Text style={styles.holiday}>Holiday</Text>
+            <Text style={styles.holiday}> {t(tokens.nav.holiday)}</Text>
           </View>
           <View style={styles.hol}>
             <TouchableOpacity
@@ -877,84 +937,129 @@ console.log("myvalue",value);
                 style={styles.images}
               />
             </TouchableOpacity>
-            <Text style={styles.holiday}>Shift</Text>
+            <Text style={styles.holiday}>
+                  {t(tokens.nav.shift)}
+
+            </Text>
           </View>
           <View style={styles.hol}>
-            <TouchableOpacity style={styles.dash1}
-            onPress={() => movepage("Loan")}
+            <TouchableOpacity
+              style={styles.dash1}
+              onPress={() => movepage("Loan")}
             >
               <Image
                 source={require("../assets/images/Assets/dollar.png")}
                 style={styles.images}
               />
             </TouchableOpacity>
-            <Text style={styles.holiday}>Loan</Text>
+            <Text style={styles.holiday}>
+                  {t(tokens.nav.loan)}
+
+            </Text>
           </View>
           <View style={styles.hol}>
-            <TouchableOpacity style={styles.dash1}  onPress={() => movepage("ReimbursementScreen")}>
+            <TouchableOpacity
+              style={styles.dash1}
+              onPress={() => movepage("ReimbursementScreen")}
+            >
               <Image
                 source={require("../assets/images/Assets/payslip.png")}
                 style={styles.images}
               />
             </TouchableOpacity>
-            <Text style={styles.holiday}>Expense</Text>
+            <Text style={styles.holiday}>
+                  {t(tokens.nav.expense)}
+
+            </Text>
           </View>
         </View>
         <View style={styles.dash12}>
           <View style={styles.hol}>
-            <TouchableOpacity style={styles.dash1} onPress={() => movepage("PaySlipScreen")}>
+            <TouchableOpacity
+              style={styles.dash1}
+              onPress={() => movepage("PaySlipScreen")}
+            >
               <Image
                 source={require("../assets/images/Assets/resignation-icon.png")}
                 style={styles.images}
               />
             </TouchableOpacity>
-            <Text style={styles.holiday}>Payslip</Text>
+            <Text style={styles.holiday}>
+                  {t(tokens.nav.paySlip)}
+
+            </Text>
           </View>
           <View style={styles.hol}>
-            <TouchableOpacity style={styles.dash1}onPress={()=>movepage("ResignationScreen")}>
+            <TouchableOpacity
+              style={styles.dash1}
+              onPress={() => movepage("ResignationScreen")}
+            >
               <Image
                 source={require("../assets/images/Assets/request-icon.png")}
                 style={styles.images}
               />
             </TouchableOpacity>
-            <Text style={styles.holiday}>Resignation</Text>
+            <Text style={styles.holiday}>
+                  {t(tokens.nav.resignation)}
+
+            </Text>
           </View>
           <View style={styles.hol}>
-            <TouchableOpacity style={styles.dash1} onPress={()=>movepage("RequestScreen")}>
+            <TouchableOpacity
+              style={styles.dash1}
+              onPress={() => movepage("RequestScreen")}
+            >
               <Image
                 source={require("../assets/images/Assets/approval-icon.png")}
                 style={styles.images}
               />
             </TouchableOpacity>
-            <Text style={styles.holiday}>Request</Text>
+            <Text style={styles.holiday}>
+                  {t(tokens.nav.request)}
+
+            </Text>
           </View>
           <View style={styles.hol}>
-            <TouchableOpacity style={styles.dash1} onPress={()=>movepage("ApprovalScreen")}>
+            <TouchableOpacity
+              style={styles.dash1}
+              onPress={() => movepage("ApprovalScreen")}
+            >
               <Image
                 source={require("../assets/images/Assets/reports.png")}
                 style={styles.images}
               />
             </TouchableOpacity>
-            <Text style={styles.holiday}>Approvals</Text>
+            <Text style={styles.holiday}>
+               {t(tokens.nav.approvals)}
+            </Text>
           </View>
-            
         </View>
-         <View style={styles.dash121}>
-            <View style={styles.hol}>
-            <TouchableOpacity style={styles.dash1} onPress={()=>movepage("ReportScreen")}>
+        <View style={styles.dash121}>
+          <View style={styles.hol}>
+            <TouchableOpacity
+              style={styles.dash1}
+              onPress={() => movepage("ReportScreen")}
+            >
               <Image
                 source={require("../assets/images/Assets/reports.png")}
                 style={styles.images}
               />
             </TouchableOpacity>
-            <Text style={styles.holiday}>Reports</Text>
+            <Text style={styles.holiday}>
+                  {t(tokens.nav.approvals)}
+
+            </Text>
           </View>
         </View>
         <View style={styles.activity}>
           <View style={styles.activitytop}>
-            <Text style={styles.recenttext}>Recent Activity</Text>
+            <Text style={styles.recenttext}>
+               {t(tokens.common.recentActivity)}
+            </Text>
             <TouchableOpacity onPress={openmodel}>
-              <Text style={styles.recenttext1}>View All</Text>
+              <Text style={styles.recenttext1}>
+                 {t(tokens.actions.viewAll)}
+              </Text>
             </TouchableOpacity>
           </View>
           <ScrollView style={styles.myscroll}>
@@ -1021,7 +1126,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 30,
     borderBottomLeftRadius: 30,
   },
-    images12: {
+  images12: {
     width: "100%",
     height: "60%",
     objectFit: "cover",
@@ -1076,7 +1181,7 @@ const styles = StyleSheet.create({
     height: 160,
     backgroundColor: "white",
     position: "absolute",
-    bottom:30,
+    bottom: 30,
     padding: 15,
     borderRadius: 20,
     zIndex: 1,
@@ -1124,12 +1229,12 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     justifyContent: "space-between",
     flexWrap: "wrap",
-    paddingBottom:20,
+    paddingBottom: 20,
     gap: 40,
   },
   dash12: {
     width: "100%",
-    paddingHorizontal:20,
+    paddingHorizontal: 20,
     display: "flex",
     flexDirection: "row",
     alignItems: "flex-start",
@@ -1137,16 +1242,16 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: 40,
   },
-    dash121: {
+  dash121: {
     width: "100%",
-    paddingHorizontal:20,
+    paddingHorizontal: 20,
     display: "flex",
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between",
     flexWrap: "wrap",
     gap: 40,
-    marginVertical:20
+    marginVertical: 20,
   },
   hol: {
     display: "flex",
@@ -1431,5 +1536,23 @@ const styles = StyleSheet.create({
     backgroundColor: "#f6f6f6",
     padding: 20,
   },
- 
+  notificationbar: {
+    position: "relative",
+  },
+  notification: {
+    position: "absolute",
+    width: 25,
+    height: 25,
+    borderRadius: 15,
+    backgroundColor: "red",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    top: -13,
+    left: 7,
+  },
+  notificationText: {
+    fontSize: 12,
+    color: "white",
+  },
 });

@@ -2,6 +2,8 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import round from "lodash/round";
 import moment from "moment";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import tokens from "@/locales/tokens";
 import {
   Modal,
   ScrollView,
@@ -21,7 +23,9 @@ export default function ApplyLoanScreen({ navigation }) {
   const selectorid = useSelector(function (data) {
     return data.empid;
   });
-  
+    const {t,i18n}=useTranslation()
+  const isRTL = i18n.language === 'ar';
+  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
 
   const [date, setDate] = useState();
   const [endDate, setEndDate] = useState();
@@ -37,6 +41,9 @@ export default function ApplyLoanScreen({ navigation }) {
   const [endDateShow, setEndDateShow] = useState(false);
 
   function calculateEMIZeroInterest(loanAmount, repaymentPeriod) {
+     const {t,i18n}=useTranslation()
+      const isRTL = i18n.language === 'ar';
+      console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
     const emi = Math.ceil(loanAmount / repaymentPeriod);
     const totalRepaymentAmount = loanAmount;
     return {
@@ -136,7 +143,7 @@ function openCalculator(params) {
 
         </TouchableOpacity>
      
-        <Text style={styles.title}>Apply Loan</Text>
+        <Text style={styles.title}>{t(tokens.nav.applyLoan)}</Text>
 <TouchableOpacity  onPress={() => {
               setConfirmVisible(true);
             }}>
@@ -149,12 +156,12 @@ function openCalculator(params) {
           <ScrollView showsVerticalScrollIndicator={false}>
             <TextInput
               style={styles.input}
-              placeholder="Loan Category"
+              placeholder={t(tokens.common.loanCategory)}
               onChangeText={setLoanCategory}
             />
             <TextInput
               style={styles.input}
-              placeholder="Loan Amount"
+              placeholder={t(tokens.common.loanAmount)}
               value={loanAmount}
               onChangeText={handleNumberChange}
             />
@@ -162,7 +169,7 @@ function openCalculator(params) {
               style={styles.input}
               onPress={() => setFromDateShow(true)}
             >
-              <Text>{formatExpectDate || "Expected Month"}</Text>
+              <Text> {formatExpectDate ? formatExpectDate : t(tokens.common.expectedMonth)}</Text>
           <Icon name="calendar-check-o" size={20} color="lightgray" />
 
             </TouchableOpacity>
@@ -178,7 +185,7 @@ function openCalculator(params) {
               style={styles.input}
               onPress={() => setEndDateShow(true)}
             >
-              <Text>{emiStartDate || "EMI Starts From"}</Text>
+              <Text>{emiStartDate ? emiStartDate : t(tokens.common.emiStartsFrom)}</Text>
           <Icon name="calendar-check-o" size={20} color="lightgray" />
 
             </TouchableOpacity>
@@ -193,7 +200,7 @@ function openCalculator(params) {
             )}
             <TextInput
               style={[styles.input, { height: 100 }]}
-              placeholder="Notes"
+              placeholder={t(tokens.common.notes)}
               multiline
               numberOfLines={4}
             />
@@ -201,7 +208,7 @@ function openCalculator(params) {
               style={styles.submitButton}
               onPress={handleSignIn}
             >
-              <Text style={styles.submitButtonText}>Apply Loan</Text>
+              <Text style={styles.submitButtonText}>{t(tokens.nav.applyLoan)}</Text>
             </TouchableOpacity>
           </ScrollView>
         </View>

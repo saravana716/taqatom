@@ -26,11 +26,14 @@ import {
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import ProfileServices from '../../Services/API/ProfileServices';
 import { dateTimeToShow, formatDateTime } from '../../utils/formatDateTime';
-// import { useTranslation } from 'react-i18next'; // Removed as per request
+import { useTranslation } from 'react-i18next'; // Removed as per request
 // import tokens from '../../locales/tokens'; // Removed as per request
 import { formatErrorsToToastMessages } from '../../utils/error-format';
-
+import tokens from '@/locales/tokens';
 export default function TrainingRequestDetails({navigation, route}) {
+   const {t,i18n}=useTranslation()
+    const isRTL = i18n.language === 'ar';
+    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
   const {employeeId, newItem, trainingList, payCodes, getPayCodeList} =
     route.params;
   // const {t}=useTranslation() // Removed as per request
@@ -256,7 +259,10 @@ export default function TrainingRequestDetails({navigation, route}) {
                 </TouchableOpacity>
               </View>
               <View style={styles.titleContainer}>
-                <Text style={styles.titleText}>View</Text>
+                <Text style={styles.titleText}>
+{t(tokens.actions.view)}
+
+                </Text>
               </View>
 
               <View style={styles.menuIconContainer}>
@@ -290,7 +296,9 @@ export default function TrainingRequestDetails({navigation, route}) {
                               alignItems: 'center',
                             }}>
                             <Icon name="pencil" size={20} color="#000" />
-                            <Text style={{marginLeft: 10}}>Edit</Text>
+                            <Text style={{marginLeft: 10}}>
+                              {t(tokens.actions.edit)}
+                            </Text>
                           </View>
                         </MenuOption>
                       )}
@@ -304,78 +312,112 @@ export default function TrainingRequestDetails({navigation, route}) {
                 <View style={styles.detailsCard}>
                   <View>
                     <View style={styles.detailRow}>
-                      <Text style={styles.detailLabel}>Approval Status</Text>
+                      <Text style={styles.detailLabel}>
+                      {t(tokens.charts.approvalStatus)}
+
+                      </Text>
                       {matchedData?.approval_status === 3 && (
                         <Text style={[styles.statusText, styles.statusRejected]}>
-                          Reject
+                          {t(tokens.actions.reject)}
+                          
                         </Text>
                       )}
                       {matchedData?.approval_status === 2 && (
                         <Text style={[styles.statusText, styles.statusApproved]}>
-                          Approve
+                          {t(tokens.actions.approve)}
+                          
                         </Text>
                       )}
                       {matchedData?.approval_status === 1 && (
                         <Text style={[styles.statusText, styles.statusPending]}>
-                          Pending
+                          {t(tokens.actions.pending)}
+                          
                         </Text>
                       )}
                       {matchedData?.approval_status === 4 && (
                         <Text style={[styles.statusText, styles.statusRevoked]}>
-                          Revoke
+                          {t(tokens.actions.revoke)}
+                          
                         </Text>
                       )}
                     </View>
                     <View style={styles.detailRow}>
-                      <Text style={styles.detailLabel}>First Name</Text>
+                      <Text style={styles.detailLabel}>
+                      {t(tokens.common.firstName)}
+
+                      </Text>
                       <Text style={styles.detailValue}>
                         {get(matchedData, 'first_name')}
                       </Text>
                     </View>
                     <View style={styles.detailRow}>
-                      <Text style={styles.detailLabel}>Last Name</Text>
+                      <Text style={styles.detailLabel}>
+                      {t(tokens.common.lastName)}
+
+                      </Text>
                       <Text style={styles.detailValue}>
                         {get(matchedData, 'last_name')}
                       </Text>
                     </View>
                     <View style={styles.detailRow}>
-                      <Text style={styles.detailLabel}>Employee Code</Text>
+                      <Text style={styles.detailLabel}>
+                      {t(tokens.common.employeeCode)}
+
+                      </Text>
                       <Text style={styles.detailValue}>
                         {get(matchedData, 'emp_code')}
                       </Text>
                     </View>
                     <View style={styles.detailRow}>
-                      <Text style={styles.detailLabel}>Department</Text>
+                      <Text style={styles.detailLabel}>
+                      {t(tokens.nav.department)}
+
+                      </Text>
                       <Text style={styles.detailValue}>
                         {get(matchedData, 'department_info.department_name')}
                       </Text>
                     </View>
                     <View style={styles.detailRow}>
-                      <Text style={styles.detailLabel}>Position</Text>
+                      <Text style={styles.detailLabel}>
+                      {t(tokens.nav.position)}
+
+                      </Text>
                       <Text style={styles.detailValue}>
                         {get(matchedData, 'position_info.position_name')}
                       </Text>
                     </View>
                     <View style={styles.detailRow}>
-                      <Text style={styles.detailLabel}>Start Time</Text>
+                      <Text style={styles.detailLabel}>
+                      {t(tokens.common.startTime)}
+
+                      </Text>
                       <Text style={styles.detailValue}>
                         {dateTimeToShow(matchedData?.start_time)}
                       </Text>
                     </View>
                     <View style={[styles.detailRow, styles.lastDetailRow]}>
-                      <Text style={styles.detailLabel}>End Time</Text>
+                      <Text style={styles.detailLabel}>
+                      {t(tokens.common.endTime)}
+
+                      </Text>
                       <Text style={styles.detailValue}>
                         {dateTimeToShow(matchedData?.end_time)}
                       </Text>
                     </View>
                     <View style={[styles.detailRow, styles.lastDetailRow]}>
-                      <Text style={styles.detailLabel}>Pay Code</Text>
+                      <Text style={styles.detailLabel}>
+                      {t(tokens.nav.payCode)}
+
+                      </Text>
                       <Text style={styles.detailValue}>
                         {matchedData?.paycode_details?.name}
                       </Text>
                     </View>
                     <View style={[styles.detailRow, styles.lastDetailRowNoBorder]}>
-                      <Text style={styles.detailLabel}>Reason</Text>
+                      <Text style={styles.detailLabel}>
+                      {t(tokens.common.reason)}
+
+                      </Text>
                       <Text style={styles.detailValue}>
                         {matchedData?.apply_reason || '-'}
                       </Text>
@@ -393,7 +435,10 @@ export default function TrainingRequestDetails({navigation, route}) {
                             : styles.buttonPrimary,
                           styles.revokeButton,
                         ]}>
-                        <Text style={styles.buttonText}>Revoke</Text>
+                        <Text style={styles.buttonText}>
+                        {t(tokens.actions.revoke)}
+
+                        </Text>
                       </TouchableOpacity>
                     )}
                     <TouchableOpacity
@@ -406,7 +451,10 @@ export default function TrainingRequestDetails({navigation, route}) {
                           : styles.buttonPrimary,
                         styles.deleteButton,
                       ]}>
-                      <Text style={styles.buttonText}>Delete</Text>
+                      <Text style={styles.buttonText}>
+                      {t(tokens.actions.delete)}
+
+                      </Text>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -426,15 +474,16 @@ export default function TrainingRequestDetails({navigation, route}) {
           }}>
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Edit</Text>
+              {t(tokens.actions.edit)}
+              <Text style={styles.modalTitle}></Text>
               <View style={styles.modalForm}>
                 <TouchableOpacity
                   onPress={() => setStartDate(true)}
                   style={styles.datePickerButton}>
                   <Text style={styles.datePickerText}>
-                    {formatStartDate
+                      {formatStartDate
                       ? dateTimeToShow(formatStartDate)
-                      : 'Start Date'}
+                      : t(tokens.common.startDate)}
                   </Text>
                   <Icon name="calendar-check-o" size={20} color="lightgray" />
                 </TouchableOpacity>
@@ -463,7 +512,8 @@ export default function TrainingRequestDetails({navigation, route}) {
                   onPress={() => setEndDate(true)}
                   style={styles.datePickerButton}>
                   <Text style={styles.datePickerText}>
-                    {formatEndDate ? dateTimeToShow(formatEndDate) : 'End Date'}
+                                       {formatEndDate ? dateTimeToShow(formatEndDate) : t(tokens.common.endDate)}
+
                   </Text>
                   <Icon name="calendar-check-o" size={20} color="lightgray" />
                 </TouchableOpacity>
@@ -502,10 +552,10 @@ export default function TrainingRequestDetails({navigation, route}) {
                     maxHeight={300}
                     labelField="name"
                     valueField="id"
-                    placeholder={
-                      matchedData?.paycode_details?.name || 'Pay Code'
+                placeholder={
+                      matchedData?.paycode_details?.name || t(tokens.nav.payCode)
                     }
-                    searchPlaceholder="Search..."
+                    searchPlaceholder={t(tokens.common.search)}
                     value={payCode}
                     onChange={item => {
                       setPayCode(item?.id);
@@ -518,7 +568,8 @@ export default function TrainingRequestDetails({navigation, route}) {
                 ) : null}
                 <TextInput
                   style={styles.reasonInput}
-                  placeholder="Reason"
+                                    placeholder={t(tokens.common.search)}
+
                   editable
                   multiline
                   textAlignVertical="top"
@@ -533,7 +584,10 @@ export default function TrainingRequestDetails({navigation, route}) {
                     setModalVisible(false);
                   }}
                   style={styles.modalCancelButton}>
-                  <Text style={styles.modalCancelButtonText}>Cancel</Text>
+                  <Text style={styles.modalCancelButtonText}>
+                  {t(tokens.actions.cancel)}
+
+                  </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   disabled={isLoading}
@@ -542,7 +596,9 @@ export default function TrainingRequestDetails({navigation, route}) {
                   {isLoading && (
                     <ActivityIndicator size="large" color="#697CE3" />
                   )}
-                  {!isLoading && <Text style={styles.modalEditButtonText}>Edit</Text>}
+                  {!isLoading && <Text style={styles.modalEditButtonText}>
+                   {t(tokens.actions.edit)}
+                    </Text>}
                 </TouchableOpacity>
               </View>
             </View>
@@ -559,9 +615,13 @@ export default function TrainingRequestDetails({navigation, route}) {
           }}>
           <View style={styles.modalOverlay}>
             <View style={styles.confirmModalContent}>
-              <Text style={styles.confirmModalTitle}>Delete</Text>
+              <Text style={styles.confirmModalTitle}>
+              {t(tokens.actions.delete)}
+
+              </Text>
               <Text style={styles.confirmModalText}>
-                Are you sure you want to delete this record?
+                             {t(tokens.messages.deleteConfirm)}
+
               </Text>
               <View style={styles.modalButtonContainer}>
                 <TouchableOpacity
@@ -569,7 +629,10 @@ export default function TrainingRequestDetails({navigation, route}) {
                     setDeleteConfirmVisible(false);
                   }}
                   style={styles.modalCancelButton}>
-                  <Text style={styles.modalCancelButtonText}>Cancel</Text>
+                  <Text style={styles.modalCancelButtonText}>
+                  {t(tokens.actions.cancel)}
+
+                  </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   disabled={isLoading}
@@ -578,7 +641,9 @@ export default function TrainingRequestDetails({navigation, route}) {
                   {isLoading && (
                     <ActivityIndicator size="large" color="#697CE3" />
                   )}
-                  {!isLoading && <Text style={styles.modalDeleteButtonText}>Delete</Text>}
+                  {!isLoading && <Text style={styles.modalDeleteButtonText}>
+                      {t(tokens.actions.delete)}
+                    </Text>}
                 </TouchableOpacity>
               </View>
             </View>
@@ -595,9 +660,13 @@ export default function TrainingRequestDetails({navigation, route}) {
           }}>
           <View style={styles.modalOverlay}>
             <View style={styles.confirmModalContent}>
-              <Text style={styles.confirmModalTitle}>Revoke</Text>
+              <Text style={styles.confirmModalTitle}>
+              {t(tokens.actions.revoke)}
+
+              </Text>
               <Text style={styles.confirmModalText}>
-                Are you sure you want to revoke this record?
+                            {t(tokens.messages.revokeConfirm)}
+
               </Text>
               <View style={styles.modalButtonContainer}>
                 <TouchableOpacity
@@ -605,7 +674,10 @@ export default function TrainingRequestDetails({navigation, route}) {
                     setRevokeConfirmVisible(false);
                   }}
                   style={styles.modalCancelButton}>
-                  <Text style={styles.modalCancelButtonText}>Cancel</Text>
+                  <Text style={styles.modalCancelButtonText}>
+                  {t(tokens.actions.cancel)}
+
+                  </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   disabled={isLoading}
@@ -615,7 +687,10 @@ export default function TrainingRequestDetails({navigation, route}) {
                     <ActivityIndicator size="large" color="#697CE3" />
                   )}
                   {!isLoading && (
-                    <Text style={styles.modalEditButtonText}>Revoke</Text>
+                    <Text style={styles.modalEditButtonText}>
+{t(tokens.actions.revoke)}
+
+                    </Text>
                   )}
                 </TouchableOpacity>
               </View>

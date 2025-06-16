@@ -17,12 +17,16 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { useSelector } from 'react-redux';
 import PaySlipComponent from '../components/PaySlipComponent';
 import ProfileServices from '../Services/API/ProfileServices';
-
+import tokens from '@/locales/tokens';
+import { useTranslation } from 'react-i18next';
 const renderDot = color => (
   <View style={{ height: 10, width: 10, borderRadius: 5, backgroundColor: color, marginRight: 10 }} />
 );
 
 export default function PaySlipScreen({ navigation }) {
+    const {t,i18n}=useTranslation()
+    const isRTL = i18n.language === 'ar';
+    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
   const employeeFullDetails = useSelector(data => data.employeeFullDetails);
   const [payrollHistory, setPayrollHistory] = useState([]);
   const [payrollData, setPayrollData] = useState([]);
@@ -103,12 +107,18 @@ console.log("history",payrollHistory);
         <TouchableOpacity onPress={handleBack} style={styles.backButton}>
           <Icon name="angle-left" size={30} color="black" />
         </TouchableOpacity>
-        <Text style={styles.title}>Pay Slip</Text>
+        <Text style={styles.title}>
+          {t(tokens.nav.paySlip)}
+
+        </Text>
       </View>
 
       <View style={styles.contentWrapper}>
         <View style={styles.chartCard}>
-          <Text style={styles.sectionTitle}>Employee Salary</Text>
+          <Text style={styles.sectionTitle}>
+              {t(tokens.nav.employeeSalary)}
+
+          </Text>
           <View style={styles.chartContainer}>
             {isLoading ? (
               <ActivityIndicator size="large" color="#697CE3" />
@@ -124,7 +134,10 @@ console.log("history",payrollHistory);
                 centerLabelComponent={() => (
                   <View style={styles.centerLabel}>
                     <Text style={styles.centerValue}>{value || totalValue}</Text>
-                    <Text style={styles.centerText}>{name || 'Total'}</Text>
+                    <Text style={styles.centerText}>
+                          {t(tokens.actions.total)}
+
+                    </Text>
                   </View>
                 )}
               />
@@ -136,7 +149,10 @@ console.log("history",payrollHistory);
                 data={[{ value: 1, color: '#D9D9D9', text: 'Deductions' }]}
                 centerLabelComponent={() => (
                   <View style={styles.centerLabel}>
-                    <Text style={styles.centerValue}>No Payroll</Text>
+                    <Text style={styles.centerValue}>
+                          {t(tokens.messages.noPayrolls)}
+
+                    </Text>
                   </View>
                 )}
               />
@@ -162,13 +178,16 @@ console.log("history",payrollHistory);
           )}
         </View>
 
-        <Text style={styles.sectionTitle}>Payroll History</Text>
+        <Text style={[styles.sectionTitle, { textAlign: isRTL ? 'right' : 'left' }]}>
+          {t(tokens.actions.payrollHistory)}
+
+        </Text>
 
         <ScrollView style={styles.scrollArea}>
           {isLoading ? (
             <ActivityIndicator size="large" color="#697CE3" />
           ) : isEmpty(payrollHistory) ? (
-            <Text>No history found.</Text>
+            <Text>{t(tokens.messages.noHistory)}</Text>
           ) : (
             payrollHistory?.map(newItem => (
               <View key={newItem.id} style={styles.historyItem}>

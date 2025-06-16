@@ -13,9 +13,12 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
 import ExpenseComponents from "../components/ExpenseComponents";
 import ProfileServices from "../Services/API/ProfileServices";
-
+import { useTranslation } from "react-i18next";
+import tokens from "@/locales/tokens";
 export default function ReimbursementScreen({ navigation }) {
-
+  const {t,i18n}=useTranslation()
+  const isRTL = i18n.language === 'ar';
+  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
 const dispatch=useDispatch()
     const selectorid=useSelector(function (data) {
         return data.empid
@@ -96,7 +99,7 @@ const dispatch=useDispatch()
         <TouchableOpacity onPress={handleBack}>
           <Icon name="chevron-back" size={30} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Expense</Text>
+        <Text style={styles.headerTitle}>{t(tokens.nav.expense)}</Text>
       </View>
 
       <View style={styles.mainContent}>
@@ -104,13 +107,13 @@ const dispatch=useDispatch()
           <View style={styles.innerContent}>
             <View style={styles.statsRow}>
               <View style={styles.statBox}>
-                <Text style={styles.statLabel}>Total Expense</Text>
+                <Text style={styles.statLabel}>   {t(tokens.charts.totalExpense)}</Text>
                 <Text style={styles.statValue}>
                   {totalExpenseDetails?.total_expense_amount || "0.00"} SAR
                 </Text>
               </View>
               <View style={styles.statBoxRight}>
-                <Text style={styles.statLabel}>Approved</Text>
+                <Text style={styles.statLabel}>{t(tokens.actions.approve)}</Text>
                 <Text style={styles.statValue}>
                   {totalApprovedDetails?.approved_total_amount || "0.00"} SAR
                 </Text>
@@ -118,13 +121,13 @@ const dispatch=useDispatch()
             </View>
             <View style={styles.statsRow}>
               <View style={styles.statBox}>
-                <Text style={styles.statLabel}>Rejected</Text>
+                <Text style={styles.statLabel}>{t(tokens.actions.reject)}</Text>
                 <Text style={styles.statValue}>
                   {totalRejectedDetails?.rejected_total_amount || "0.00"} SAR
                 </Text>
               </View>
               <View style={styles.statBoxRight}>
-                <Text style={styles.statLabel}>Pending</Text>
+                <Text style={styles.statLabel}> {t(tokens.actions.pending)}</Text>
                 <Text style={styles.statValue}>
                   {totalPendingDetails?.pending_total_amount || "0.00"} SAR
                 </Text>
@@ -161,7 +164,7 @@ const dispatch=useDispatch()
           </View>
 
           <View style={styles.recentBox}>
-            <Text style={styles.recentTitle}>Recent Expenses</Text>
+            <Text style={styles.recentTitle}> {t(tokens.common.recents)}</Text>
             <ScrollView style={styles.scrollArea}>
               {expenseDetails?.map((newItem, index) => (
                 <TouchableOpacity

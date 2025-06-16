@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import Icon from "react-native-vector-icons/FontAwesome";
-
+import tokens from "@/locales/tokens";
 import ProfileServices from "@/Services/API/ProfileServices";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Image,
   ScrollView,
@@ -13,7 +13,12 @@ import {
   View,
 } from "react-native";
 import Toast from "react-native-toast-message";
+import Icon from "react-native-vector-icons/FontAwesome";
 const PasswordUpdate = ({navigation}) => {
+  const {t,i18n}=useTranslation()
+  const isRTL = i18n.language === 'ar';
+  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+  
   const [modalVisible, setModalVisible] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -136,7 +141,7 @@ const PasswordUpdate = ({navigation}) => {
           <View style={styles.updatepro}>
             <View style={styles.updatetop}>
               <Icon name="angle-left" size={30} color="white" />
-              <Text style={styles.modalText}>Change Password</Text>
+              <Text style={styles.modalText}> {t(tokens.common.changePassword)}</Text>
             </View>
             <ScrollView
               Style={styles.updatecontent}
@@ -153,34 +158,34 @@ const PasswordUpdate = ({navigation}) => {
               showsVerticalScrollIndicator={false}
             >
               <View style={styles.inputs}>
-                <Text style={styles.des}>Old Password</Text>
+                <Text style={[styles.des, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.common.oldPassword)}</Text>
                 <TextInput
-                  placeholder="Old Password"
+                  placeholder={t(tokens.common.oldPassword)}
                   placeholderTextColor={"gray"}
-                  style={styles.pass}
+               style={[styles.pass, { textAlign: isRTL ? 'right' : 'left' }]}
                   onChangeText={setOldPassword}
                 />
               </View>
               <View style={styles.inputs}>
-                <Text style={styles.des}>New Password</Text>
+                <Text style={[styles.des, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.common.newPassword)}</Text>
                 <TextInput
-                  placeholder="New Password"
+                  placeholder={t(tokens.common.newPassword)}
                   placeholderTextColor={"gray"}
                   style={styles.pass}
                   onChangeText={setPassword}
                 />
               </View>
               <View style={styles.inputs}>
-                <Text style={styles.des}>Confirm New Password</Text>
+                <Text style={[styles.des, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.common.newPasswordConfirm)}</Text>
                 <TextInput
-                  placeholder="Confirm New Password"
+                  placeholder={t(tokens.common.newPasswordConfirm)}
                   placeholderTextColor={"gray"}
                   style={styles.pass}
                   onChangeText={setConfirmPassword}
                 />
               </View>
               <TouchableOpacity style={styles.passbtn} onPress={savepassword}>
-                <Text style={styles.passtext}>Save</Text>
+                <Text style={styles.passtext}>{t(tokens.actions.save)}</Text>
               </TouchableOpacity>
             </ScrollView>
           </View>
@@ -275,19 +280,20 @@ const styles = StyleSheet.create({
     gap: 7,
   },
   des: {
-    fontSize: 15,
-    fontWeight: 600,
-    marginBottom: 7,
-  },
-  pass: {
-    width: "100%",
-    borderWidth: 1,
-    borderColor: "#697ce3",
-    paddingHorizontal: 12,
-    paddingVertical: 20,
-    borderRadius: 10,
-    marginBottom: 10,
-  },
+  fontSize: 15,
+  fontWeight: '600',
+  marginBottom: 7,
+},
+
+pass: {
+  width: '100%',
+  borderWidth: 1,
+  borderColor: '#697ce3',
+  paddingHorizontal: 12,
+  paddingVertical: 20,
+  borderRadius: 10,
+  marginBottom: 10,
+},
   passbtn: {
     width: "100%",
     padding: 20,

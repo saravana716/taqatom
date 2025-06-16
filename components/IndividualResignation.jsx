@@ -10,6 +10,8 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
+import tokens from '@/locales/tokens';
+import { useTranslation } from 'react-i18next';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useSelector } from 'react-redux';
@@ -24,6 +26,9 @@ export default function IndividualResignation({
 const newItem=useSelector(function (data) {
     return data.newItem
 })
+  const {t,i18n}=useTranslation()
+  const isRTL = i18n.language === 'ar';
+  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
 const route = useRoute();
  const getResignationList = route.params?.getResignationList;
 
@@ -58,7 +63,7 @@ const route = useRoute();
           <TouchableOpacity onPress={handleBack} style={styles.backButton}>
             <Icon name="angle-left" size={30} color="black" />
                     </TouchableOpacity>
-          <Text style={styles.headerText}>View</Text>
+          <Text style={styles.headerText}>{t(tokens.actions.view)}</Text>
         </View>
 
         <ScrollView
@@ -68,34 +73,58 @@ const route = useRoute();
           <View style={styles.card}>
             <View>
               <View style={styles.infoRow}>
-                <Text style={styles.label}>Approval Status</Text>
+                <Text style={styles.label}>{t(tokens.charts.approvalStatus)}</Text>
                 {newItem?.status === 'reject' && (
-                  <Text style={styles.rejectStatus}>Rejected</Text>
+                  <Text style={styles.rejectStatus}>
+                    {t(tokens.actions.reject)}
+
+                  </Text>
                 )}
                 {newItem?.status === 'approve' && (
-                  <Text style={styles.approveStatus}>Approved</Text>
+                  <Text style={styles.approveStatus}>
+                    {t(tokens.actions.approve)}
+
+                  </Text>
                 )}
                 {newItem?.status === 'pending' && (
-                  <Text style={styles.pendingStatus}>Pending</Text>
+                  <Text style={styles.pendingStatus}>
+                    {t(tokens.actions.pending)}
+
+                  </Text>
                 )}
                 {newItem?.status === 'withdraw' && (
-                  <Text style={styles.withdrawStatus}>Cancelled</Text>
+                  <Text style={styles.withdrawStatus}>
+                    {t(tokens.actions.cancelled)}
+
+                  </Text>
                 )}
               </View>
               <View style={styles.infoRow}>
-                <Text style={styles.label}>Resign Date</Text>
+                <Text style={styles.label}>
+                  {t(tokens.actions.resignDate)}
+
+                </Text>
                 <Text style={styles.value}>{dayjs(newItem?.resign_date).format('DD MMMM, YYYY')}</Text>
               </View>
               <View style={styles.infoRow}>
-                <Text style={styles.label}>Last Working Date</Text>
+                <Text style={styles.label}>
+                  {t(tokens.actions.lastWorkingDate)}
+
+                </Text>
                 <Text style={styles.value}>{dayjs(newItem?.lwd_date).format('DD MMMM, YYYY')}</Text>
               </View>
               <View style={styles.infoColumn}>
-                <Text style={styles.label}>Reason</Text>
+                <Text style={[styles.label, { textAlign: isRTL ? 'right' : 'left' }]}>
+                  {t(tokens.common.reason)}
+
+                </Text>
                 <Text style={styles.value}>{newItem?.reason ?? '-'}</Text>
               </View>
               <View style={styles.infoColumn}>
-                <Text style={styles.label}>LWD Reason</Text>
+                <Text style={[styles.label, { textAlign: isRTL ? 'right' : 'left' }]}>
+                  {t(tokens.common.lwdReason)}
+
+                </Text>
                 <Text style={styles.value}>{newItem?.lwd_reason || '-'}</Text>
               </View>
             </View>

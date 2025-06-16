@@ -16,7 +16,6 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import find from 'lodash/find';
 import get from 'lodash/get';
 import moment from 'moment';
-import { useTranslation } from 'react-i18next';
 import { Dropdown } from 'react-native-element-dropdown';
 import {
     Menu,
@@ -28,16 +27,19 @@ import {
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import { formatErrorsToToastMessages } from '../utils/error-format';
 import { dateTimeToShow, formatDateTime } from '../utils/formatDateTime';
-
+import { useTranslation } from 'react-i18next';
+import tokens from '../locales/tokens';
 export default function OvertimeRequestDetails({
   navigation,route
 }) {
+   const {t,i18n}=useTranslation()
+  const isRTL = i18n.language === 'ar';
+  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
   const {employeeId,
           newItem,
           payCodesList,
           getPayCodeList,
           overtimeList}=route.params
-  const {t} = useTranslation(); // 't' function is used for translation
   const [isLoading, setIsLoading] = useState(false);
   const [OvertimeData, setOvertimeData] = useState([]);
   const matchedData = find(OvertimeData, log => log?.id === newItem?.id);
@@ -285,7 +287,10 @@ export default function OvertimeRequestDetails({
               </View>
 
               <View style={styles.headerTitleContainer}>
-                <Text style={styles.headerTitle}>View</Text>
+                <Text style={styles.headerTitle}>
+{t(tokens.actions.view)}
+                  
+                </Text>
               </View>
 
               <View style={styles.headerMenuContainer}>
@@ -319,7 +324,7 @@ export default function OvertimeRequestDetails({
                             }}>
                             <Icon name="pencil" size={20} color="#000" />
                             <Text style={{marginLeft: 10}}>
-                            Edit
+                            {t(tokens.actions.edit)}
                             </Text>
                           </View>
                         </MenuOption>
@@ -335,32 +340,38 @@ export default function OvertimeRequestDetails({
                   <View>
                     <View style={styles.detailRow}>
                       <Text style={styles.detailLabel}>
-                        Approval Status
+                       {t(tokens.charts.approvalStatus)}
+                        
                       </Text>
                       {matchedData?.approval_status === 3 && (
                         <Text style={styles.rejectedStatus}>
-                          Rejected
+                          {t(tokens.actions.reject)}
+
                         </Text>
                       )}
                       {matchedData?.approval_status === 2 && (
                         <Text style={styles.approvedStatus}>
-                          Approved
+                          {t(tokens.actions.approve)}
+                          
                         </Text>
                       )}
                       {matchedData?.approval_status === 1 && (
                         <Text style={styles.pendingStatus}>
-                          Pending
+                                                 {t(tokens.actions.pending)}
+
                         </Text>
                       )}
                       {matchedData?.approval_status === 4 && (
                         <Text style={styles.revokedStatus}>
-                          Revoked
+                          {t(tokens.actions.revoke)}
+                         
                         </Text>
                       )}
                     </View>
                     <View style={styles.detailRow}>
                       <Text style={styles.detailLabel}>
-                        First Name
+                                              {t(tokens.common.firstName)}
+
                       </Text>
                       <Text style={styles.detailValue}>
                         {get(matchedData, 'first_name')}
@@ -368,7 +379,8 @@ export default function OvertimeRequestDetails({
                     </View>
                     <View style={styles.detailRow}>
                       <Text style={styles.detailLabel}>
-                        Last Name
+                                             {t(tokens.common.lastName)}
+
                       </Text>
                       <Text style={styles.detailValue}>
                         {get(matchedData, 'last_name')}
@@ -376,7 +388,8 @@ export default function OvertimeRequestDetails({
                     </View>
                     <View style={styles.detailRow}>
                       <Text style={styles.detailLabel}>
-                        Employee Code
+                                              {t(tokens.common.employeeCode)}
+
                       </Text>
                       <Text style={styles.detailValue}>
                         {get(matchedData, 'emp_code')}
@@ -384,7 +397,8 @@ export default function OvertimeRequestDetails({
                     </View>
                     <View style={styles.detailRow}>
                       <Text style={styles.detailLabel}>
-                        Department
+                      {t(tokens.nav.department)}
+                        
                       </Text>
                       <Text style={styles.detailValue}>
                         {get(matchedData, 'department_info.department_name')}
@@ -392,7 +406,7 @@ export default function OvertimeRequestDetails({
                     </View>
                     <View style={styles.detailRow}>
                       <Text style={styles.detailLabel}>
-                        Position
+                       {t(tokens.nav.position)}
                       </Text>
                       <Text style={styles.detailValue}>
                         {get(matchedData, 'position_info.position_name')}
@@ -400,7 +414,8 @@ export default function OvertimeRequestDetails({
                     </View>
                     <View style={styles.detailRow}>
                       <Text style={styles.detailLabel}>
-                        Start Time
+                      {t(tokens.common.startTime)}
+                     
                       </Text>
                       <Text style={styles.detailValue}>
                         {dateTimeToShow(matchedData?.start_time)}
@@ -408,7 +423,8 @@ export default function OvertimeRequestDetails({
                     </View>
                     <View style={styles.detailRowNoBorder}>
                       <Text style={styles.detailLabel}>
-                        End Time
+                      {t(tokens.common.endTime)}
+                        
                       </Text>
                       <Text style={styles.detailValue}>
                         {dateTimeToShow(matchedData?.end_time)}
@@ -416,7 +432,8 @@ export default function OvertimeRequestDetails({
                     </View>
                     <View style={styles.detailRowNoBorder}>
                       <Text style={styles.detailLabel}>
-                        Pay Code
+                      {t(tokens.nav.payCode)}
+                        
                       </Text>
                       <Text style={styles.detailValue}>
                         {matchedData?.paycode_details?.name}
@@ -424,7 +441,8 @@ export default function OvertimeRequestDetails({
                     </View>
                     <View style={styles.detailRowNoBorder}>
                       <Text style={styles.detailLabel}>
-                        Reason
+                      {t(tokens.common.reason)}
+                        
                       </Text>
                       <Text style={styles.detailValue}>
                         {matchedData?.apply_reason || '-'}
@@ -443,7 +461,8 @@ export default function OvertimeRequestDetails({
                             : styles.primaryButton,
                         ]}>
                         <Text style={styles.actionButtonText}>
-                          Revoke
+                        {t(tokens.actions.revoke)}
+                          
                         </Text>
                       </TouchableOpacity>
                     )}
@@ -458,7 +477,8 @@ export default function OvertimeRequestDetails({
                         styles.primaryButton,
                       ]}>
                       <Text style={styles.actionButtonText}>
-                        Delete
+                      {t(tokens.actions.delete)}
+                        
                       </Text>
                     </TouchableOpacity>
                   </View>
@@ -478,15 +498,18 @@ export default function OvertimeRequestDetails({
         }}>
         <View style={styles.modalOverlay}>
           <View style={styles.editModalContainer}>
-            <Text style={styles.editModalTitle}>Edit</Text>
+            <Text style={styles.editModalTitle}>
+              {t(tokens.actions.edit)}
+
+            </Text>
             <View style={styles.editModalContent}>
               <TouchableOpacity
                 onPress={() => setStartDate(true)}
                 style={styles.dateTimeInput}>
                 <Text style={styles.dateTimeInputText}>
-                  {formatStartDate
-                    ? dateTimeToShow(formatStartDate):
-                    "Start Date"}
+                   {formatStartDate
+                    ? dateTimeToShow(formatStartDate)
+                    : t(tokens.common.startDate)}
                 </Text>
 <Icon name="calendar-check-o" size={20} color="lightgray" />
               </TouchableOpacity>
@@ -512,9 +535,8 @@ export default function OvertimeRequestDetails({
                 onPress={() => setEndDate(true)}
                 style={styles.dateTimeInput}>
                 <Text style={styles.dateTimeInputText}>
-                  {formatEndDate
-                    ? dateTimeToShow(formatEndDate)
-                    :"End Date"}
+                                    {formatEndDate ? dateTimeToShow(formatEndDate) : t(tokens.common.endDate)}
+
                 </Text>
                <Icon name="calendar-check-o" size={20} color="lightgray" />
               </TouchableOpacity>
@@ -550,11 +572,8 @@ export default function OvertimeRequestDetails({
                   maxHeight={300}
                   labelField="name"
                   valueField="id"
-                  placeholder={
-                    matchedData?.paycode_details?.name ||
-                    "Pay Code"
-                  }
-                  searchPlaceholder={"Search"}
+                  placeholder={matchedData?.paycode_details?.name || t(tokens.nav.payCode)}
+                  searchPlaceholder={t(tokens.common.search)}
                   value={payCode}
                   onChange={item => {
                     setPayCode(item?.id);
@@ -567,7 +586,7 @@ export default function OvertimeRequestDetails({
               ) : null}
               <TextInput
                 style={styles.reasonInput}
-                placeholder={"Reason"}
+               placeholder={t(tokens.common.reason)}
                 editable
                 multiline
                 textAlignVertical="top"
@@ -584,7 +603,8 @@ export default function OvertimeRequestDetails({
                 }}
                 style={[styles.modalButton, styles.modalCancelButton]}>
                 <Text style={styles.modalCancelButtonText}>
-                  Cancel
+                                   {t(tokens.actions.cancel)}
+
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -594,7 +614,8 @@ export default function OvertimeRequestDetails({
                 {isLoading && <ActivityIndicator size="small" color="#fff" />}
                 {!isLoading && (
                   <Text style={styles.modalEditButtonText}>
-                    Edit
+                     {t(tokens.actions.edit)}
+                    
                   </Text>
                 )}
               </TouchableOpacity>
@@ -613,10 +634,12 @@ export default function OvertimeRequestDetails({
         <View style={styles.modalOverlay}>
           <View style={styles.confirmModalContainer}>
             <Text style={styles.confirmModalTitle}>
-              Delete
+                              {t(tokens.actions.delete)}
+
             </Text>
             <Text style={styles.confirmModalMessage}>
-              Are you sure you want to delete this item?
+              {t(tokens.messages.deleteConfirm)}
+              
             </Text>
             <View style={styles.modalButtonContainer}>
               <TouchableOpacity
@@ -625,7 +648,8 @@ export default function OvertimeRequestDetails({
                 }}
                 style={[styles.modalButton, styles.modalCancelButton]}>
                 <Text style={styles.modalCancelButtonText}>
-                  Cancel
+                    {t(tokens.actions.cancel)}
+                  
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -635,7 +659,8 @@ export default function OvertimeRequestDetails({
                 {isLoading && <ActivityIndicator size="small" color="#fff" />}
                 {!isLoading && (
                   <Text style={styles.modalEditButtonText}>
-                    Delete
+                      {t(tokens.actions.delete)}
+                    
                   </Text>
                 )}
               </TouchableOpacity>
@@ -654,10 +679,12 @@ export default function OvertimeRequestDetails({
         <View style={styles.modalOverlay}>
           <View style={styles.confirmModalContainer}>
             <Text style={styles.confirmModalTitle}>
-              Revoke
+                            {t(tokens.actions.revoke)}
+
             </Text>
             <Text style={styles.confirmModalMessage}>
-              Are you sure you want to revoke this item?
+                            {t(tokens.messages.revokeConfirm)}
+
             </Text>
             <View style={styles.modalButtonContainer}>
               <TouchableOpacity
@@ -666,7 +693,8 @@ export default function OvertimeRequestDetails({
                 }}
                 style={[styles.modalButton, styles.modalCancelButton]}>
                 <Text style={styles.modalCancelButtonText}>
-                  Cancel
+                                  {t(tokens.actions.cancel)}
+
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -676,7 +704,8 @@ export default function OvertimeRequestDetails({
                 {isLoading && <ActivityIndicator size="small" color="#fff" />}
                 {!isLoading && (
                   <Text style={styles.modalEditButtonText}>
-                  Revoke
+                      {t(tokens.actions.revoke)}
+               
                   </Text>
                 )}
               </TouchableOpacity>

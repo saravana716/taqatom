@@ -16,10 +16,15 @@ import { PieChart } from 'react-native-svg-charts';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ProfileServices from '../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../utils/error-format';
-
+import { useTranslation } from "react-i18next";
+import tokens from "@/locales/tokens";
 export default function PayslipPreview({
   route
 }) {
+  const {t,i18n}=useTranslation()
+  const isRTL = i18n.language === 'ar';
+  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+
     const{newItem,
       employeeFullDetails,
       payrollData,}=route.params
@@ -100,7 +105,7 @@ const getMediaPermission = async () => {
         <TouchableOpacity onPress={handleBack} style={styles.backButton}>
          <Icon name="angle-left" size={30} color="#697ce3" />
         </TouchableOpacity>
-        <Text style={styles.title}>Payslip</Text>
+        <Text style={styles.title}>{t(tokens.nav.paySlip)}</Text>
       </View>
 
       <ScrollView
@@ -128,7 +133,7 @@ const getMediaPermission = async () => {
                   <Text style={styles.payAmount}>
                     {newItem?.gross_pay || '0'}
                   </Text>
-                  <Text style={styles.payLabel}>Gross Pay</Text>
+                  <Text style={styles.payLabel}> {t(tokens.charts.grossPay)}</Text>
                 </View>
               </View>
               <View style={styles.payRow}>
@@ -137,7 +142,10 @@ const getMediaPermission = async () => {
                   <Text style={styles.payAmount}>
                     {newItem?.net_pay || '0'}
                   </Text>
-                  <Text style={styles.payLabel}>Net Pay</Text>
+                  <Text style={styles.payLabel}>
+                    {t(tokens.charts.netPay)}
+
+                  </Text>
                 </View>
               </View>
             </View>
@@ -145,7 +153,10 @@ const getMediaPermission = async () => {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Earnings</Text>
+          <Text style={styles.sectionTitle}>
+            {t(tokens.charts.earnings)}
+
+          </Text>
           <View>
             {earnings?.map(item => (
               <View key={item.reference_id} style={styles.row}>
@@ -159,7 +170,10 @@ const getMediaPermission = async () => {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Deductions</Text>
+          <Text style={styles.sectionTitle}>
+            {t(tokens.charts.deductions)}
+
+          </Text>
           <View>
             {deductions?.map(deduct => (
               <View key={deduct.reference_id} style={styles.row}>
@@ -176,7 +190,10 @@ const getMediaPermission = async () => {
       <Toast />
       <View style={styles.buttonWrapper}>
         <TouchableOpacity onPress={downloadPDF} style={styles.downloadButton}>
-          <Text style={styles.downloadButtonText}>Download Payslip</Text>
+          <Text style={styles.downloadButtonText}>
+            {t(tokens.actions.downloadPayslip)}
+
+          </Text>
         </TouchableOpacity>
       </View>
     </View>

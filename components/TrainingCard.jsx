@@ -9,11 +9,11 @@ import {
 } from 'react-native';
 import { dateTimeToShow, formatDateTime } from '../utils/formatDateTime';
 // import { Iconify } from 'react-native-iconify';
-import { useTranslation } from 'react-i18next';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import ProfileServices from '../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../utils/error-format';
-
+import { useTranslation } from 'react-i18next';
+import tokens from '../locales/tokens';
 export default function TrainingCard({
   newItem,
   componentId,
@@ -24,7 +24,9 @@ export default function TrainingCard({
 }) {
         const navigation=useNavigation()
     
-  const { t } = useTranslation();
+    const {t,i18n}=useTranslation()
+  const isRTL = i18n.language === 'ar';
+  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
   const [revokeConfirmVisible, setRevokeConfirmVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -221,27 +223,34 @@ export default function TrainingCard({
               <View>
                 {newItem?.approval_status === 3 && (
                   <Text style={[styles.statusText, styles.statusRejected]}>
-                    Rejected
+             {t(tokens.actions.reject)}
+                    
                   </Text>
                 )}
                 {newItem?.approval_status === 2 && (
                   <Text style={[styles.statusText, styles.statusApproved]}>
-                    Approved
+              {t(tokens.actions.approve)}
+                    
                   </Text>
                 )}
                 {newItem?.approval_status === 1 && (
                   <Text style={[styles.statusText, styles.statusPending]}>
-                    Pending
+              {t(tokens.actions.pending)}
+                    
                   </Text>
                 )}
                 {newItem?.approval_status === 4 && (
                   <Text style={[styles.statusText, styles.statusRevoked]}>
-                    Revoked
+              {t(tokens.actions.revoke)}
+                    
                   </Text>
                 )}
               </View>
               <View>
-                <Text style={styles.labelDate}>Start Date</Text>
+                <Text style={styles.labelDate}>
+            {t(tokens.common.startDate)}
+
+                </Text>
                 <Text style={styles.valueDate}>
                   {dateTimeToShow(newItem?.start_time)}
                 </Text>
@@ -249,14 +258,18 @@ export default function TrainingCard({
             </View>
             <View style={[styles.rowBetween, styles.paddingBottomSmall]}>
               <View>
-                <Text style={styles.labelDate}>End Date</Text>
+                <Text style={styles.labelDate}>
+              {t(tokens.common.endDate)}
+
+                </Text>
                 <Text style={styles.valueDate}>
                   {dateTimeToShow(newItem?.end_time)}
                 </Text>
               </View>
               <View>
                 <Text style={[styles.labelDate, styles.textAlignRight]}>
-                  Pay Code
+              {t(tokens.nav.payCode)}
+                  
                 </Text>
                 <Text style={[styles.valueDate, styles.textAlignRight]}>
                   {newItem?.paycode_details?.name}

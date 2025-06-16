@@ -14,8 +14,12 @@ import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import { useSelector } from 'react-redux';
 import ProfileServices from '../Services/API/ProfileServices';
 import RecentResignationComponent from '../components/RecentResignationComponent';
-
+import { useTranslation } from 'react-i18next';
+import tokens from '@/locales/tokens';
 export default function ResignationScreen({navigation}) {
+    const {t,i18n}=useTranslation()
+    const isRTL = i18n.language === 'ar';
+    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
     const employeeFullDetails=useSelector(function (data) {
         return data.employeeFullDetails
     })
@@ -52,7 +56,10 @@ export default function ResignationScreen({navigation}) {
         <TouchableOpacity onPress={handleBack}>
          <Icon name="angle-left" size={30} color="black" />
                          </TouchableOpacity>
-        <Text style={styles.title}>Resignation</Text>
+        <Text style={styles.title}>
+            {t(tokens.nav.resignation)}
+
+        </Text>
       </View>
 
       {/* Scroll Area */}
@@ -73,7 +80,10 @@ export default function ResignationScreen({navigation}) {
             </View>
           ): (
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>No Resignations</Text>
+            <Text style={styles.emptyText}>
+             {t(tokens.messages.noResignations)}
+
+            </Text>
           </View>
         )}
       </ScrollView>
