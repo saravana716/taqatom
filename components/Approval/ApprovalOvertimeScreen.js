@@ -118,7 +118,10 @@ export default function ApprovalOvertimeScreen({ navigation }) {
           <TouchableOpacity onPress={handleBack}>
             <Icon name="angle-left" size={30} color="#697ce3" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Overtime</Text>
+          <Text style={styles.headerTitle}>
+            {t(tokens.nav.overtime)}
+
+          </Text>
         </View>
 
         {isLoading ? (
@@ -127,7 +130,10 @@ export default function ApprovalOvertimeScreen({ navigation }) {
           </View>
         ) : isEmpty(OvertimeData) ? (
           <View style={styles.noData}>
-            <Text style={styles.noDataText}>No overtime data available</Text>
+            <Text style={styles.noDataText}>
+              {t(tokens.messages.noOvertime)}
+
+            </Text>
           </View>
         ) : (
           <ScrollView

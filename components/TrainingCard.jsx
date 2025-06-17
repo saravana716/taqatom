@@ -8,7 +8,6 @@ import {
     View
 } from 'react-native';
 import { dateTimeToShow, formatDateTime } from '../utils/formatDateTime';
-// import { Iconify } from 'react-native-iconify';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import ProfileServices from '../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../utils/error-format';

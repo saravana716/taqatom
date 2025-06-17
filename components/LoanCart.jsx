@@ -1,6 +1,5 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import { Iconify } from 'react-native-iconify';
 
 export default function LoanCard({ status, requestLoan, newItem }) {
   

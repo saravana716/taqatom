@@ -18,7 +18,6 @@ import {
   MenuTrigger,
   MenuProvider,
 } from 'react-native-popup-menu';
-import {Iconify} from 'react-native-iconify';
 import {Dropdown} from 'react-native-element-dropdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import ProfileServices from '../Services/API/ProfileServices';

@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import Icon from "react-native-vector-icons/FontAwesome";
-// import {Iconify} from 'react-native-iconify';
 import { useSelector } from 'react-redux';
 import LoanServices from '../Services/API/LoanServices';
 import { useTranslation } from 'react-i18next';

@@ -21,7 +21,8 @@ import {
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import Icon from "react-native-vector-icons/FontAwesome";
 import NotificationComponent from "../components/NotificationComponent";
-
+import { useTranslation } from "react-i18next";
+import tokens from "@/locales/tokens";
 import ProfileServices from "../Services/API/ProfileServices";
 import { formatErrorsToToastMessages } from "../utils/error-format";
 
@@ -40,7 +41,9 @@ export default function NotificationScreen({ navigation, route }) {
     setSubordinateName,
     token,
   } = route.params;
- 
+   const {t,i18n}=useTranslation()
+     const isRTL = i18n.language === 'ar';
+     console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
   console.log('NotificationScreen Props:', {
     selectorid,
     setProfilePicUrl,
@@ -115,7 +118,10 @@ export default function NotificationScreen({ navigation, route }) {
               </TouchableOpacity>
             </View>
             <View style={styles.headerTitleWrapper}>
-              <Text style={styles.headerTitle}>Notifications</Text>
+              <Text style={styles.headerTitle}>
+                {t(tokens.nav.notification)}
+
+              </Text>
             </View>
             <View style={styles.menuWrapper}>
               {!isEmpty(notifications) && (
@@ -128,7 +134,8 @@ export default function NotificationScreen({ navigation, route }) {
                       <View style={styles.menuOptionRow}>
                         <Icon name="check-double" size={20} color="white" />
                         <Text style={styles.menuOptionText}>
-                          Mark all as read
+                          {t(tokens.messages.markAllRead)}
+                          
                         </Text>
                       </View>
                     </MenuOption>
@@ -147,7 +154,7 @@ export default function NotificationScreen({ navigation, route }) {
               </View>
             ) : isEmpty(notifications) ? (
               <View style={styles.noDataWrapper}>
-                <Text>No notifications</Text>
+                <Text>{t(tokens.messages.noNotifications)}</Text>
               </View>
             ) : (
               <ScrollView

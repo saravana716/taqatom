@@ -5,39 +5,34 @@ import * as MediaLibrary from 'expo-media-library';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import React from 'react';
 import {
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { G, Rect, Text as SvgText } from 'react-native-svg';
-import { PieChart } from 'react-native-svg-charts';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ProfileServices from '../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../utils/error-format';
 import { useTranslation } from "react-i18next";
 import tokens from "@/locales/tokens";
-export default function PayslipPreview({
-  route
-}) {
-  const {t,i18n}=useTranslation()
-  const isRTL = i18n.language === 'ar';
-  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+import { PieChart } from 'react-native-gifted-charts';
 
-    const{newItem,
-      employeeFullDetails,
-      payrollData,}=route.params
-    const navigation=useNavigation()
-    console.log("news",newItem);
-    
+export default function PayslipPreview({ route }) {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
+  const { newItem, employeeFullDetails, payrollData } = route.params;
+  const navigation = useNavigation();
+
   const handleBack = () => {
     navigation.navigate("PaySlipComponent");
   };
-const getMediaPermission = async () => {
-  const { status } = await MediaLibrary.requestPermissionsAsync();
-  return status === 'granted';
-};
+
+  const getMediaPermission = async () => {
+    const { status } = await MediaLibrary.requestPermissionsAsync();
+    return status === 'granted';
+  };
+
   const earnings = get(newItem, 'earnings');
   const deductions = get(newItem, 'deductions');
 
@@ -49,61 +44,49 @@ const getMediaPermission = async () => {
     }).format(date);
   }
 
- const downloadPDF = async () => {
-  try {
-    const response = await ProfileServices.downloadPaySlip(
-      newItem?.payrun_id,
-      employeeFullDetails?.id
-    );
+  const downloadPDF = async () => {
+    try {
+      const response = await ProfileServices.downloadPaySlip(
+        newItem?.payrun_id,
+        employeeFullDetails?.id
+      );
 
-    console.log("Download response:", response);
-
-    if (response?.success) {
+      if (response?.success) {
+        Toast.show({
+          type: 'success',
+          text1: `Payslip downloaded to ${response.path}`,
+          position: 'bottom',
+        });
+      }
+    } catch (error) {
+      console.error('Error downloading PDF: ', error.message);
       Toast.show({
-        type: 'success',
-        text1: `Payslip downloaded to ${response.path}`,
+        type: 'error',
+        text1: 'Failed to download payslip',
+        text2: error.message,
         position: 'bottom',
       });
     }
-  } catch (error) {
-    console.error('Error downloading PDF: ', error.message);
-    Toast.show({
-      type: 'error',
-      text1: 'Failed to download payslip',
-      text2: error.message,
-      position: 'bottom',
-    });
-  }
-};
-
+  };
 
   const data = [
     {
-      key: 'Gross Pay',
       value: newItem?.gross_pay || 0,
-      svg: { fill: '#697CE3', innerRadius: '50%', outerRadius: '80%' },
+      color: '#697CE3',
+      text: 'Gross',
     },
     {
-      key: 'Net Pay',
       value: newItem?.net_pay || 0,
-      svg: { fill: '#FFC907', innerRadius: '50%', outerRadius: '80%' },
+      color: '#FFC907',
+      text: 'Net',
     },
   ];
-
-  const legends = data.map((item, index) => (
-    <G key={index} x={index * 100} y={0}>
-      <Rect width={10} height={10} fill={item.svg.fill} />
-      <SvgText x={15} y={10} fontSize={12} fill={'black'}>
-        {item.key}
-      </SvgText>
-    </G>
-  ));
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-         <Icon name="angle-left" size={30} color="#697ce3" />
+          <Icon name="angle-left" size={30} color="#697ce3" />
         </TouchableOpacity>
         <Text style={styles.title}>{t(tokens.nav.paySlip)}</Text>
       </View>
@@ -116,10 +99,13 @@ const getMediaPermission = async () => {
         <View style={styles.chartContainer}>
           <View style={styles.pieChartWrapper}>
             <PieChart
-              style={{ flex: 1 }}
               data={data}
-              padAngle={0}
-              innerRadius={'70%'}
+              donut
+              showText
+              textColor="black"
+              focusOnPress
+              innerRadius={40}
+              radius={60}
             />
           </View>
           <View style={styles.chartInfo}>
@@ -133,7 +119,7 @@ const getMediaPermission = async () => {
                   <Text style={styles.payAmount}>
                     {newItem?.gross_pay || '0'}
                   </Text>
-                  <Text style={styles.payLabel}> {t(tokens.charts.grossPay)}</Text>
+                  <Text style={styles.payLabel}>{t(tokens.charts.grossPay)}</Text>
                 </View>
               </View>
               <View style={styles.payRow}>
@@ -142,10 +128,7 @@ const getMediaPermission = async () => {
                   <Text style={styles.payAmount}>
                     {newItem?.net_pay || '0'}
                   </Text>
-                  <Text style={styles.payLabel}>
-                    {t(tokens.charts.netPay)}
-
-                  </Text>
+                  <Text style={styles.payLabel}>{t(tokens.charts.netPay)}</Text>
                 </View>
               </View>
             </View>
@@ -153,10 +136,7 @@ const getMediaPermission = async () => {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            {t(tokens.charts.earnings)}
-
-          </Text>
+          <Text style={styles.sectionTitle}>{t(tokens.charts.earnings)}</Text>
           <View>
             {earnings?.map(item => (
               <View key={item.reference_id} style={styles.row}>
@@ -170,10 +150,7 @@ const getMediaPermission = async () => {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            {t(tokens.charts.deductions)}
-
-          </Text>
+          <Text style={styles.sectionTitle}>{t(tokens.charts.deductions)}</Text>
           <View>
             {deductions?.map(deduct => (
               <View key={deduct.reference_id} style={styles.row}>
@@ -192,7 +169,6 @@ const getMediaPermission = async () => {
         <TouchableOpacity onPress={downloadPDF} style={styles.downloadButton}>
           <Text style={styles.downloadButtonText}>
             {t(tokens.actions.downloadPayslip)}
-
           </Text>
         </TouchableOpacity>
       </View>

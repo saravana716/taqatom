@@ -13,7 +13,8 @@ import { dateTimeToShow } from '../../utils/formatDateTime';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import ProfileServices from '../../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../../utils/error-format';
-
+import { useTranslation } from 'react-i18next';
+import tokens from '../../locales/tokens';
 export default function ApprovalTrainingCard({ newItem, employeeId, getTrainingList }) {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
@@ -26,7 +27,9 @@ export default function ApprovalTrainingCard({ newItem, employeeId, getTrainingL
     });
  
   };
-
+   const {t,i18n}=useTranslation()
+    const isRTL = i18n.language === 'ar';
+    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
   const handleApprove = async () => {
     try {
       const response = await ProfileServices.postTrainingApprove(newItem?.id);
@@ -59,31 +62,52 @@ export default function ApprovalTrainingCard({ newItem, employeeId, getTrainingL
             <View style={styles.rowBetween}>
               <View>
                 {newItem?.approval_status === 3 && (
-                  <Text style={[styles.badge, styles.rejectBadge]}>Rejected</Text>
+                  <Text style={[styles.badge, styles.rejectBadge]}>
+              {t(tokens.actions.reject)}
+
+                  </Text>
                 )}
                 {newItem?.approval_status === 2 && (
-                  <Text style={[styles.badge, styles.approveBadge]}>Approved</Text>
+                  <Text style={[styles.badge, styles.approveBadge]}>
+              {t(tokens.actions.approve)}
+
+                  </Text>
                 )}
                 {newItem?.approval_status === 1 && (
-                  <Text style={[styles.badge, styles.pendingBadge]}>Pending</Text>
+                  <Text style={[styles.badge, styles.pendingBadge]}>
+              {t(tokens.actions.pending)}
+
+                  </Text>
                 )}
                 {newItem?.approval_status === 4 && (
-                  <Text style={[styles.badge, styles.revokeBadge]}>Revoked</Text>
+                  <Text style={[styles.badge, styles.revokeBadge]}>
+              {t(tokens.actions.revoke)}
+
+                  </Text>
                 )}
               </View>
               <View>
-                <Text style={styles.label}>Start Date</Text>
+                <Text style={styles.label}>
+            {t(tokens.common.startDate)}
+
+                </Text>
                 <Text style={styles.value}>{dateTimeToShow(newItem?.start_time)}</Text>
               </View>
             </View>
 
             <View style={styles.rowBetween}>
               <View>
-                <Text style={styles.label}>End Date</Text>
+                <Text style={styles.label}>
+              {t(tokens.common.endDate)}
+
+                </Text>
                 <Text style={styles.value}>{dateTimeToShow(newItem?.end_time)}</Text>
               </View>
               <View style={{ alignItems: 'flex-end' }}>
-                <Text style={styles.label}>Paycode</Text>
+                <Text style={styles.label}>
+              {t(tokens.nav.payCode)}
+
+                </Text>
                 <Text style={styles.value}>{newItem?.paycode_details?.name}</Text>
               </View>
             </View>
@@ -99,13 +123,16 @@ export default function ApprovalTrainingCard({ newItem, employeeId, getTrainingL
         onRequestClose={() => setApproveConfirmVisible(false)}>
         <View style={styles.modalBackdrop}>
           <View style={styles.modalBox}>
-            <Text style={styles.modalTitle}>Approve</Text>
-            <Text style={styles.modalMessage}>Are you sure you want to approve this training?</Text>
+            <Text style={styles.modalTitle}>{t(tokens.actions.approve)}</Text>
+            <Text style={styles.modalMessage}>{t(tokens.messages.approveConfirm)}</Text>
             <View style={styles.buttonContainer}>
               <TouchableOpacity
                 onPress={() => setApproveConfirmVisible(false)}
                 style={styles.cancelBtn}>
-                <Text style={styles.cancelBtnText}>Cancel</Text>
+                <Text style={styles.cancelBtnText}>
+                    {t(tokens.actions.cancel)}
+
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 disabled={isLoading}
@@ -114,7 +141,10 @@ export default function ApprovalTrainingCard({ newItem, employeeId, getTrainingL
                 {isLoading ? (
                   <ActivityIndicator size="large" color="#fff" />
                 ) : (
-                  <Text style={styles.approveBtnText}>Approve</Text>
+                  <Text style={styles.approveBtnText}>
+                      {t(tokens.actions.approve)}
+
+                  </Text>
                 )}
               </TouchableOpacity>
             </View>
@@ -130,13 +160,20 @@ export default function ApprovalTrainingCard({ newItem, employeeId, getTrainingL
         onRequestClose={() => setRejectedConfirmVisible(false)}>
         <View style={styles.modalBackdrop}>
           <View style={styles.modalBox}>
-            <Text style={styles.modalTitle}>Reject</Text>
-            <Text style={styles.modalMessage}>Are you sure you want to reject this training?</Text>
+            <Text style={styles.modalTitle}>
+              {t(tokens.actions.reject)}
+            </Text>
+            <Text style={styles.modalMessage}>
+              {t(tokens.messages.rejectConfirm)}
+            </Text>
             <View style={styles.buttonContainer}>
               <TouchableOpacity
                 onPress={() => setRejectedConfirmVisible(false)}
                 style={styles.cancelBtn}>
-                <Text style={styles.cancelBtnText}>Cancel</Text>
+                <Text style={styles.cancelBtnText}>
+                    {t(tokens.actions.cancel)}
+
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 disabled={isLoading}
@@ -145,7 +182,10 @@ export default function ApprovalTrainingCard({ newItem, employeeId, getTrainingL
                 {isLoading ? (
                   <ActivityIndicator size="large" color="#fff" />
                 ) : (
-                  <Text style={styles.rejectBtnText}>Reject</Text>
+                  <Text style={styles.rejectBtnText}>
+                      {t(tokens.actions.reject)}
+
+                  </Text>
                 )}
               </TouchableOpacity>
             </View>

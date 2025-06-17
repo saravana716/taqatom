@@ -14,12 +14,16 @@ import { dateTimeToShow } from '../../utils/formatDateTime';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import ProfileServices from '../../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../../utils/error-format';
-
+import { useTranslation } from 'react-i18next'; // Removed as per request
+import tokens from '../../locales/tokens'; // Removed as per request
 export default function ApprovalOvertimeCard({
   newItem,
   employeeId,
   getOvertimeList,
 }) {
+   const {t,i18n}=useTranslation()
+      const isRTL = i18n.language === 'ar';
+      console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
   const navigation = useNavigation();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -92,13 +96,16 @@ export default function ApprovalOvertimeCard({
   const getStatusStyle = (status) => {
     switch (status) {
       case 1:
-        return styles.pending;
+        return t(tokens.actions.reject);
       case 2:
-        return styles.approved;
+              return t(tokens.actions.approve);
+        ;
       case 3:
-        return styles.rejected;
+              return t(tokens.actions.reject);
+
       case 4:
-        return styles.revoked;
+              return t(tokens.actions.revoke);
+
       default:
         return {};
     }
@@ -116,17 +123,26 @@ export default function ApprovalOvertimeCard({
                 </Text>
               </View>
               <View>
-                <Text style={styles.labelText}>Start Date</Text>
+                <Text style={styles.labelText}>
+            {t(tokens.common.startDate)}
+
+                </Text>
                 <Text style={styles.valueText}>{dateTimeToShow(newItem?.start_time)}</Text>
               </View>
             </View>
             <View style={styles.rowBetween}>
               <View>
-                <Text style={styles.labelText}>End Date</Text>
+                <Text style={styles.labelText}>
+              {t(tokens.common.endDate)}
+
+                </Text>
                 <Text style={styles.valueText}>{dateTimeToShow(newItem?.end_time)}</Text>
               </View>
               <View>
-                <Text style={[styles.labelText, { textAlign: 'right' }]}>Pay Code</Text>
+                <Text style={[styles.labelText, { textAlign: 'right' }]}>
+              {t(tokens.nav.payCode)}
+
+                </Text>
                 <Text style={[styles.valueText, { textAlign: 'right' }]}>
                   {newItem?.paycode_details?.name}
                 </Text>
@@ -144,13 +160,22 @@ export default function ApprovalOvertimeCard({
         onRequestClose={() => setApproveConfirmVisible(false)}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Approve</Text>
-            <Text style={styles.modalMessage}>Are you sure you want to approve?</Text>
+            <Text style={styles.modalTitle}>
+              {t(tokens.actions.approve)}
+
+            </Text>
+            <Text style={styles.modalMessage}>
+              {t(tokens.messages.approveConfirm)}
+
+            </Text>
             <View style={styles.buttonContainer}>
               <TouchableOpacity
                 onPress={() => setApproveConfirmVisible(false)}
                 style={styles.cancelButton}>
-                <Text style={styles.cancelButtonText}>Cancel</Text>
+                <Text style={styles.cancelButtonText}>
+                    {t(tokens.actions.cancel)}
+
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 disabled={isLoading}
@@ -159,7 +184,10 @@ export default function ApprovalOvertimeCard({
                 {isLoading ? (
                   <ActivityIndicator size="large" color="#fff" />
                 ) : (
-                  <Text style={styles.approveButtonText}>Approve</Text>
+                  <Text style={styles.approveButtonText}>
+                      {t(tokens.actions.approve)}
+
+                  </Text>
                 )}
               </TouchableOpacity>
             </View>
@@ -175,13 +203,22 @@ export default function ApprovalOvertimeCard({
         onRequestClose={() => setRejectedConfirmVisible(false)}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Reject</Text>
-            <Text style={styles.modalMessage}>Are you sure you want to reject?</Text>
+            <Text style={styles.modalTitle}>
+                {t(tokens.actions.reject)}
+
+            </Text>
+            <Text style={styles.modalMessage}>
+              {t(tokens.messages.rejectConfirm)}
+
+            </Text>
             <View style={styles.buttonContainer}>
               <TouchableOpacity
                 onPress={() => setRejectedConfirmVisible(false)}
                 style={styles.cancelButton}>
-                <Text style={styles.cancelButtonText}>Cancel</Text>
+                <Text style={styles.cancelButtonText}>
+                  {t(tokens.actions.cancel)}
+
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 disabled={isLoading}
@@ -190,7 +227,10 @@ export default function ApprovalOvertimeCard({
                 {isLoading ? (
                   <ActivityIndicator size="large" color="#fff" />
                 ) : (
-                  <Text style={styles.approveButtonText}>Reject</Text>
+                  <Text style={styles.approveButtonText}>
+                      {t(tokens.actions.reject)}
+
+                  </Text>
                 )}
               </TouchableOpacity>
             </View>

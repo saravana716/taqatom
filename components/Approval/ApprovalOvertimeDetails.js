@@ -16,6 +16,8 @@ import {Toast} from 'react-native-toast-message/lib/src/Toast';
 import {dateTimeToShow} from '../../utils/formatDateTime';
 import get from 'lodash/get';
 import find from 'lodash/find';
+import { useTranslation } from 'react-i18next';
+import tokens from '../../locales/tokens';
 // Removed: import { useTranslation } from 'react-i18next';
 // Removed: import tokens from '../../locales/tokens';
 import {formatErrorsToToastMessages} from '../../utils/error-format';
@@ -25,6 +27,9 @@ export default function ApprovalOvertimeDetails({navigation, route}) {
     route.params;
   // Removed: const {t}=useTranslation()
   const [isLoading, setIsLoading] = useState(false);
+    const {t,i18n}=useTranslation()
+    const isRTL = i18n.language === 'ar';
+    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
   const [approveConfirmVisible, setApproveConfirmVisible] = useState(false);
   const [rejectedConfirmVisible, setRejectedConfirmVisible] = useState(false);
   const [OvertimeData, setOvertimeData] = useState([]);
@@ -125,7 +130,10 @@ export default function ApprovalOvertimeDetails({navigation, route}) {
             <TouchableOpacity onPress={handleBack} style={styles.backButton}>
               <Icon name="angle-left" size={30} color="#697ce3" />
             </TouchableOpacity>
-            <Text style={styles.headerText}>View</Text>
+            <Text style={styles.headerText}>
+              {t(tokens.actions.view)}
+
+            </Text>
           </View>
           <View style={styles.detailsContainer}>
             <View style={styles.scrollViewWrapper}>
@@ -133,64 +141,103 @@ export default function ApprovalOvertimeDetails({navigation, route}) {
                 <View style={styles.dataDisplayContainer}>
                   <View style={styles.dataRowsContainer}>
                     <View style={styles.dataRow}>
-                      <Text style={styles.dataLabel}>Approval Status</Text>
+                      <Text style={styles.dataLabel}>
+                      {t(tokens.charts.approvalStatus)}
+
+                      </Text>
                       {matchedData?.approval_status === 3 && (
-                        <Text style={styles.rejectedStatus}>Reject</Text>
+                        <Text style={styles.rejectedStatus}>
+                          {t(tokens.actions.reject)}
+
+                        </Text>
                       )}
                       {matchedData?.approval_status === 2 && (
-                        <Text style={styles.approvedStatus}>Approve</Text>
+                        <Text style={styles.approvedStatus}>
+                            {t(tokens.actions.approve)}
+
+                        </Text>
                       )}
                       {matchedData?.approval_status === 1 && (
-                        <Text style={styles.pendingStatus}>Pending</Text>
+                        <Text style={styles.pendingStatus}>
+                          {t(tokens.actions.pending)}
+
+                        </Text>
                       )}
                       {matchedData?.approval_status === 4 && (
-                        <Text style={styles.rejectedStatus}>Revoke</Text>
+                        <Text style={styles.rejectedStatus}>
+                          {t(tokens.actions.revoke)}
+
+                        </Text>
                       )}
                     </View>
                     <View style={styles.dataRow}>
-                      <Text style={styles.dataLabel}>First Name</Text>
+                      <Text style={styles.dataLabel}>
+                      {t(tokens.common.firstName)}
+
+                      </Text>
                       <Text style={styles.dataValue}>
                         {get(matchedData, 'first_name')}
                       </Text>
                     </View>
                     <View style={styles.dataRow}>
-                      <Text style={styles.dataLabel}>Last Name</Text>
+                      <Text style={styles.dataLabel}>
+                      {t(tokens.common.lastName)}
+
+                      </Text>
                       <Text style={styles.dataValue}>
                         {get(matchedData, 'last_name') || '-'}
                       </Text>
                     </View>
                     <View style={styles.dataRow}>
-                      <Text style={styles.dataLabel}>Employee Code</Text>
+                      <Text style={styles.dataLabel}>
+                      {t(tokens.common.employeeCode)}
+
+                      </Text>
                       <Text style={styles.dataValue}>
                         {get(matchedData, 'emp_code')}
                       </Text>
                     </View>
                     <View style={styles.dataRow}>
-                      <Text style={styles.dataLabel}>Department</Text>
+                      <Text style={styles.dataLabel}>
+                        {t(tokens.nav.department)}
+
+                      </Text>
                       <Text style={styles.dataValue}>
                         {get(matchedData, 'department_info.department_name')}
                       </Text>
                     </View>
                     <View style={styles.dataRow}>
-                      <Text style={styles.dataLabel}>Start Time</Text>
+                      <Text style={styles.dataLabel}>
+                      {t(tokens.common.startTime)}
+
+                      </Text>
                       <Text style={styles.dataValue}>
                         {dateTimeToShow(matchedData?.start_time)}
                       </Text>
                     </View>
                     <View style={styles.dataRowNoBorder}>
-                      <Text style={styles.dataLabel}>End Time</Text>
+                      <Text style={styles.dataLabel}>
+                      {t(tokens.common.endTime)}
+
+                      </Text>
                       <Text style={styles.dataValue}>
                         {dateTimeToShow(matchedData?.end_time)}
                       </Text>
                     </View>
                     <View style={styles.dataRowNoBorder}>
-                      <Text style={styles.dataLabel}>Pay Code</Text>
+                      <Text style={styles.dataLabel}>
+                      {t(tokens.nav.payCode)}
+
+                      </Text>
                       <Text style={styles.dataValue}>
                         {matchedData?.paycode_details?.name}
                       </Text>
                     </View>
                     <View style={styles.dataRowNoBorder}>
-                      <Text style={styles.dataLabel}>Reason</Text>
+                      <Text style={styles.dataLabel}>
+                      {t(tokens.common.reason)}
+
+                      </Text>
                       <Text style={styles.dataValue}>
                         {matchedData?.apply_reason || '-'}
                       </Text>
@@ -206,7 +253,10 @@ export default function ApprovalOvertimeDetails({navigation, route}) {
                             ? styles.disabledButton
                             : styles.rejectButton,
                         ]}>
-                        <Text style={styles.rejectButtonText}>Reject</Text>
+                        <Text style={styles.rejectButtonText}>
+                        {t(tokens.actions.reject)}
+
+                        </Text>
                       </TouchableOpacity>
 
                       <TouchableOpacity
@@ -218,7 +268,10 @@ export default function ApprovalOvertimeDetails({navigation, route}) {
                             ? styles.fullWidthButton
                             : styles.approveButton,
                         ]}>
-                        <Text style={styles.approveButtonText}>Approve</Text>
+                        <Text style={styles.approveButtonText}>
+                        {t(tokens.actions.approve)}
+
+                        </Text>
                       </TouchableOpacity>
                     </View>
                   )}
@@ -237,9 +290,13 @@ export default function ApprovalOvertimeDetails({navigation, route}) {
               }}>
               <View style={styles.modalOverlay}>
                 <View style={styles.modalContainer}>
-                  <Text style={styles.modalTitle}>Approve</Text>
+                  <Text style={styles.modalTitle}>
+                  {t(tokens.actions.approve)}
+
+                  </Text>
                   <Text style={styles.modalMessage}>
-                    Are you sure you want to approve this overtime?
+                  {t(tokens.messages.approveConfirm)}
+                    
                   </Text>
                   <View style={styles.modalInputWrapper}>
                     <TextInput
@@ -261,7 +318,9 @@ export default function ApprovalOvertimeDetails({navigation, route}) {
                         setApproveConfirmVisible(false);
                       }}
                       style={styles.modalCancelButton}>
-                      <Text style={styles.modalCancelButtonText}>Cancel</Text>
+                      <Text style={styles.modalCancelButtonText}>
+                         {t(tokens.actions.cancel)}
+                      </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       disabled={isLoading}
@@ -272,7 +331,8 @@ export default function ApprovalOvertimeDetails({navigation, route}) {
                       )}
                       {!isLoading && (
                         <Text style={styles.modalApproveButtonText}>
-                          Approve
+                          {t(tokens.actions.approve)}
+                          
                         </Text>
                       )}
                     </TouchableOpacity>
@@ -292,9 +352,13 @@ export default function ApprovalOvertimeDetails({navigation, route}) {
               }}>
               <View style={styles.modalOverlay}>
                 <View style={styles.modalContainer}>
-                  <Text style={styles.modalTitle}>Reject</Text>
+                  <Text style={styles.modalTitle}>
+                  {t(tokens.actions.reject)}
+
+                  </Text>
                   <Text style={styles.modalMessage}>
-                    Are you sure you want to reject this overtime?
+                                      {t(tokens.messages.rejectConfirm)}
+
                   </Text>
                   <View style={styles.modalInputWrapper}>
                     <TextInput
@@ -316,7 +380,10 @@ export default function ApprovalOvertimeDetails({navigation, route}) {
                         setRejectedConfirmVisible(false);
                       }}
                       style={styles.modalCancelButton}>
-                      <Text style={styles.modalCancelButtonText}>Cancel</Text>
+                      <Text style={styles.modalCancelButtonText}>
+                      {t(tokens.actions.cancel)}
+
+                      </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       disabled={isLoading}
@@ -326,7 +393,10 @@ export default function ApprovalOvertimeDetails({navigation, route}) {
                         <ActivityIndicator size="large" color="#697CE3" />
                       )}
                       {!isLoading && (
-                        <Text style={styles.modalApproveButtonText}>Reject</Text>
+                        <Text style={styles.modalApproveButtonText}>
+                          {t(tokens.actions.reject)}
+
+                        </Text>
                       )}
                     </TouchableOpacity>
                   </View>

@@ -15,9 +15,13 @@ import {Toast} from 'react-native-toast-message/lib/src/Toast';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import get from 'lodash/get';
 import {useNavigation} from '@react-navigation/native';
-
+import { useTranslation } from 'react-i18next';
+import tokens from '@/locales/tokens';
 export default function ReportsCard({ reportsData }) {
   const navigation = useNavigation();
+    const {t,i18n}=useTranslation()
+      const isRTL = i18n.language === 'ar';
+      console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
   const [isExpanded, setIsExpanded] = useState(false);
   const toggleCardDetails = () => setIsExpanded(prev => !prev);
 

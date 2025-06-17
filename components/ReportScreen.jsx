@@ -1,31 +1,28 @@
-import DateTimePicker from '@react-native-community/datetimepicker';
-import get from 'lodash/get';
-import isEmpty from 'lodash/isEmpty';
-import map from 'lodash/map';
-import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useSelector } from 'react-redux';
+import moment from 'moment';
+import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
+import map from 'lodash/map';
+
 import ReportsCard from '../components/ReportsCard';
 import ProfileServices from '../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../utils/error-format';
 
 export default function ReportScreen({ navigation }) {
-      const selectorid= useSelector(function (data) {
-        return data.empid
-    })
-    
-    
-    
+  const selectorid = useSelector(data => data.empid);
+
   const [fromDateShow, setFromDateShow] = useState(false);
   const [endDateShow, setEndDateShow] = useState(false);
   const [date, setDate] = useState(new Date());
@@ -68,8 +65,7 @@ export default function ReportScreen({ navigation }) {
         page: pagination.pageIndex,
         size: pagination.pageSize,
       });
-      
-      
+
       setReportsData(get(reports, 'results'));
       setCount(get(reports, 'count'));
     } catch (error) {
@@ -121,7 +117,7 @@ export default function ReportScreen({ navigation }) {
             mode="date"
             is24Hour={true}
             onChange={onChange}
-            minimumDate={new Date()}
+            minimumDate={new Date('2022-01-01')}
           />
         )}
 
@@ -137,7 +133,7 @@ export default function ReportScreen({ navigation }) {
             mode="date"
             is24Hour={true}
             onChange={onChangeEnd}
-            minimumDate={new Date()}
+            minimumDate={new Date('2022-01-01')}
           />
         )}
       </View>
@@ -161,6 +157,7 @@ export default function ReportScreen({ navigation }) {
                   </View>
                 ))}
               </ScrollView>
+
               <View style={styles.pagination}>
                 <TouchableOpacity
                   style={[
@@ -168,8 +165,7 @@ export default function ReportScreen({ navigation }) {
                     pagination.pageIndex === 0 && styles.disabledButton,
                   ]}
                   onPress={handlePrevPage}
-                  disabled={pagination.pageIndex === 0}
-                >
+                  disabled={pagination.pageIndex === 0}>
                   <Text style={styles.pageButtonText}>Prev</Text>
                 </TouchableOpacity>
 
@@ -180,14 +176,12 @@ export default function ReportScreen({ navigation }) {
                       styles.pageNumber,
                       pagination.pageIndex === index && styles.activePage,
                     ]}
-                    onPress={() => handlePageChange(index)}
-                  >
+                    onPress={() => handlePageChange(index)}>
                     <Text
                       style={[
                         styles.pageText,
                         pagination.pageIndex === index && styles.activeText,
-                      ]}
-                    >
+                      ]}>
                       {index + 1}
                     </Text>
                   </TouchableOpacity>
@@ -199,8 +193,7 @@ export default function ReportScreen({ navigation }) {
                     pagination.pageIndex === totalPages - 1 && styles.disabledButton,
                   ]}
                   onPress={handleNextPage}
-                  disabled={pagination.pageIndex === totalPages - 1}
-                >
+                  disabled={pagination.pageIndex === totalPages - 1}>
                   <Text style={styles.pageButtonText}>Next</Text>
                 </TouchableOpacity>
               </View>

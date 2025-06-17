@@ -17,13 +17,17 @@ import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import ProfileServices from '../../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../../utils/error-format';
 import { dateTimeToShow } from '../../utils/formatDateTime';
-
+import tokens from '@/locales/tokens';
+import { useTranslation } from 'react-i18next';
 export default function ApprovalTrainingDetails({ navigation, route }) {
     const { newItem, employeeId, componentId, getTrainingList } = route.params;
     const [isLoading, setIsLoading] = useState(false);
     const handleBack = () => {
         Navigation.pop(componentId);
     };
+     const {t,i18n}=useTranslation()
+        const isRTL = i18n.language === 'ar';
+        console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
     const [approveConfirmVisible, setApproveConfirmVisible] = useState(false);
     const [rejectedConfirmVisible, setRejectedConfirmVisible] = useState(false);
     const [trainingData, setTrainingData] = useState([]);
@@ -118,7 +122,8 @@ export default function ApprovalTrainingDetails({ navigation, route }) {
                             <Icon name="angle-left" size={30} color="#697ce3" />
                         </TouchableOpacity>
                         <Text style={styles.headerText}>
-                            View
+              {t(tokens.actions.view)}
+                            
                         </Text>
                     </View>
                     <View style={styles.contentArea}>
@@ -127,32 +132,38 @@ export default function ApprovalTrainingDetails({ navigation, route }) {
                                 <View style={styles.detailsContainer}>
                                     <View style={styles.detailRow}>
                                         <Text style={styles.detailLabel}>
-                                            Approval Status
+                        {t(tokens.charts.approvalStatus)}
+                                            
                                         </Text>
                                         {matchedData?.approval_status === 3 && (
                                             <Text style={[styles.statusText, styles.rejectedStatus]}>
-                                                Rejected
+                          {t(tokens.actions.reject)}
+                                                
                                             </Text>
                                         )}
                                         {matchedData?.approval_status === 2 && (
                                             <Text style={[styles.statusText, styles.approvedStatus]}>
-                                                Approved
+                          {t(tokens.actions.approve)}
+                                                
                                             </Text>
                                         )}
                                         {matchedData?.approval_status === 1 && (
                                             <Text style={[styles.statusText, styles.pendingStatus]}>
-                                                Pending
+                          {t(tokens.actions.pending)}
+                                                
                                             </Text>
                                         )}
                                         {matchedData?.approval_status === 4 && (
                                             <Text style={[styles.statusText, styles.revokedStatus]}>
-                                                Revoked
+                          {t(tokens.actions.revoke)}
+                                                
                                             </Text>
                                         )}
                                     </View>
                                     <View style={styles.detailRow}>
                                         <Text style={styles.detailLabel}>
-                                            First Name
+                        {t(tokens.common.firstName)}
+                                            
                                         </Text>
                                         <Text style={styles.detailValue}>
                                             {get(matchedData, 'first_name')}
@@ -160,7 +171,8 @@ export default function ApprovalTrainingDetails({ navigation, route }) {
                                     </View>
                                     <View style={styles.detailRow}>
                                         <Text style={styles.detailLabel}>
-                                            Last Name
+                        {t(tokens.common.lastName)}
+                                            
                                         </Text>
                                         <Text style={styles.detailValue}>
                                             {get(matchedData, 'last_name') || '-'}
@@ -168,7 +180,8 @@ export default function ApprovalTrainingDetails({ navigation, route }) {
                                     </View>
                                     <View style={styles.detailRow}>
                                         <Text style={styles.detailLabel}>
-                                            Employee Code
+                        {t(tokens.common.employeeCode)}
+                                            
                                         </Text>
                                         <Text style={styles.detailValue}>
                                             {get(matchedData, 'emp_code')}
@@ -176,7 +189,8 @@ export default function ApprovalTrainingDetails({ navigation, route }) {
                                     </View>
                                     <View style={styles.detailRow}>
                                         <Text style={styles.detailLabel}>
-                                            Department
+                        {t(tokens.nav.department)}
+                                            
                                         </Text>
                                         <Text style={styles.detailValue}>
                                             {get(matchedData, 'department_info.department_name')}
@@ -184,7 +198,8 @@ export default function ApprovalTrainingDetails({ navigation, route }) {
                                     </View>
                                     <View style={styles.detailRow}>
                                         <Text style={styles.detailLabel}>
-                                            Start Time
+                        {t(tokens.common.startTime)}
+                                            
                                         </Text>
                                         <Text style={styles.detailValue}>
                                             {dateTimeToShow(matchedData?.start_time)}
@@ -192,7 +207,8 @@ export default function ApprovalTrainingDetails({ navigation, route }) {
                                     </View>
                                     <View style={styles.detailRow}>
                                         <Text style={styles.detailLabel}>
-                                            End Time
+                        {t(tokens.common.endTime)}
+                                            
                                         </Text>
                                         <Text style={styles.detailValue}>
                                             {dateTimeToShow(matchedData?.end_time)}
@@ -200,7 +216,8 @@ export default function ApprovalTrainingDetails({ navigation, route }) {
                                     </View>
                                     <View style={styles.detailRow}>
                                         <Text style={styles.detailLabel}>
-                                            Pay Code
+                        {t(tokens.nav.payCode)}
+                                            
                                         </Text>
                                         <Text style={styles.detailValue}>
                                             {matchedData?.paycode_details?.name}
@@ -208,7 +225,8 @@ export default function ApprovalTrainingDetails({ navigation, route }) {
                                     </View>
                                     <View style={styles.detailRow}>
                                         <Text style={styles.detailLabel}>
-                                            Reason
+                        {t(tokens.common.reason)}
+                                            
                                         </Text>
                                         <Text style={styles.detailValue}>
                                             {matchedData?.apply_reason || '-'}
@@ -224,7 +242,8 @@ export default function ApprovalTrainingDetails({ navigation, route }) {
                                             style={[styles.actionButton, styles.rejectButtonBorder]}
                                         >
                                             <Text style={styles.rejectButtonText}>
-                                                Reject
+                        {t(tokens.actions.reject)}
+                                                
                                             </Text>
                                         </TouchableOpacity>
                                         <TouchableOpacity
@@ -236,7 +255,8 @@ export default function ApprovalTrainingDetails({ navigation, route }) {
                                                 <ActivityIndicator size="large" color="#697CE3" />
                                             ) : (
                                                 <Text style={styles.approveButtonText}>
-                                                    Approve
+                          {t(tokens.actions.approve)}
+                                                    
                                                 </Text>
                                             )}
                                         </TouchableOpacity>
@@ -254,10 +274,12 @@ export default function ApprovalTrainingDetails({ navigation, route }) {
                                 <View style={styles.modalOverlay}>
                                     <View style={styles.modalContent}>
                                         <Text style={styles.modalTitle}>
-                                            Approve
+                        {t(tokens.actions.approve)}
+                                            
                                         </Text>
                                         <Text style={styles.modalMessage}>
-                                            Are you sure you want to approve this training request?
+                        {t(tokens.messages.approveConfirm)}
+                                            
                                         </Text>
                                         <View style={styles.modalTextInputContainer}>
                                             <TextInput
@@ -283,7 +305,8 @@ export default function ApprovalTrainingDetails({ navigation, route }) {
                                                 style={[styles.modalButton, styles.modalCancelButtonBorder]}
                                             >
                                                 <Text style={styles.modalCancelButtonText}>
-                                                    Cancel
+                            {t(tokens.actions.cancel)}
+                                                    
                                                 </Text>
                                             </TouchableOpacity>
                                             <TouchableOpacity
@@ -295,7 +318,8 @@ export default function ApprovalTrainingDetails({ navigation, route }) {
                                                     <ActivityIndicator size="large" color="#697CE3" />
                                                 ) : (
                                                     <Text style={styles.modalApproveButtonText}>
-                                                        Approve
+                              {t(tokens.actions.approve)}
+                                                        
                                                     </Text>
                                                 )}
                                             </TouchableOpacity>
@@ -314,10 +338,12 @@ export default function ApprovalTrainingDetails({ navigation, route }) {
                                 <View style={styles.modalOverlay}>
                                     <View style={styles.modalContent}>
                                         <Text style={styles.modalTitle}>
-                                            Reject
+                        {t(tokens.actions.reject)}
+                                            
                                         </Text>
                                         <Text style={styles.modalMessage}>
-                                            Are you sure you want to reject this training request?
+                                                                   {t(tokens.messages.rejectConfirm)}
+
                                         </Text>
                                         <View style={styles.modalTextInputContainer}>
                                             <TextInput
@@ -343,7 +369,8 @@ export default function ApprovalTrainingDetails({ navigation, route }) {
                                                 style={[styles.modalButton, styles.modalCancelButtonBorder]}
                                             >
                                                 <Text style={styles.modalCancelButtonText}>
-                                                    Cancel
+                            {t(tokens.actions.cancel)}
+                                                    
                                                 </Text>
                                             </TouchableOpacity>
                                             <TouchableOpacity
@@ -355,7 +382,8 @@ export default function ApprovalTrainingDetails({ navigation, route }) {
                                                     <ActivityIndicator size="large" color="#697CE3" />
                                                 ) : (
                                                     <Text style={styles.modalApproveButtonText}>
-                                                        Reject
+                              {t(tokens.actions.reject)}
+                                                        
                                                     </Text>
                                                 )}
                                             </TouchableOpacity>

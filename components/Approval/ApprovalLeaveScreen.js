@@ -18,7 +18,8 @@ import ProfileServices from '../../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../../utils/error-format';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
-
+import {useTranslation} from 'react-i18next';
+import tokens from '../../locales/tokens';
 export default function ApprovalLeaveScreen({ navigation }) {
   const selectorid = useSelector((data) => data.empid);
 
@@ -32,7 +33,9 @@ export default function ApprovalLeaveScreen({ navigation }) {
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [time, setTime] = useState(new Date());
   const [LeaveData, setLeaveData] = useState([]);
-
+   const {t,i18n}=useTranslation()
+    const isRTL = i18n.language === 'ar';
+    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
   const handleBack = () => {
     navigation.navigate('ApprovalScreen');
   };
@@ -106,7 +109,8 @@ export default function ApprovalLeaveScreen({ navigation }) {
             <Icon name="angle-left" size={30} color="#697ce3" />
           </TouchableOpacity>
           <Text style={{ fontSize: 20, flex: 1, textAlign: 'center', color: 'black', fontWeight: 'bold' }}>
-            Leave
+                      {t(tokens.nav.leave)}
+
           </Text>
         </View>
       </View>
@@ -118,7 +122,8 @@ export default function ApprovalLeaveScreen({ navigation }) {
       ) : isEmpty(LeaveData) ? (
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 20, textAlign: 'center', paddingTop: 160 }}>
-            No leave available
+                         {t(tokens.messages.noLeave)}
+
           </Text>
         </View>
       ) : (

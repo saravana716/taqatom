@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import tokens from '../../../locales/tokens';
-import {Iconify} from 'react-native-iconify';
 import {Navigation} from 'react-native-navigation';
 import isEmpty from 'lodash/isEmpty';
 import {Dropdown} from 'react-native-element-dropdown';

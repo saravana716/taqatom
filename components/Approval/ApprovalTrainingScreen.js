@@ -20,10 +20,13 @@ import ProfileServices from "../../Services/API/ProfileServices";
 import ApprovalTrainingCard from "../../components/ApprovalCards/ApprovalTrainingCard";
 import { formatErrorsToToastMessages } from "../../utils/error-format";
 import { useSelector } from "react-redux";
-
+import tokens from '@/locales/tokens';
+import { useTranslation } from "react-i18next";
 export default function ApprovalTrainingScreen({ navigation }) {
   const selectorid = useSelector((data) => data.empid);
-
+   const {t,i18n}=useTranslation()
+    const isRTL = i18n.language === 'ar';
+    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
   const [punchTimeDate, setPunchTimeDate] = useState(false);
   const [formatExpectDate, setFormatExpectDate] = useState(null);
   const [workCode, setWorkCode] = useState('');
@@ -88,7 +91,10 @@ export default function ApprovalTrainingScreen({ navigation }) {
           <TouchableOpacity onPress={handleBack} style={styles.backButton}>
             <Icon name="angle-left" size={30} color="#697ce3" />
           </TouchableOpacity>
-          <Text style={styles.title}>Training</Text>
+          <Text style={styles.title}>
+            {t(tokens.nav.training)}
+
+          </Text>
         </View>
 
         {isLoading ? (
@@ -97,7 +103,10 @@ export default function ApprovalTrainingScreen({ navigation }) {
           </View>
         ) : isEmpty(trainingData) ? (
           <View style={styles.noDataView}>
-            <Text style={styles.noDataText}>No training available</Text>
+            <Text style={styles.noDataText}>
+          {t(tokens.messages.noTraining)}
+
+            </Text>
           </View>
         ) : (
           <ScrollView
