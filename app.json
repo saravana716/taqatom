@@ -4,12 +4,12 @@
     "slug": "taqadom",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/splash_icon 1.png",
+    "icon": "./assets/images/splash_icon 1.png",
     "scheme": "taqadom",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash_icon 1.png",
+      "image": "./assets/images/splash_icon 1.png",
       "resizeMode": "cover",
       "backgroundColor": "#693ce3"
     },
