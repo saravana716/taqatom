@@ -223,6 +223,7 @@ const Dashboard = () => {
         userDetails?.username
       );
       //
+      console.log("pppppppppppppppp", employee);
 
       const empID = employee?.id;
 
@@ -301,59 +302,59 @@ const Dashboard = () => {
     return +parseFloat(value).toFixed(dp);
   }
 
-const updateStatus = async (latitude, longitude) => {
-  try {
-    const currentTime = moment(new Date());
+  const updateStatus = async (latitude, longitude) => {
+    try {
+      const currentTime = moment(new Date());
 
-    const data = {
-      latitude: toFixedIfNecessary(latitude, 6),
-      longitude: toFixedIfNecessary(longitude, 6),
-      punch_time: currentTime.format("YYYY-MM-DDTHH:mm:ss"),
-      employee_id: empid,
-      clock_type: value,
-      work_code: workCode,
-    };
+      const data = {
+        latitude: toFixedIfNecessary(latitude, 6),
+        longitude: toFixedIfNecessary(longitude, 6),
+        punch_time: currentTime.format("YYYY-MM-DDTHH:mm:ss"),
+        employee_id: empid,
+        clock_type: value,
+        work_code: workCode,
+      };
 
-    // ✅ Correct null/undefined check (0 is allowed)
-    if (
-      data.employee_id == null ||
-      data.clock_type == null ||
-      data.work_code == null
-    ) {
-      console.warn("❌ Missing fields in punch data", data);
-      return;
+      // ✅ Correct null/undefined check (0 is allowed)
+      if (
+        data.employee_id == null ||
+        data.clock_type == null ||
+        data.work_code == null
+      ) {
+        console.warn("❌ Missing fields in punch data", data);
+        return;
+      }
+
+      console.log(
+        "✅ Punching data:",
+        data.employee_id,
+        data.clock_type,
+        data.work_code
+      );
+
+      const res = await ProfileServices.updateClockStatus(data);
+
+      console.log("✅ Response from server:", res);
+
+      setModalVisible1(false); // Close modal after success
+
+      Toast.show({
+        type: "success",
+        text1: getClockType(value),
+        position: "bottom",
+      });
+
+      await getRecentActivity(empid);
+
+      setWorkCode(null);
+      setValue(null);
+
+      return data;
+    } catch (err) {
+      console.error("❌ Error in updateStatus", err);
+      setIsLoading(false);
     }
-
-    console.log(
-      "✅ Punching data:",
-      data.employee_id,
-      data.clock_type,
-      data.work_code
-    );
-
-    const res = await ProfileServices.updateClockStatus(data);
-
-    console.log("✅ Response from server:", res);
-
-    setModalVisible1(false); // Close modal after success
-
-    Toast.show({
-      type: "success",
-      text1: getClockType(value),
-      position: "bottom",
-    });
-
-    await getRecentActivity(empid);
-
-    setWorkCode(null);
-    setValue(null);
-
-    return data;
-  } catch (err) {
-    console.error("❌ Error in updateStatus", err);
-    setIsLoading(false);
-  }
-};
+  };
 
   const getClockType = (value) => {
     //
@@ -394,22 +395,21 @@ const updateStatus = async (latitude, longitude) => {
       setIsRefreshing(false);
     }
   };
-const handlePunchConfirm = async (latitude, longitude) => {
-  if (value === null || value === undefined) {
-    setPunchStateError("Punch type is required");
-    return;
-  }
+  const handlePunchConfirm = async (latitude, longitude) => {
+    if (value === null || value === undefined) {
+      setPunchStateError("Punch type is required");
+      return;
+    }
 
-  if (!workCode) {
-    setPunchStateError("Work code is required");
-    return;
-  }
+    if (!workCode) {
+      setPunchStateError("Work code is required");
+      return;
+    }
 
-  await updateStatus(latitude, longitude);
-  await getRecentActivity(empid);
-  setModalVisible(false);
-};
-
+    await updateStatus(latitude, longitude);
+    await getRecentActivity(empid);
+    setModalVisible(false);
+  };
 
   useEffect(() => {
     if (recent.length > 0) {
@@ -911,7 +911,7 @@ const handlePunchConfirm = async (latitude, longitude) => {
             <View style={styles.icons}>
               <TouchableOpacity onPress={handleLanguageChange}>
                 {i18n.language === LANG_CODES.ARABIC ? (
-                  <Icon name="font" size={25} color="#fff" />
+                 <Icon name="language" size={25} color="#fff" />
                 ) : (
                   <Icon name="globe" size={25} color="#fff" />
                 )}
@@ -1153,7 +1153,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 0,
     left: 0,
-    paddingVertical: 40,
+    paddingVertical: 20,
     paddingHorizontal: 20,
   },
   leftcon: {

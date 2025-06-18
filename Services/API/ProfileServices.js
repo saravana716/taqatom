@@ -678,6 +678,31 @@ downloadPaySlip(pay_run_id, employee_id) {
       );
     });
   },
+putEmployeeFullDetails(id, data) {
+  return new Promise((resolve, reject) => {
+    APIService.request(
+      {
+        url: `${API_URL}/v1/employee/${id}/`,
+        method: 'PUT',
+        data: data, // Example: { profile_file: 'data:image/jpeg;base64,...' }
+        customHeaders: {
+          'Content-Type': 'application/json',
+        },
+        isFileData: false, // explicitly treat as JSON
+      },
+      (error, responseData) => {
+        if (error) {
+          console.error('PUT Error:', error);
+          reject(error);
+        } else {
+          console.log('PUT Success:', responseData);
+          resolve(responseData);
+        }
+      },
+    );
+  });
+},
+
   getUserDetailsData(id) {
     
     return new Promise((resolve, reject) => {

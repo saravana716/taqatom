@@ -158,7 +158,7 @@ const Profile = ({ navigation}) => {
                 style={styles.closeButton}
                 onPress={navigatepage}
               >
-                <Icon name="angle-left" size={30} color="white" />
+                <Icon name="angle-left" size={35} color="white" />
               </TouchableOpacity>
               <Text style={styles.modalText}>
                   {t(tokens.nav.myProfile)}
@@ -489,11 +489,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 600,
   },
-  closeButton: {
-    position: "absolute",
-    left: 0,
-    top: 0,
-  },
+
   between: {
     width: "100%",
     display: "flex",

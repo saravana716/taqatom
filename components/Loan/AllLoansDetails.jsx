@@ -40,8 +40,8 @@ export default function AllLoansDetails({ navigation }) {
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-            <Icon name="angle-left" size={30} color="black" />
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+            <Icon name="angle-left" size={35} color="black" />
           </TouchableOpacity>
           <Text style={styles.headerText}>All Loan Details</Text>
         </View>
@@ -91,11 +91,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'relative',
   },
-  backButton: {
-    position: 'absolute',
-    left: 12,
-    zIndex: 10,
-  },
+
   headerText: {
     width: '100%',
     textAlign: 'center',

@@ -45,8 +45,8 @@ export default function RequestedLoans({ navigation }) {
     <View style={styles.container}>
       <View style={styles.headerWrapper}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-            <Icon name="angle-left" size={30} color="black" />
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+            <Icon name="angle-left" size={35} color="black" />
           </TouchableOpacity>
           <Text style={styles.headerText}>Requested Loans</Text>
         </View>
@@ -96,11 +96,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'relative',
   },
-  backButton: {
-    position: 'absolute',
-    left: 12,
-    zIndex: 10,
-  },
+
   headerText: {
     width: '100%',
     textAlign: 'center',

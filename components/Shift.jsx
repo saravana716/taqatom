@@ -119,8 +119,8 @@ const Shift = ({ navigation }) => {
       <View style={styles.shiftTop}>
         <View style={styles.left}>
           <View style={styles.leftcon1}>
-            <TouchableOpacity onPress={navigatePage} style={styles.closeButton}>
-              <Icon name="angle-left" size={30} color="black" />
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.closeButton}>
+              <Icon name="angle-left" size={35} color="black" />
             </TouchableOpacity>
             <Text style={styles.modalText}>{t(tokens.nav.shift)}</Text>
           </View>
@@ -302,11 +302,7 @@ backgroundColor: "#f6f6f6",
     width: "100%",
     position: "relative",
   },
-  closeButton: {
-    position: "absolute",
-    left: 0,
-    top: 0,
-  },
+  
   modalText: {
     fontSize: 20,
     fontWeight: "700",

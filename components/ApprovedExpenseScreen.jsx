@@ -34,7 +34,7 @@ export default function ApprovedExpenseScreen({ navigation }) {
         />
         <View style={styles.headerContainer}>
           <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-            <Icon name="angle-left" size={30} color="white" />
+            <Icon name="angle-left" size={35} color="white" />
           </TouchableOpacity>
           <Text style={styles.headerText}>Expense and Reimbursement</Text>
         </View>

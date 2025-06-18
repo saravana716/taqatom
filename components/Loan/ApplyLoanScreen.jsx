@@ -138,8 +138,8 @@ function openCalculator(params) {
       <View style={styles.headerContainer}>
 
 
-        <TouchableOpacity onPress={navigatepage}>
-        <Icon name="angle-left" size={30} color="#697ce3" />
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <Icon name="angle-left" size={35} color="#697ce3" />
 
         </TouchableOpacity>
      

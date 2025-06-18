@@ -88,8 +88,8 @@ const selectorid=useSelector(function (data) {
       <View>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton}>
-            <Icon name="angle-left" size={30} color="black" />
+          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+            <Icon name="angle-left" size={35} color="black" />
 
           </TouchableOpacity>
           <Text style={styles.headerTitle}>{t(tokens.nav.loan)}</Text>
@@ -224,17 +224,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'relative',
   },
-  backButton: {
-    position: 'absolute',
-    left: 12,
-    zIndex: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+ 
   headerTitle: {
     flex: 1,
     textAlign: 'center',
     fontSize: 20,
+    fontWeight:700,
     fontFamily: 'PublicSans-Bold',
     color: '#000',
   },

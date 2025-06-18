@@ -58,8 +58,8 @@ export default function RunningLoans({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-          <Icon name="angle-left" size={30} color="black" />
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Icon name="angle-left" size={35} color="black" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Running Loans</Text>
       </View>
@@ -107,11 +107,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'relative',
   },
-  backButton: {
-    position: 'absolute',
-    left: 10,
-    zIndex: 10,
-  },
+ 
   headerTitle: {
     flex: 1,
     fontSize: 20,

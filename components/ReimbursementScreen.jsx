@@ -97,7 +97,7 @@ const dispatch=useDispatch()
       />
       <View style={styles.headerOverlay}>
         <TouchableOpacity onPress={handleBack}>
-          <Icon name="chevron-back" size={30} color="#fff" />
+          <Icon name="chevron-back" size={35} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{t(tokens.nav.expense)}</Text>
       </View>

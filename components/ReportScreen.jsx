@@ -1,3 +1,8 @@
+import DateTimePicker from '@react-native-community/datetimepicker';
+import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
+import map from 'lodash/map';
+import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -7,14 +12,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useSelector } from 'react-redux';
-import moment from 'moment';
-import get from 'lodash/get';
-import isEmpty from 'lodash/isEmpty';
-import map from 'lodash/map';
 
 import ReportsCard from '../components/ReportsCard';
 import ProfileServices from '../Services/API/ProfileServices';
@@ -98,8 +98,8 @@ export default function ReportScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-          <Icon name="angle-left" size={30} color="#697ce3" />
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Icon name="angle-left" size={35} color="#697ce3" />
         </TouchableOpacity>
         <Text style={styles.title}>Reports</Text>
       </View>
@@ -225,9 +225,10 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    marginLeft: 36,
     fontWeight: 'bold',
     color: 'black',
+    width:"100%",
+    textAlign:"center"
   },
   datePickerSection: {
     paddingTop: 12,

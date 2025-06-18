@@ -28,8 +28,8 @@ function navigateTo(event) {
     <View style={styles.container}>
       <View style={styles.wrapper}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-            <Icon name="angle-left" size={30} color="#697ce3" />
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+            <Icon name="angle-left" size={35} color="#697ce3" />
           </TouchableOpacity>
           <Text style={styles.title}>
             {t(tokens.nav.approvals)}
@@ -94,9 +94,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignItems: 'center',
   },
-  backButton: {
-    paddingLeft: 4,
-  },
+
   title: {
     fontSize: 20,
     fontWeight: 'bold',

@@ -76,8 +76,8 @@ const Holiday = ({ navigation }) => {
         />
         <View style={styles.left}>
           <View style={styles.leftcon1}>
-            <TouchableOpacity style={styles.closeButton} onPress={navigateBack}>
-              <Icon name="angle-left" size={30} color="white" />
+            <TouchableOpacity style={styles.closeButton} onPress={() => navigation.goBack()}>
+              <Icon name="angle-left" size={35} color="white" />
             </TouchableOpacity>
             <Text style={styles.modalText}>  {t(tokens.nav.holiday)}</Text>
           </View>
@@ -195,9 +195,7 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   closeButton: {
-    position: "absolute",
-    left: 0,
-    top: 0,
+    fontWeight:900
   },
   modalText: {
     fontSize: 20,

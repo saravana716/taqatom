@@ -44,8 +44,8 @@ export default function ClearedLoan({ navigation }) {
     <View style={styles.screen}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-          <Icon name="angle-left" size={30} color="black" />
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Icon name="angle-left" size={35} color="black" />
         </TouchableOpacity>
         <Text style={styles.headerText}>Cleared Loans</Text>
       </View>
@@ -92,12 +92,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'relative',
   },
-  backButton: {
-    position: 'absolute',
-    left: 12,
-    zIndex: 10,
-    width: '100%',
-  },
+
   headerText: {
     fontSize: 20,
     color: '#000',
