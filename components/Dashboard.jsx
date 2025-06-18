@@ -1,23 +1,26 @@
+/* eslint-disable no-dupe-keys */
 import ProfileServices from "@/Services/API/ProfileServices";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { decode as atob } from "base-64";
 import * as Location from "expo-location";
-import get from 'lodash/get';
-import map from 'lodash/map';
+import get from "lodash/get";
+import map from "lodash/map";
 import moment from "moment";
-import { useTranslation } from 'react-i18next';
-import tokens from '../locales/tokens';
-import { LANG_CODES } from '../locales/translations/languages';
-import { FEATURE_CODES } from '../utils/feature-constants';
+import { useTranslation } from "react-i18next";
+import tokens from "../locales/tokens";
+import { LANG_CODES } from "../locales/translations/languages";
+import { FEATURE_CODES } from "../utils/feature-constants";
 // import { LANG_CODES } from '../locales/translations/languages';
 import { myreducers } from "@/Store/Store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
+  Alert,
   Image,
   Modal,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -34,8 +37,8 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { useDispatch, useSelector } from "react-redux";
 import { AuthContext } from "./AuthContext";
 const Dashboard = () => {
-  const {i18n, t} = useTranslation();
-  
+  const { i18n, t } = useTranslation();
+
   const navigation = useNavigation();
   const selectorid = useSelector(function (data) {
     return data.empid;
@@ -154,7 +157,7 @@ const Dashboard = () => {
       let userid = await AsyncStorage.getItem("token");
       //
 
-      navigation.navigate("Profile",dataToSend);
+      navigation.navigate("Profile", dataToSend);
     } catch (err) {}
   }
   async function movepage(event) {
@@ -240,15 +243,25 @@ const Dashboard = () => {
   };
 
   const getLocation = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert("Permission to access location was denied");
-      return;
-    }
+    if (!(await isLocationEnabled())) return;
+    try {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permission denied", "Location access is required.");
+        return;
+      }
 
-    let location = await Location.getCurrentPositionAsync({});
-    setCurrenLatLocation(location.coords.latitude);
-    setCurrenLongLocation(location.coords.longitude);
+      let location = await Location.getCurrentPositionAsync({});
+      if (location && location.coords) {
+        setCurrenLatLocation(location.coords.latitude);
+        setCurrenLongLocation(location.coords.longitude);
+      } else {
+        Alert.alert("Error", "Could not retrieve coordinates.");
+      }
+    } catch (err) {
+      console.error("Location fetch failed:", err);
+      Alert.alert("Error", "Failed to fetch location. Please enable GPS.");
+    }
   };
   useEffect(() => {
     if (modalVisible1) {
@@ -284,81 +297,63 @@ const Dashboard = () => {
     }
   };
 
-  //
-
-  const handleRefreshLocation = async () => {
-    setIsRefreshLoading(true);
-    await fetchLatiLong();
-    setIsRefreshLoading(false);
-  };
-
-  const fetchLatiLongOnly = async () => {
-    try {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        alert("Permission to access location was denied");
-        return;
-      }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setCurrenLatLocation(location.coords.latitude);
-      setCurrenLongLocation(location.coords.longitude);
-    } catch (error) {
-      console.error("Error fetching location:", error);
-    }
-  };
   function toFixedIfNecessary(value, dp) {
     return +parseFloat(value).toFixed(dp);
   }
 
-  const updateStatus = async (latitude, longitude) => {
-    try {
-      const currentTime = moment(new Date());
+const updateStatus = async (latitude, longitude) => {
+  try {
+    const currentTime = moment(new Date());
 
-      const data = {
-        latitude: toFixedIfNecessary(latitude, 6),
-        longitude: toFixedIfNecessary(longitude, 6),
-        punch_time: currentTime.format("YYYY-MM-DDTHH:mm:ss"),
-        employee_id: empid, // ensure this is available or pass explicitly
-        clock_type: value,
-        work_code: workCode,
-      };
+    const data = {
+      latitude: toFixedIfNecessary(latitude, 6),
+      longitude: toFixedIfNecessary(longitude, 6),
+      punch_time: currentTime.format("YYYY-MM-DDTHH:mm:ss"),
+      employee_id: empid,
+      clock_type: value,
+      work_code: workCode,
+    };
 
-      //
-
-      //
-
-      if (!data.employee_id || !data.clock_type || !data.work_code) {
-        console.warn("❌ Missing fields in punch data", data);
-        return;
-      }
-      console.log(
-        "pppppppppp",
-        data.employee_id,
-        data.clock_type,
-        data.work_code
-      );
-
-      const res = await ProfileServices.updateClockStatus(data);
-
-      console.log("rrrrrrrrrrrrrrrrr", res);
-
-      setModalVisible1(false); // close immediately
-      Toast.show({
-        type: "success",
-        text1: getClockType(value),
-        position: "bottom",
-      });
-      await getRecentActivity(empid);
-      // setIsLoading(false);
-      setWorkCode(null);
-      setValue(null);
-      return data;
-    } catch (err) {
-      console.error("Error in updateStatus", err);
-      setIsLoading(false);
+    // ✅ Correct null/undefined check (0 is allowed)
+    if (
+      data.employee_id == null ||
+      data.clock_type == null ||
+      data.work_code == null
+    ) {
+      console.warn("❌ Missing fields in punch data", data);
+      return;
     }
-  };
+
+    console.log(
+      "✅ Punching data:",
+      data.employee_id,
+      data.clock_type,
+      data.work_code
+    );
+
+    const res = await ProfileServices.updateClockStatus(data);
+
+    console.log("✅ Response from server:", res);
+
+    setModalVisible1(false); // Close modal after success
+
+    Toast.show({
+      type: "success",
+      text1: getClockType(value),
+      position: "bottom",
+    });
+
+    await getRecentActivity(empid);
+
+    setWorkCode(null);
+    setValue(null);
+
+    return data;
+  } catch (err) {
+    console.error("❌ Error in updateStatus", err);
+    setIsLoading(false);
+  }
+};
 
   const getClockType = (value) => {
     //
@@ -380,11 +375,7 @@ const Dashboard = () => {
         return "-";
     }
   };
-  useEffect(() => {
-    if (modalVisible1) {
-      fetchLatiLongOnly(); // ✅ only get location
-    }
-  }, [modalVisible1]);
+
   const refreshLocation = async () => {
     setIsRefreshing(true);
     try {
@@ -403,21 +394,22 @@ const Dashboard = () => {
       setIsRefreshing(false);
     }
   };
-  const handlePunchConfirm = async (latitude, longitude) => {
-    if (value === null || value === undefined) {
-      setPunchStateError("Punch type is required");
-      return;
-    }
+const handlePunchConfirm = async (latitude, longitude) => {
+  if (value === null || value === undefined) {
+    setPunchStateError("Punch type is required");
+    return;
+  }
 
-    if (!workCode) {
-      setPunchStateError("Work code is required");
-      return;
-    }
+  if (!workCode) {
+    setPunchStateError("Work code is required");
+    return;
+  }
 
-    await updateStatus(latitude, longitude); // call only after valid
-    await getRecentActivity(empid);
-    setModalVisible(false);
-  };
+  await updateStatus(latitude, longitude);
+  await getRecentActivity(empid);
+  setModalVisible(false);
+};
+
 
   useEffect(() => {
     if (recent.length > 0) {
@@ -587,27 +579,31 @@ const Dashboard = () => {
     }
   }
   console.log("myvalue", value);
-   const FEATURES_ARRAY = map(get(userDetails, 'features', []), el => {
-    return get(el, 'name');
+  const FEATURES_ARRAY = map(get(userDetails, "features", []), (el) => {
+    return get(el, "name");
   });
   const IS_PAYROLL_ENABLED = FEATURES_ARRAY.includes(FEATURE_CODES.PAYROLL);
 
   const handleLanguageChange = useCallback(async () => {
-    console.log("pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp");
-    console.log("dddkgl;",LANG_CODES);
-    console.log("mylanduajbds",i18n.language);
-    
+    console.log(
+      "pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp"
+    );
+    console.log("dddkgl;", LANG_CODES);
+    console.log("mylanduajbds", i18n.language);
+
     const language =
       i18n.language === LANG_CODES.ARABIC
         ? LANG_CODES.ENGLISH
         : LANG_CODES.ARABIC;
     await i18n.changeLanguage(language);
-    console.log("gkngkndkfkgnknhghkkdfnkknknknkgndfkhnklfnhkfnhkfnkhnlkdfnhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
-    
-    console.log(i18n.language, 'CURRENT LAGNNGG');
+    console.log(
+      "gkngkndkfkgnknhghkkdfnkknknknkgndfkhnklfnhkfnhkfnkhnlkdfnhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"
+    );
+
+    console.log(i18n.language, "CURRENT LAGNNGG");
   }, [i18n, t]);
   let greeting;
-  console.log({"data":{i18n,t}});
+  console.log({ data: { i18n, t } });
 
   if (currentHour < 12) {
     greeting = t(tokens.common.goodMorning);
@@ -616,7 +612,14 @@ const Dashboard = () => {
   } else {
     greeting = t(tokens.common.goodevening);
   }
-  
+
+  const isLocationEnabled = async () => {
+    const enabled = await Location.hasServicesEnabledAsync();
+    if (!enabled) {
+      Alert.alert("Location Disabled", "Please turn on location services.");
+    }
+    return enabled;
+  };
 
   return (
     <>
@@ -641,7 +644,7 @@ const Dashboard = () => {
                     style={styles.modalText}
                     onPress={() => setModalVisible(false)}
                   >
-                      {t(tokens.common.recentActivity)}
+                    {t(tokens.common.recentActivity)}
                   </Text>
                 </View>
                 <View style={styles.search}>
@@ -737,30 +740,59 @@ const Dashboard = () => {
           <View style={styles.modalOverlay}>
             <View style={styles.modalview}>
               <View style={styles.map}>
-                <MapView
-                  style={{ height: 160, width: "100%", borderRadius: 10 }}
-                  region={{
-                    latitude: currenLatLocation || 12.9716,
-                    longitude: currenLongLocation || 77.5946,
-                    latitudeDelta: 0.01,
-                    longitudeDelta: 0.01,
-                  }}
-                >
-                  {currenLatLocation && currenLongLocation && (
-                    <Marker
-                      coordinate={{
-                        latitude: currenLatLocation,
-                        longitude: currenLongLocation,
+                {Platform.OS === "android" ? (
+                  <View style={{ height: 160 }}>
+                    <MapView
+                      style={{ height: 160, width: "100%", borderRadius: 10 }}
+                      region={{
+                        latitude: currenLatLocation || 12.9716,
+                        longitude: currenLongLocation || 77.5946,
+                        latitudeDelta: 0.01,
+                        longitudeDelta: 0.01,
                       }}
-                      title="Your Location"
                     >
-                      <Image
-                        source={require("../assets/images/Assets/live-location.png")}
-                        style={{ width: 30, height: 30 }}
-                      />
-                    </Marker>
-                  )}
-                </MapView>
+                      {currenLatLocation && currenLongLocation && (
+                        <Marker
+                          coordinate={{
+                            latitude: currenLatLocation,
+                            longitude: currenLongLocation,
+                          }}
+                          title="Your Location"
+                        >
+                          <Image
+                            source={require("../assets/images/Assets/live-location.png")}
+                            style={{ width: 30, height: 30 }}
+                          />
+                        </Marker>
+                      )}
+                    </MapView>
+                  </View>
+                ) : (
+                  <MapView
+                    style={{ height: 160, width: "100%", borderRadius: 10 }}
+                    region={{
+                      latitude: currenLatLocation || 12.9716,
+                      longitude: currenLongLocation || 77.5946,
+                      latitudeDelta: 0.01,
+                      longitudeDelta: 0.01,
+                    }}
+                  >
+                    {currenLatLocation && currenLongLocation && (
+                      <Marker
+                        coordinate={{
+                          latitude: currenLatLocation,
+                          longitude: currenLongLocation,
+                        }}
+                        title="Your Location"
+                      >
+                        <Image
+                          source={require("../assets/images/Assets/live-location.png")}
+                          style={{ width: 30, height: 30 }}
+                        />
+                      </Marker>
+                    )}
+                  </MapView>
+                )}
               </View>
               <TouchableOpacity
                 style={{
@@ -878,13 +910,13 @@ const Dashboard = () => {
             </View>
             <View style={styles.icons}>
               <TouchableOpacity onPress={handleLanguageChange}>
-  {i18n.language === LANG_CODES.ARABIC ? (
-    <Icon name="font" size={25} color="#fff" />
-  ) : (
-    <Icon name="globe" size={25} color="#fff" />
-  )}
-</TouchableOpacity>
-             
+                {i18n.language === LANG_CODES.ARABIC ? (
+                  <Icon name="font" size={25} color="#fff" />
+                ) : (
+                  <Icon name="globe" size={25} color="#fff" />
+                )}
+              </TouchableOpacity>
+
               <TouchableOpacity
                 onPress={handleNotificationScreen}
                 style={styles.notificationbar}
@@ -901,7 +933,9 @@ const Dashboard = () => {
 
           <View style={styles.punch}>
             <View style={styles.punchtitle}>
-              <Text style={styles.punchday}>{t(tokens.common.todayOverview)}</Text>
+              <Text style={styles.punchday}>
+                {t(tokens.common.todayOverview)}
+              </Text>
               <Text style={styles.punchday1}>
                 {moment().format("MMMM D, YYYY")}
               </Text>
@@ -937,10 +971,7 @@ const Dashboard = () => {
                 style={styles.images}
               />
             </TouchableOpacity>
-            <Text style={styles.holiday}>
-                  {t(tokens.nav.shift)}
-
-            </Text>
+            <Text style={styles.holiday}>{t(tokens.nav.shift)}</Text>
           </View>
           <View style={styles.hol}>
             <TouchableOpacity
@@ -952,10 +983,7 @@ const Dashboard = () => {
                 style={styles.images}
               />
             </TouchableOpacity>
-            <Text style={styles.holiday}>
-                  {t(tokens.nav.loan)}
-
-            </Text>
+            <Text style={styles.holiday}>{t(tokens.nav.loan)}</Text>
           </View>
           <View style={styles.hol}>
             <TouchableOpacity
@@ -967,10 +995,7 @@ const Dashboard = () => {
                 style={styles.images}
               />
             </TouchableOpacity>
-            <Text style={styles.holiday}>
-                  {t(tokens.nav.expense)}
-
-            </Text>
+            <Text style={styles.holiday}>{t(tokens.nav.expense)}</Text>
           </View>
         </View>
         <View style={styles.dash12}>
@@ -984,10 +1009,7 @@ const Dashboard = () => {
                 style={styles.images}
               />
             </TouchableOpacity>
-            <Text style={styles.holiday}>
-                  {t(tokens.nav.paySlip)}
-
-            </Text>
+            <Text style={styles.holiday}>{t(tokens.nav.paySlip)}</Text>
           </View>
           <View style={styles.hol}>
             <TouchableOpacity
@@ -999,10 +1021,7 @@ const Dashboard = () => {
                 style={styles.images}
               />
             </TouchableOpacity>
-            <Text style={styles.holiday}>
-                  {t(tokens.nav.resignation)}
-
-            </Text>
+            <Text style={styles.holiday}>{t(tokens.nav.resignation)}</Text>
           </View>
           <View style={styles.hol}>
             <TouchableOpacity
@@ -1014,10 +1033,7 @@ const Dashboard = () => {
                 style={styles.images}
               />
             </TouchableOpacity>
-            <Text style={styles.holiday}>
-                  {t(tokens.nav.request)}
-
-            </Text>
+            <Text style={styles.holiday}>{t(tokens.nav.request)}</Text>
           </View>
           <View style={styles.hol}>
             <TouchableOpacity
@@ -1029,9 +1045,7 @@ const Dashboard = () => {
                 style={styles.images}
               />
             </TouchableOpacity>
-            <Text style={styles.holiday}>
-               {t(tokens.nav.approvals)}
-            </Text>
+            <Text style={styles.holiday}>{t(tokens.nav.approvals)}</Text>
           </View>
         </View>
         <View style={styles.dash121}>
@@ -1045,20 +1059,17 @@ const Dashboard = () => {
                 style={styles.images}
               />
             </TouchableOpacity>
-            <Text style={styles.holiday}>
-                  {t(tokens.nav.approvals)}
-
-            </Text>
+            <Text style={styles.holiday}>{t(tokens.nav.reports)}</Text>
           </View>
         </View>
         <View style={styles.activity}>
           <View style={styles.activitytop}>
             <Text style={styles.recenttext}>
-               {t(tokens.common.recentActivity)}
+              {t(tokens.common.recentActivity)}
             </Text>
             <TouchableOpacity onPress={openmodel}>
               <Text style={styles.recenttext1}>
-                 {t(tokens.actions.viewAll)}
+                {t(tokens.actions.viewAll)}
               </Text>
             </TouchableOpacity>
           </View>

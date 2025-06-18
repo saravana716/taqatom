@@ -1,173 +1,61 @@
 import moment from 'moment';
 import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
-
 import {
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import { useSelector } from 'react-redux';
 import { convertUtcToLocalTime } from '../utils/formatDateTime';
 
-export default function ApprovedExpenseScreen({navigation}) {
-    const expenseData=useSelector(function (data) {
-        return data.expenseData
-    })
-    
-// 
+export default function ApprovedExpenseScreen({ navigation }) {
+  const expenseData = useSelector((data) => data.expenseData);
 
   const handleBack = () => {
-    navigation.navigate("Dashboard")
+    navigation.navigate("Dashboard");
   };
-
-  const handleDashboard = () => {
-    Navigation.setRoot({
-      root: {
-        stack: {
-          children: [
-            {
-              component: {
-                name: 'Dashboard',
-                options: {
-                  animations: {
-                    push: { enabled: false },
-                    pop: { enabled: false },
-                  },
-                  topBar: { visible: false },
-                },
-              },
-            },
-          ],
-        },
-        bottomTabs: {
-          id: 'BOTTOM_TABS_LAYOUT',
-          children: [
-            {
-              stack: {
-                id: 'HOME_TAB',
-                children: [
-                  {
-                    component: {
-                      id: 'HOME_SCREEN',
-                      name: 'Dashboard',
-                    },
-                  },
-                ],
-                options: {
-                  topBar: { visible: false },
-                  bottomTab: {
-                    icon: require('../assets/images/Assets/home-black.png'),
-                    selectedIcon: require('../assets/images/Assets/home-blue.png'),
-                  },
-                },
-              },
-            },
-            {
-              stack: {
-                id: 'BENEFITS_TAB',
-                children: [
-                  {
-                    component: {
-                      id: 'BENEFITS_SCREEN',
-                      name: 'BenefitsScreen',
-                    },
-                  },
-                ],
-                options: {
-                  topBar: { visible: false },
-                  bottomTab: {
-                    icon: require('../assets/images/Assets/home-black.png'),
-                    selectedIcon: require('../assets/images/Assets/crown-blue.png'),
-                  },
-                },
-              },
-            },
-            {
-              stack: {
-                id: 'PROFILE_TAB',
-                children: [
-                  {
-                    component: {
-                      id: 'PROFILE_SCREEN',
-                      name: 'EditProfile',
-                    },
-                  },
-                ],
-                options: {
-                  topBar: { visible: false },
-                  bottomTab: {
-                    icon: require('../assets/images/Assets/profile-black.png'),
-                    selectedIcon: require('../assets/images/Assets/profile-blue.png'),
-                  },
-                },
-              },
-            },
-            {
-              stack: {
-                id: 'SETTING_TAB',
-                children: [
-                  {
-                    component: {
-                      id: 'SETTING_SCREEN',
-                      name: 'SettingsScreen',
-                    },
-                  },
-                ],
-                options: {
-                  topBar: { visible: false },
-                  bottomTab: {
-                    icon: require('../assets/images/Assets/hamburger-black.png'),
-                    selectedIcon: require('../assets/images/Assets/hamburger-blue.png'),
-                  },
-                },
-              },
-            },
-          ],
-        },
-      },
-    });
-  };
-// 
 
   return (
     <View style={{ flex: 1, backgroundColor: '#F1F3F4' }}>
       <View>
         <Image
           source={require('../assets/images/Assets/blue-bg.png')}
-          style={{ width: '100%', borderBottomLeftRadius: 0, borderBottomRightRadius: 0, borderTopLeftRadius: 24, borderTopRightRadius: 24 }}
+          style={{
+            width: '100%',
+            borderBottomLeftRadius: 0,
+            borderBottomRightRadius: 0,
+            borderTopLeftRadius: 24,
+            borderTopRightRadius: 24
+          }}
         />
-        <View style={{ position: 'absolute', top: 28, left: 16, flexDirection: 'row', alignItems: 'center' }}>
-          <TouchableOpacity onPress={handleBack} style={{ justifyContent: 'center', alignItems: 'center' }}>
-              <Icon name="angle-left" size={30} color="white" />
-                         </TouchableOpacity>
-          <Text style={{ fontSize: 20, paddingLeft: 32, fontFamily: 'PublicSans-Bold', color: '#fff' }}>
-            Expense and Reimbursement
-          </Text>
+        <View style={styles.headerContainer}>
+          <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+            <Icon name="angle-left" size={30} color="white" />
+          </TouchableOpacity>
+          <Text style={styles.headerText}>Expense and Reimbursement</Text>
         </View>
       </View>
 
-      <ScrollView style={{ position: 'absolute', top: 64, width: '100%', padding: 20 }}>
-        <View style={{ backgroundColor: '#fff', borderRadius: 16, padding: 20 }}>
-          <View style={{ alignItems: 'center', marginBottom: 20 }}>
-        {expenseData?.Status === 'Approved' && (
-               <Icon name="checkmark" size={30} color="green" />
-
-)}
-
-{expenseData?.Status === 'Pending' && (
-               <Icon name="push" size={30} color="green" />
-
-)}
-            <Text style={{ fontSize: 18, fontFamily: 'PublicSans-Bold', color: statusColor(expenseData?.Status), textAlign: 'center' }}>
+      <ScrollView style={styles.scrollContainer}>
+        <View style={styles.card}>
+          <View style={styles.statusContainer}>
+            {expenseData?.Status === 'Approved' && (
+              <Icon name="check" size={30} color="#66A079" />
+            )}
+            {expenseData?.Status === 'Pending' && (
+              <View style={[styles.iconBox, { borderColor: statusColor(expenseData?.Status) }]}>
+                <Icon name="pause" size={20} color={statusColor(expenseData?.Status)} />
+              </View>
+            )}
+            <Text style={[styles.statusText, { color: statusColor(expenseData?.Status) }]}>
               {expenseData?.Status}
             </Text>
-            <Text style={{ fontSize: 14, color: '#6B7280', textAlign: 'center' }}>Reimbursement</Text>
-            <Text style={{ fontSize: 18, fontFamily: 'PublicSans-Bold', color: '#000', marginTop: 12 }}>Expense details</Text>
+            <Text style={styles.subText}>Reimbursement</Text>
+            <Text style={styles.sectionTitle}>Expense details</Text>
           </View>
 
           <View style={{ gap: 20 }}>
@@ -176,7 +64,7 @@ export default function ApprovedExpenseScreen({navigation}) {
             {renderRow('Time', moment(convertUtcToLocalTime(expenseData?.created_at)).format('LT'))}
             {renderRow('Date', expenseData?.Expense_Date)}
             {renderRow('Description', expenseData?.Description, '#000', '60%')}
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingTop: 16, borderTopWidth: 2, borderTopColor: '#DDDDDD' }}>
+            <View style={styles.totalRow}>
               <Text style={styles.label}>Total Bill Amount</Text>
               <Text style={styles.value}>{expenseData?.Amount} SAR</Text>
             </View>
@@ -211,14 +99,78 @@ function statusColor(status) {
 }
 
 const styles = StyleSheet.create({
+  headerContainer: {
+    position: 'absolute',
+    top: 28,
+    left: 16,
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  backButton: {
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  headerText: {
+    fontSize: 20,
+    paddingLeft: 32,
+    fontFamily: 'PublicSans-Bold',
+    color: '#fff'
+  },
+  scrollContainer: {
+    position: 'absolute',
+    top: 64,
+    width: '100%',
+    padding: 20
+  },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 20
+  },
+  statusContainer: {
+    alignItems: 'center',
+    marginBottom: 20
+  },
+  iconBox: {
+    borderRadius: 25,
+    width: 50,
+    height: 50,
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8
+  },
+  statusText: {
+    fontSize: 18,
+    fontFamily: 'PublicSans-Bold',
+    textAlign: 'center'
+  },
+  subText: {
+    fontSize: 14,
+    color: '#6B7280',
+    textAlign: 'center'
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontFamily: 'PublicSans-Bold',
+    color: '#000',
+    marginTop: 12
+  },
   label: {
     fontSize: 14,
     fontFamily: 'PublicSans-Bold',
-    color: '#9CA3AF',
+    color: '#9CA3AF'
   },
   value: {
     fontSize: 14,
     fontFamily: 'PublicSans-Bold',
-    color: '#000',
+    color: '#000'
   },
+  totalRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingTop: 16,
+    borderTopWidth: 2,
+    borderTopColor: '#DDDDDD'
+  }
 });

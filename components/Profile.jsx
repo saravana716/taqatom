@@ -16,36 +16,16 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { useDispatch, useSelector } from "react-redux";
 import ProfileServices from "../Services/API/ProfileServices";
 import { AuthContext } from "./AuthContext";
-const Profile = ({ navigation,route}) => {
-    const {
-    selectorid,
-    setProfilePicUrl,
-    employeeFullDetails,
-    userDetails,
-    profilePicUrl,
-    setUpdateKey,
-    updateKey,
+const Profile = ({ navigation}) => {
    
-    subordinateName,
-    setSubordinateName,
-  } = route.params;
+    const selectorid = useSelector(function (data) {
+    return data.empid;
+  });
+  console.log(selectorid);
   const {t,i18n} = useTranslation();
   const isRTL = i18n.language === 'ar';
-  
-    console.log('NotificationScreen Props:', {
-    selectorid,
-    setProfilePicUrl,
-    employeeFullDetails,
-    userDetails,
-    profilePicUrl,
-    setUpdateKey,
-    updateKey,
-    setGender,
-    gender,
-    subordinateName,
-    setSubordinateName,
-    token,
-  });
+  console.log(selectorid);
+
    const { logout } = useContext(AuthContext);
   const dispatch = useDispatch();
   

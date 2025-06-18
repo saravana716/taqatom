@@ -2,35 +2,36 @@ import ProfileServices from '@/Services/API/ProfileServices'; // Your API servic
 import * as ImagePicker from 'expo-image-picker';
 import get from 'lodash/get';
 import React, { useCallback, useState } from 'react';
-import {useTranslation} from 'react-i18next';
-import tokens from '@/locales/tokens';
-import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Toast from 'react-native-toast-message'; // Assuming you're using this Toast lib
+import {
+  Alert,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import Toast from 'react-native-toast-message';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useSelector } from 'react-redux';
 
-const ProfileUpdate = () => {
+const ProfileUpdate = ({ navigation }) => {
+  const isRTL = false; // Set manually or dynamically
 
-  const {t,i18n} = useTranslation();
-  const isRTL = i18n.language === 'ar';
-  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
   const [isLoading, setIsLoading] = useState(false);
   const selector = useSelector((data) => data.employeedetails);
-  
-  
   const profilePicFromStore = useSelector((data) => data.setprofiledata.profilePic);
   const gender = useSelector((data) => data.setprofiledata.gender);
-
   const [profilePic, setProfilePic] = useState(profilePicFromStore || null);
 
-  // Helper: Upload file to S3 using PUT fetch
+  const backto = () => {
+    navigation.navigate('Profile');
+  };
+
   const uploadToS3 = async (file, presignedUrl) => {
     try {
-      // Fetch file as blob
       const fileResponse = await fetch(file.uri);
       const blob = await fileResponse.blob();
-
-      // Upload to S3 with PUT
       const uploadResponse = await fetch(presignedUrl, {
         method: 'PUT',
         headers: {
@@ -38,97 +39,65 @@ const ProfileUpdate = () => {
         },
         body: blob,
       });
-
       if (!uploadResponse.ok) {
         throw new Error(`S3 upload failed with status ${uploadResponse.status}`);
       }
-
       return true;
     } catch (err) {
-      
       throw err;
     }
   };
 
-const handleFilePick = useCallback(async () => {
-  try {
-    // Request permission to access media library
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permission Denied', 'Permission to access media library is required!');
-      return;
-    }
-
-    // Launch image picker
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      quality: 1,
-      base64: false,
-    });
-
-    if (!result.canceled) {
-      const imageAsset = result.assets[0];
-      setIsLoading(true);
-
-      // Get the user ID from selector array (first item)
-      const myid = selector.length > 0 ? selector[0].id : null;
-      
-      if (!myid) throw new Error('User ID not found.');
-
-      const mimeType = imageAsset.type ?? 'image/jpeg';
-
-      // Step 1: Get presigned URL from backend
-      const res = await ProfileServices.updateProfilePic(myid, {
-        uri: imageAsset.uri,
-        type: mimeType,
-        name: imageAsset.fileName ?? `profile_${Date.now()}.jpg`,
-      });
-
-      
-
-      const s3Link = get(res, 'url');
-      
-
-      if (!s3Link) {
-        throw new Error('Failed to get S3 presigned URL');
+  const handleFilePick = useCallback(async () => {
+    try {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Denied', 'Permission to access media library is required!');
+        return;
       }
 
-      // Step 2: Upload file to S3
-      let yyy=await uploadToS3(
-        {
-          uri: imageAsset.uri,
-          type: mimeType,
-          name: imageAsset.fileName ?? `profile_${Date.now()}.jpg`,
-        },
-        s3Link
-      );
-
-      // Step 3: Update profilePic state with cache busting
-      const updatedPicUrl = `${s3Link.split('?')[0]}?t=${Date.now()}`;
-      
-      setProfilePic(updatedPicUrl);
-
-      Toast.show({
-        type: 'success',
-        text1: 'Profile Updated Successfully',
-        position: 'bottom',
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        quality: 1,
+        base64: true,
       });
 
-      // setIsLoading(false);
-    }
-  } catch (error) {
-    
-    // setIsLoading(false);
-    Toast.show({
-      type: 'error',
-      text1: 'Upload failed',
-      text2: error.message || 'Please try again later.',
-      position: 'bottom',
-    });
-  }
-}, [selector]);
+      if (!result.canceled) {
+        const imageAsset = result.assets[0];
+        setIsLoading(true);
 
+        const myid = selector.length > 0 ? selector[0].id : null;
+        if (!myid) throw new Error('User ID not found.');
+
+        const base64Image = `data:${imageAsset.type};base64,${imageAsset.base64}`;
+
+        const res = await ProfileServices.updateProfilePic(myid, {
+          profile_url: base64Image,
+        });
+
+        if (!res?.success) {
+          throw new Error('Failed to update profile image');
+        }
+
+        setProfilePic(base64Image);
+        Toast.show({
+          type: 'success',
+          text1: 'Profile Updated Successfully',
+          position: 'bottom',
+        });
+      }
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Upload failed',
+        text2: error.message || 'Please try again later.',
+        position: 'bottom',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [selector]);
 
   return (
     <View style={styles.container}>
@@ -140,10 +109,10 @@ const handleFilePick = useCallback(async () => {
         {selector.map((data) => (
           <View key={data.id} style={styles.updatepro}>
             <View style={styles.updatetop}>
-              <Icon name="angle-left" size={30} color="white" />
-              <Text style={styles.modalText}>
-                  {t(tokens.nav.myProfile)}
-              </Text>
+              <TouchableOpacity onPress={backto}>
+                <Icon name="angle-left" size={30} color="white" />
+              </TouchableOpacity>
+              <Text style={styles.modalText}>My Profile</Text>
             </View>
 
             <ScrollView
@@ -161,12 +130,7 @@ const handleFilePick = useCallback(async () => {
               <View style={styles.profileupdate}>
                 <View style={styles.po1}>
                   {profilePic && profilePic !== 'null' ? (
-                   <Image
-  key={profilePic} // forces rerender
-  source={{ uri: profilePic }}
-  style={styles.po1}
-  resizeMode="cover"
-/>
+                    <Image source={{ uri: profilePic }} style={styles.po1} />
                   ) : gender === 'M' ? (
                     <Image
                       source={require('../assets/images/Assets/profile-image.png')}
@@ -188,56 +152,64 @@ const handleFilePick = useCallback(async () => {
               </View>
 
               <View style={styles.updatename}>
-                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.common.name)}</Text>
-                <Text style={styles.titlename}>
-                  {data.first_name} {data.last_name}
-                </Text>
+                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>Name</Text>
+                <Text style={styles.titlename}>{data.first_name} {data.last_name}</Text>
               </View>
+
               <View style={styles.updatename}>
-                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.common.employeeCode)}</Text>
+                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>Employee Code</Text>
                 <Text style={styles.titlename}>{data.emp_code}</Text>
               </View>
+
               <View style={styles.updatename}>
-                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.common.employeeType)}</Text>
+                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>Employee Type</Text>
                 <Text style={styles.titlename}>{data.emp_type}</Text>
               </View>
+
               <View style={styles.updatename}>
-                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.common.mobileNumber)}</Text>
+                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>Mobile Number</Text>
                 <Text style={styles.titlename}>{data.mobile}</Text>
               </View>
+
               <View style={styles.updatename}>
-                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.common.officeContactNumber)}</Text>
+                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>Office Contact Number</Text>
                 <Text style={styles.titlename}>{data.office_tel}</Text>
               </View>
+
               <View style={styles.updatename}>
-                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.common.officeEmail)}</Text>
+                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>Office Email</Text>
                 <Text style={styles.titlename}>{data.email}</Text>
               </View>
+
               <View style={styles.updatename}>
-                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.nav.position)}</Text>
+                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>Position</Text>
                 <Text style={styles.titlename}>{data.position_name}</Text>
               </View>
+
               <View style={styles.updatename}>
-                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.nav.department)}</Text>
+                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>Department</Text>
                 <Text style={styles.titlename}>{data.department_name}</Text>
               </View>
+
               <View style={styles.updatename}>
-                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.common.dateOfJoining)}</Text>
+                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>Date of Joining</Text>
                 <Text style={styles.titlename}>{data.hire_date}</Text>
               </View>
+
               <View style={styles.updatename}>
-                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.common.dateOfBirth)}</Text>
+                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>Date of Birth</Text>
                 <Text style={styles.titlename}>{data.birthday}</Text>
               </View>
+
               <View style={styles.updatename}>
-                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.common.country)}</Text>
+                <Text style={[styles.titles, { textAlign: isRTL ? 'right' : 'left' }]}>Country</Text>
                 <Text style={styles.titlename}>{data.national}</Text>
               </View>
             </ScrollView>
           </View>
         ))}
       </View>
-      <Toast/>
+      <Toast />
     </View>
   );
 };
@@ -307,18 +279,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: 'white',
   },
-  updatecontent: {
-    width: '100%',
-    height: '100%',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 15,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    flexDirection: 'column',
-    gap: 15,
-  },
   profileupdate: {
     width: '100%',
     display: 'flex',
@@ -345,13 +305,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     bottom: 2,
     right: -2,
-  },
-  fl: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 15,
-    paddingVertical: 10,
   },
   updatename: {
     width: '100%',

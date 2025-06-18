@@ -181,6 +181,7 @@ const OtpVerification = ({ navigation }) => {
           onPress={resendOtp}
           disabled={isLoading}
         >
+          <Text style={styles.dont}>Didn't Receive a Code ?</Text>
           <Text style={styles.resendText}>
             {isLoading ? 'Resending...' : 'Resend Code'}
           </Text>
@@ -217,6 +218,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 20,
     justifyContent: 'space-between',
+  },
+  dont:{
+color:"gray",
+fontSize:17,
+textAlign:"center",
+fontWeight:600
   },
   header: {
     flexDirection: 'row',
@@ -264,6 +271,8 @@ const styles = StyleSheet.create({
     color: '#697ce3',
     fontWeight: 'bold',
     fontSize: 18,
+    textAlign:"center",
+    marginTop:10
   },
   submitBtn: {
     backgroundColor: '#697ce3',

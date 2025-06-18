@@ -89,7 +89,8 @@ const selectorid=useSelector(function (data) {
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity style={styles.backButton}>
-            {/* <Iconify icon="mingcute:left-line" size={30} color="#000" /> */}
+            <Icon name="angle-left" size={30} color="black" />
+
           </TouchableOpacity>
           <Text style={styles.headerTitle}>{t(tokens.nav.loan)}</Text>
         </View>

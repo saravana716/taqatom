@@ -25,13 +25,11 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/splash_icon 1.png",
         "backgroundColor": "#693ce3",
-      "resizeMode": "contain"
-
-        
+        "resizeMode": "contain"
       },
       "permissions": [
-        "android.permission.ACCESS_FINE_LOCATION",
-        "android.permission.ACCESS_COARSE_LOCATION"
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
       ],
       "edgeToEdgeEnabled": true,
       "package": "com.saravanapriyan.taqadom"

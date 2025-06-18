@@ -21,7 +21,7 @@ import { formatErrorsToToastMessages } from '../utils/error-format';
 export default function IndividualResignation({
  navigation}) {
   const handleBack = () => {
-    navigation.navigate("RecentResignationComponent")
+    navigation.navigate("ResignationScreen")
   };
 const newItem=useSelector(function (data) {
     return data.newItem
@@ -174,9 +174,9 @@ const route = useRoute();
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'space-between', backgroundColor: '#f8f9fa' },
+  container: { flex: 1, justifyContent: 'space-between', backgroundColor: '#f8f9fa',padding:20 },
   headerContainer: { paddingBottom: 48 },
-  headerRow: { flexDirection: 'row', alignItems: 'center', height: '6%' },
+  headerRow: { flexDirection: 'row', alignItems: 'center', height: '15%', paddingVertical:20},
   backButton: { paddingLeft: 4 },
   headerText: { fontSize: 20, color: '#000', fontWeight: '700', textAlign: 'center', width: '100%', paddingRight: '15%' },
   scrollContainer: { paddingTop: 20, padding: 20, backgroundColor: '#fff', borderRadius: 16, width: '100%' },
