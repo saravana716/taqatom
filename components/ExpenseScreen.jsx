@@ -16,15 +16,15 @@ import { Dropdown } from 'react-native-element-dropdown';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
+import tokens from '@/locales/tokens';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import ProfileServices from '../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../utils/error-format';
-import { useTranslation } from 'react-i18next';
-import tokens from '@/locales/tokens';
 export default function ExpenseScreen({navigation}) {
     const {t,i18n}=useTranslation()
     const isRTL = i18n.language === 'ar';
-    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+    
   const handleBack = () => {
     navigation.navigate("Dashboard")
   };
@@ -191,7 +191,7 @@ const handleFilePick = async () => {
                     placeholder={t(tokens.common.description)}
               style={styles.textArea}
               multiline
-              numberOfLines={8}
+              numberOfLines={40}
               onChangeText={setDescription}
               textAlignVertical="top"
             />
@@ -265,11 +265,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
   },
-  backButton: {
-    position: 'absolute',
-    left: 0,
-    bottom: 0,
-  },
+
   headerTitle: {
     fontSize: 20,
     fontWeight: '700',
@@ -279,12 +275,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 100,
     width: '100%',
+    height:"70%",
     padding: 20,
   },
   card: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
+    backgroundColor: 'white',
+    borderRadius: 20,
     padding: 20,
+    
   },
   formSection: {
     gap: 20,
@@ -312,6 +310,10 @@ const styles = StyleSheet.create({
   dropdown: {
     height: 50,
     paddingHorizontal: 8,
+      borderColor: "#697ce3",
+    borderWidth: 0.5,
+    borderRadius: 8,
+    paddingHorizontal: 8,
   },
   placeholderStyle: {
     fontSize: 12,
@@ -338,6 +340,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   textArea: {
+    height:150,
     borderRadius: 16,
     borderWidth: 1,
     borderColor: '#697CE3',

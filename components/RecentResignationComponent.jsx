@@ -1,14 +1,14 @@
+import tokens from '@/locales/tokens';
 import { myreducers } from '@/Store/Store';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import tokens from '@/locales/tokens';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 export default function RecentResignationComponent({newItem,getResignationList}) {
     const {t,i18n}=useTranslation()
   const isRTL = i18n.language === 'ar';
-  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+  
   
     const dispatch=useDispatch()
   const date = new Date(newItem?.updated_at);

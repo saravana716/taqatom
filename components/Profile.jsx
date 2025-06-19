@@ -4,12 +4,12 @@ import { useTranslation } from 'react-i18next';
 import tokens from '../locales/tokens';
 
 import {
-  Image,
-  Modal,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Image,
+    Modal,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -21,10 +21,16 @@ const Profile = ({ navigation}) => {
     const selectorid = useSelector(function (data) {
     return data.empid;
   });
-  console.log(selectorid);
+ 
+    const userpic = useSelector((data) => data.employeedetails);
+   const profileUrl = userpic[0]?.profile_url;
+console.log('👤 Profile Image URLuuu:', profileUrl);
+  
+console.log("gnfdkjnh",userpic);
+  console.log(userpic);
   const {t,i18n} = useTranslation();
   const isRTL = i18n.language === 'ar';
-  console.log(selectorid);
+  
 
    const { logout } = useContext(AuthContext);
   const dispatch = useDispatch();
@@ -32,7 +38,7 @@ const Profile = ({ navigation}) => {
   const selector = useSelector(function (data) {
     return data.userDetails.user_id;
   });
-  
+  const profilePics = useSelector((state) => state.setprofiledata.profilePic);
   
   const [token, settoken] = useState("");
   const [profilePic, setProfilePic] = useState("");
@@ -102,8 +108,11 @@ const Profile = ({ navigation}) => {
       let userDetails = await ProfileServices.getEmployeeFullDetails(
         employeeId?.id
       );
+      console.log("dlkgkjngjkfdngjkndjkgjkd");
+      
       
       // let data = [userDetails];
+      console.log("popo",userDetails?.profile_url);
       
       
     setProfilePic(`${userDetails?.profile_url}`);
@@ -168,10 +177,14 @@ const Profile = ({ navigation}) => {
 
           <View style={styles.punch}>
             <View style={styles.pro}>
-              <Image
-                source={require("../assets/images/Assets/edit-profile.png")}
-                style={styles.leftimg}
-              />
+          <Image
+                          source={
+                            profileUrl
+                              ? { uri:profileUrl}
+                              : require("../assets/images/Assets/edit-profile.png")
+                          }
+                          style={styles.leftimg}
+                        />
 
               {employeedetails.map(function (data,index) {
   return (

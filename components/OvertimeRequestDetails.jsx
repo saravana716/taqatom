@@ -16,6 +16,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import find from 'lodash/find';
 import get from 'lodash/get';
 import moment from 'moment';
+import { useTranslation } from 'react-i18next';
 import { Dropdown } from 'react-native-element-dropdown';
 import {
     Menu,
@@ -25,16 +26,15 @@ import {
     MenuTrigger,
 } from 'react-native-popup-menu';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
+import tokens from '../locales/tokens';
 import { formatErrorsToToastMessages } from '../utils/error-format';
 import { dateTimeToShow, formatDateTime } from '../utils/formatDateTime';
-import { useTranslation } from 'react-i18next';
-import tokens from '../locales/tokens';
 export default function OvertimeRequestDetails({
   navigation,route
 }) {
    const {t,i18n}=useTranslation()
   const isRTL = i18n.language === 'ar';
-  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+  
   const {employeeId,
           newItem,
           payCodesList,

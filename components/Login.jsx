@@ -73,6 +73,7 @@ const Login = ({ navigation }) => {
         username: email,
         password: password,
       });
+console.log("myrespone",response);
 
       const token = response.access;
       const sessionToken = response.session_token;
@@ -100,6 +101,8 @@ const Login = ({ navigation }) => {
       }, 2000);
 
     } catch (err) {
+      console.log("daes",err);
+      
       
       Toast.show({
         type: 'error',

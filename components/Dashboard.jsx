@@ -43,15 +43,21 @@ const Dashboard = () => {
   const selectorid = useSelector(function (data) {
     return data.empid;
   });
-  console.log(selectorid);
+  
   const employeeFullDetails = useSelector(function (data) {
     return data.employeeFullDetails;
   });
-  console.log("emp", employeeFullDetails);
+  
   const userDetails = useSelector(function (data) {
     return data.userDetails;
   });
-  console.log("users", userDetails);
+  
+ 
+  const userpic = useSelector((data) => data.employeedetails);
+   const profileUrl = userpic[0]?.profile_url;
+console.log('👤 Profile Image URL:', profileUrl);
+  
+console.log("gnfdkjnh",userpic);
 
   const dispatch = useDispatch();
   const [workCode, setWorkCode] = useState();
@@ -94,7 +100,7 @@ const Dashboard = () => {
   const unread = useMemo(() => {
     return notificationsCount;
   }, [notificationsCount]);
-  console.log("rrrrrrrrrrrrrrrrrr", unread);
+  
 
   const options = [
     {
@@ -203,7 +209,7 @@ const Dashboard = () => {
 
       return decodedPayload;
     } catch (error) {
-      // console.error("Token parsing failed:", error);
+      // 
       throw error;
     }
   };
@@ -223,7 +229,7 @@ const Dashboard = () => {
         userDetails?.username
       );
       //
-      console.log("pppppppppppppppp", employee);
+      
 
       const empID = employee?.id;
 
@@ -239,7 +245,7 @@ const Dashboard = () => {
         dispatch(myreducers.sendempDetails(fullDetails));
       }
     } catch (err) {
-      // console.error("User detail fetch failed", err);
+      // 
     }
   };
 
@@ -260,7 +266,7 @@ const Dashboard = () => {
         Alert.alert("Error", "Could not retrieve coordinates.");
       }
     } catch (err) {
-      console.error("Location fetch failed:", err);
+      
       Alert.alert("Error", "Failed to fetch location. Please enable GPS.");
     }
   };
@@ -294,7 +300,7 @@ const Dashboard = () => {
       //
       //
     } catch (err) {
-      console.error("Fetching recent activity failed", err);
+      
     }
   };
 
@@ -321,7 +327,7 @@ const Dashboard = () => {
         data.clock_type == null ||
         data.work_code == null
       ) {
-        console.warn("❌ Missing fields in punch data", data);
+        
         return;
       }
 
@@ -334,7 +340,7 @@ const Dashboard = () => {
 
       const res = await ProfileServices.updateClockStatus(data);
 
-      console.log("✅ Response from server:", res);
+      
 
       setModalVisible1(false); // Close modal after success
 
@@ -351,7 +357,7 @@ const Dashboard = () => {
 
       return data;
     } catch (err) {
-      console.error("❌ Error in updateStatus", err);
+      
       setIsLoading(false);
     }
   };
@@ -390,7 +396,7 @@ const Dashboard = () => {
       setCurrenLatLocation(location.coords.latitude);
       setCurrenLongLocation(location.coords.longitude);
     } catch (error) {
-      console.error("Failed to refresh location:", error);
+      
     } finally {
       setIsRefreshing(false);
     }
@@ -495,7 +501,7 @@ const Dashboard = () => {
 
       setgetalldata(result);
     } catch (err) {
-      console.error("getdata error", err);
+      
     }
   }
   useEffect(() => {
@@ -508,12 +514,12 @@ const Dashboard = () => {
 
     try {
       const employeeName = await ProfileServices.getEmployeeNameDetails();
-      console.log("employeeName", employeeName);
-      console.log("gnfdngjkngjknjkdfngjkdsngjkndjkgnjkdgjkdgjksdbgjksdbgjkb");
+      
+      
 
       setSubordinateName(employeeName);
     } catch (err) {
-      console.warn(err);
+      
     }
   };
 
@@ -566,19 +572,19 @@ const Dashboard = () => {
     setSubordinateName,
     token: tokenDetail,
   };
-  console.log("sendadat", dataToSend);
+  
 
   async function handleNotificationScreen() {
     try {
-      console.log("Navigating to NotificationScreen");
+      
 
       navigation.navigate("NotificationScreen", dataToSend);
-      console.log("senddata");
+      
     } catch (err) {
-      console.error("Navigation error:", err);
+      
     }
   }
-  console.log("myvalue", value);
+  
   const FEATURES_ARRAY = map(get(userDetails, "features", []), (el) => {
     return get(el, "name");
   });
@@ -589,7 +595,7 @@ const Dashboard = () => {
       "pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp"
     );
     console.log("dddkgl;", LANG_CODES);
-    console.log("mylanduajbds", i18n.language);
+    
 
     const language =
       i18n.language === LANG_CODES.ARABIC
@@ -600,10 +606,10 @@ const Dashboard = () => {
       "gkngkndkfkgnknhghkkdfnkknknknkgndfkhnklfnhkfnhkfnkhnlkdfnhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"
     );
 
-    console.log(i18n.language, "CURRENT LAGNNGG");
+    
   }, [i18n, t]);
   let greeting;
-  console.log({ data: { i18n, t } });
+  
 
   if (currentHour < 12) {
     greeting = t(tokens.common.goodMorning);
@@ -706,12 +712,15 @@ const Dashboard = () => {
                     year: "numeric",
                   });
 
-                  const timeString = localDate.toLocaleTimeString("en-US", {
-                    hour: "numeric",
-                    minute: "2-digit",
-                    second: "2-digit",
-                    hour12: true,
-                  });
+             const hours = localDate.getHours();
+    const minutes = localDate.getMinutes();
+
+    const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
+    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+    const ampm = hours >= 12 ? "pm" : "am";
+
+    const timeString = `${formattedHours < 10 ? '0' : ''}${formattedHours}:${formattedMinutes} ${ampm}`;
+
 
                   return (
                     <View key={index} style={styles.scroll}>
@@ -825,7 +834,7 @@ const Dashboard = () => {
                   maxHeight={300}
                   labelField="label"
                   valueField="id" // ✅ Fixed this line
-                  placeholder={!isFocus ? "Select item" : "..."}
+                  placeholder={!isFocus ? "Punch State*" : "..."}
                   searchPlaceholder="Search..."
                   value={value}
                   onFocus={() => setIsFocus(true)}
@@ -893,9 +902,13 @@ const Dashboard = () => {
             <View style={styles.leftcon}>
               <TouchableOpacity onPress={navigateprofile}>
                 <Image
-                  source={require("../assets/images/Assets/edit-profile.png")}
-                  style={styles.leftimg}
-                />
+                 source={
+                   profileUrl
+                     ? { uri:profileUrl}
+                     : require("../assets/images/Assets/edit-profile.png")
+                 }
+                 style={styles.leftimg}
+               />
               </TouchableOpacity>
               {UserDetails.map(function (data, index) {
                 return (
@@ -1073,36 +1086,37 @@ const Dashboard = () => {
               </Text>
             </TouchableOpacity>
           </View>
-          <ScrollView style={styles.myscroll}>
-            {recent.map((data, index) => {
-              const localDate = convertUTCToLocal(data.updated_at);
+         <ScrollView style={styles.myscroll}>
+  {recent.map((data, index) => {
+    const localDate = convertUTCToLocal(data.updated_at);
 
-              const dateString = localDate.toLocaleDateString("en-GB", {
-                day: "numeric",
-                month: "short",
-                year: "numeric",
-              });
+    const dateString = localDate.toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
 
-              const timeString = localDate.toLocaleTimeString("en-US", {
-                hour: "numeric",
-                minute: "2-digit",
-                // second: "2-digit",
-                hour12: true,
-              });
+    const hours = localDate.getHours();
+    const minutes = localDate.getMinutes();
 
-              return (
-                <View key={index} style={styles.scroll}>
-                  <View style={styles.check}>
-                    <Text style={styles.check}>
-                      {getClockType(data.clock_type)}
-                    </Text>
-                    <Text style={styles.check1}>{dateString}</Text>
-                  </View>
-                  <Text style={styles.check2}>{timeString}</Text>
-                </View>
-              );
-            })}
-          </ScrollView>
+    const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
+    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+    const ampm = hours >= 12 ? "pm" : "am";
+
+    const timeString = `${formattedHours < 10 ? '0' : ''}${formattedHours}:${formattedMinutes} ${ampm}`;
+
+    return (
+      <View key={index} style={styles.scroll}>
+        <View style={styles.check}>
+          <Text style={styles.check}>{getClockType(data.clock_type)}</Text>
+          <Text style={styles.check1}>{dateString}</Text>
+        </View>
+        <Text style={styles.check2}>{timeString}</Text>
+      </View>
+    );
+  })}
+</ScrollView>
+
         </View>
         <Toast />
       </View>
@@ -1151,7 +1165,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     flexDirection: "row",
     position: "absolute",
-    top: 0,
+    top: 10,
     left: 0,
     paddingVertical: 20,
     paddingHorizontal: 20,
@@ -1192,7 +1206,7 @@ const styles = StyleSheet.create({
     height: 160,
     backgroundColor: "white",
     position: "absolute",
-    bottom: 30,
+    bottom: 40,
     padding: 15,
     borderRadius: 20,
     zIndex: 1,
@@ -1519,13 +1533,13 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   check: {
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: "bold",
     color: "black",
     marginBottom: 4,
   },
   check1: {
-    fontSize: 15,
+    fontSize: 12,
     color: "gray",
     fontWeight: 600,
   },

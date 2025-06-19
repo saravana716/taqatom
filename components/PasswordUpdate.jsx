@@ -4,20 +4,20 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Image,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import Toast from "react-native-toast-message";
 import Icon from "react-native-vector-icons/FontAwesome";
 const PasswordUpdate = ({navigation}) => {
   const {t,i18n}=useTranslation()
   const isRTL = i18n.language === 'ar';
-  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+  
   
   const [modalVisible, setModalVisible] = useState(false);
   const [showPicker, setShowPicker] = useState(false);

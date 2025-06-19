@@ -1,25 +1,25 @@
-import { useEffect, useState } from 'react';
-import {
-  ActivityIndicator,
-  Modal,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import isEmpty from 'lodash/isEmpty';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import isEmpty from 'lodash/isEmpty';
+import moment from 'moment';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+    ActivityIndicator,
+    Modal,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { useSelector } from 'react-redux';
 import ApprovalLeaveCard from '../../components/ApprovalCards/ApprovalLeaveCard';
+import tokens from '../../locales/tokens';
 import ProfileServices from '../../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../../utils/error-format';
-import { useSelector } from 'react-redux';
-import moment from 'moment';
-import {useTranslation} from 'react-i18next';
-import tokens from '../../locales/tokens';
 export default function ApprovalLeaveScreen({ navigation }) {
   const selectorid = useSelector((data) => data.empid);
 
@@ -35,7 +35,7 @@ export default function ApprovalLeaveScreen({ navigation }) {
   const [LeaveData, setLeaveData] = useState([]);
    const {t,i18n}=useTranslation()
     const isRTL = i18n.language === 'ar';
-    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+    
   const handleBack = () => {
     navigation.navigate('ApprovalScreen');
   };

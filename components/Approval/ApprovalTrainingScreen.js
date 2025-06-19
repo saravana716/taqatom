@@ -1,32 +1,28 @@
+import isEmpty from 'lodash/isEmpty';
+import moment from 'moment';
 import { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  Modal,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from "react-native";
-import Icon from 'react-native-vector-icons/FontAwesome';
-import isEmpty from 'lodash/isEmpty';
-import { Dropdown } from "react-native-element-dropdown";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
-import moment from 'moment';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
+import tokens from '@/locales/tokens';
+import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 import ProfileServices from "../../Services/API/ProfileServices";
 import ApprovalTrainingCard from "../../components/ApprovalCards/ApprovalTrainingCard";
 import { formatErrorsToToastMessages } from "../../utils/error-format";
-import { useSelector } from "react-redux";
-import tokens from '@/locales/tokens';
-import { useTranslation } from "react-i18next";
 export default function ApprovalTrainingScreen({ navigation }) {
   const selectorid = useSelector((data) => data.empid);
    const {t,i18n}=useTranslation()
     const isRTL = i18n.language === 'ar';
-    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+    
   const [punchTimeDate, setPunchTimeDate] = useState(false);
   const [formatExpectDate, setFormatExpectDate] = useState(null);
   const [workCode, setWorkCode] = useState('');

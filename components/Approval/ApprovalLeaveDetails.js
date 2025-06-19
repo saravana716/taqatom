@@ -1,30 +1,30 @@
-import {useEffect, useState} from 'react';
-import {
-  ActivityIndicator,
-  Modal,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import find from 'lodash/find';
+import get from 'lodash/get';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+    ActivityIndicator,
+    Modal,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from 'react-native';
+import { Toast } from 'react-native-toast-message/lib/src/Toast';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import tokens from '../../locales/tokens';
 import ProfileServices from '../../Services/API/ProfileServices';
-import {Toast} from 'react-native-toast-message/lib/src/Toast';
-import {dateTimeToShow} from '../../utils/formatDateTime';
-import get from 'lodash/get';
-import find from 'lodash/find';
+import { dateTimeToShow } from '../../utils/formatDateTime';
 // Removed: import {useTranslation} from 'react-i18next';
 // Removed: import tokens from '../../locales/tokens';
-import {formatErrorsToToastMessages} from '../../utils/error-format';
+import { formatErrorsToToastMessages } from '../../utils/error-format';
 
 export default function ApprovalLeaveDetails({navigation, route}) {
     const {t,i18n}=useTranslation()
     const isRTL = i18n.language === 'ar';
-    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+    
   const {newItem, employeeId, leaveList} = route.params;
   // Removed: const {t} = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
@@ -126,7 +126,7 @@ export default function ApprovalLeaveDetails({navigation, route}) {
       setRejectReason('');
     } catch (error) {
       formatErrorsToToastMessages(error);
-      console.log(error?.errorResponse?.errors[0]?.message, 'err');
+      
       setRejectedConfirmVisible(false);
     }
   };
@@ -141,11 +141,11 @@ export default function ApprovalLeaveDetails({navigation, route}) {
 
   const getLeaveList = async () => {
     try {
-      console.log('updated');
+      
       const RecentActivities = await ProfileServices.getApprovalLeaveData(
         employeeId,
       );
-      console.log('RecentActivities1', RecentActivities);
+      
       setLeaveData(RecentActivities?.results);
     } catch (error) {
       formatErrorsToToastMessages(error);

@@ -292,14 +292,15 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     paddingHorizontal: 8,
-    height: '60%',
+    height: '50%',
+    marginTop:20
   },
   scrollViewWrapper: {
-    backgroundColor: '#fff',
+    height:"100%",
     padding: 12,
     flex: 1,
     borderRadius: 24,
-    paddingBottom: 96,
+    paddingBottom: 0,
   },
   scrollViewContent: {
     rowGap: 12, // space between list items

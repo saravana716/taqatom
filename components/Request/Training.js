@@ -4,29 +4,29 @@ import moment from 'moment';
 import { useCallback, useEffect, useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+import { useTranslation } from 'react-i18next';
 import {
-  ActivityIndicator,
-  Modal,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Modal,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import { useSelector } from 'react-redux';
 import TrainingCard from '../../components/TrainingCard';
+import tokens from '../../locales/tokens';
 import ProfileServices from '../../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../../utils/error-format';
 import { dateTimeToShow, formatDateTime } from '../../utils/formatDateTime';
-import { useTranslation } from 'react-i18next';
-import tokens from '../../locales/tokens';
 export default function TrainingScreen({navigation}) {
     const {i18n}=useTranslation()
   const isRTL = i18n.language === 'ar';
-  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+  
    const selectorid= useSelector(function (data) {
         return data.empid
     })

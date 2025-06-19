@@ -1,27 +1,27 @@
+import tokens from "@/locales/tokens";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
 import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
-  ActivityIndicator,
-  Modal,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Modal,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { PieChart } from "react-native-gifted-charts";
-import Icon from "react-native-vector-icons/FontAwesome";
-import { useTranslation } from "react-i18next";
-import tokens from "@/locales/tokens";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Icon from "react-native-vector-icons/FontAwesome";
 import { useSelector } from "react-redux";
 import LeaveCard from "../../components/LeaveCard";
 import ProfileServices from "../../Services/API/ProfileServices";
 import { formatErrorsToToastMessages } from "../../utils/error-format";
-import { formatDateTime } from "../../utils/formatDateTime";
+import { dateTimeToShow, formatDateTime } from "../../utils/formatDateTime";
 
 export default function LeaveScreen({ navigation }) {
   const selectorid = useSelector(function (data) {
@@ -29,7 +29,7 @@ export default function LeaveScreen({ navigation }) {
   });
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === "ar";
-  console.log("yyyyyyyyyyyyyyyyyyyy", isRTL);
+  
 
   const [modalVisible, setModalVisible] = useState(false);
   const [startDatePicker, setStartDatePicker] = useState(false);

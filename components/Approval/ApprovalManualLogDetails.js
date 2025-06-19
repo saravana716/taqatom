@@ -1,23 +1,23 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import {
-  ActivityIndicator,
-  Modal,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Modal,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import ProfileServices from '../../Services/API/ProfileServices';
-import {Toast} from 'react-native-toast-message/lib/src/Toast';
-import {dateTimeToShow} from '../../utils/formatDateTime';
-import get from 'lodash/get';
 import find from 'lodash/find';
-import {MenuProvider} from 'react-native-popup-menu';
-import {formatErrorsToToastMessages} from '../../utils/error-format';
+import get from 'lodash/get';
+import { MenuProvider } from 'react-native-popup-menu';
+import { Toast } from 'react-native-toast-message/lib/src/Toast';
+import ProfileServices from '../../Services/API/ProfileServices';
+import { formatErrorsToToastMessages } from '../../utils/error-format';
+import { dateTimeToShow } from '../../utils/formatDateTime';
 
 export default function ApprovalManualLogDetails({navigation,route
  
@@ -67,7 +67,7 @@ export default function ApprovalManualLogDetails({navigation,route
       });
       setApproveReason('');
     } catch (error) {
-      console.log(error, 'err123');
+      
       formatErrorsToToastMessages(error);
       setApproveConfirmVisible(false);
     } finally {
@@ -96,7 +96,7 @@ export default function ApprovalManualLogDetails({navigation,route
       });
       setRejectReason('');
     } catch (error) {
-      console.log(error?.errorResponse, 'err');
+      
       formatErrorsToToastMessages(error);
       setRejectedConfirmVisible(false);
     } finally {
@@ -109,7 +109,7 @@ export default function ApprovalManualLogDetails({navigation,route
       const RecentActivities = await ProfileServices.getApprovalManualLogData(
         employeeId,
       );
-      console.log('RecentActivities1', RecentActivities?.results);
+      
       setManualLogData(RecentActivities?.results);
     } catch (error) {
       formatErrorsToToastMessages(error);

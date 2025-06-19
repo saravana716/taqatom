@@ -1,5 +1,6 @@
 import isEmpty from 'lodash/isEmpty';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     ActivityIndicator,
     ScrollView,
@@ -8,20 +9,19 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import { useTranslation } from 'react-i18next';
-import tokens from '../../locales/tokens';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useSelector } from 'react-redux';
 import ProfileServices from '../../Services/API/ProfileServices';
 import ApprovalManualCard from '../../components/ApprovalCards/ApprovalManualCard';
+import tokens from '../../locales/tokens';
 import { formatErrorsToToastMessages } from '../../utils/error-format';
 
 export default function ApprovalManualLogScreen({ navigation }) {
   const selectorid = useSelector((data) => data.empid);
     const {t,i18n}=useTranslation()
     const isRTL = i18n.language === 'ar';
-    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+    
   
   const [workCode, setWorkCode] = useState('');
   const [isLoading, setIsLoading] = useState(false);

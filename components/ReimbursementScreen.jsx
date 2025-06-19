@@ -1,5 +1,7 @@
+import tokens from "@/locales/tokens";
 import { myreducers } from "@/Store/Store";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
     Image,
     ScrollView,
@@ -13,12 +15,10 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
 import ExpenseComponents from "../components/ExpenseComponents";
 import ProfileServices from "../Services/API/ProfileServices";
-import { useTranslation } from "react-i18next";
-import tokens from "@/locales/tokens";
 export default function ReimbursementScreen({ navigation }) {
   const {t,i18n}=useTranslation()
   const isRTL = i18n.language === 'ar';
-  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+  
 const dispatch=useDispatch()
     const selectorid=useSelector(function (data) {
         return data.empid

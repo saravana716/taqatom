@@ -1,21 +1,25 @@
-import ProfileServices from '@/Services/API/ProfileServices'; // Your API service
-import * as ImagePicker from 'expo-image-picker';
-import get from 'lodash/get';
-import React, { useCallback, useState } from 'react';
-import {useTranslation} from 'react-i18next';
 import tokens from '@/locales/tokens';
+import ProfileServices from '@/Services/API/ProfileServices'; // Your API service
+import { myreducers } from '@/Store/Store';
+import * as ImageManipulator from 'expo-image-manipulator';
+import * as ImagePicker from 'expo-image-picker';
+import React, { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-toast-message'; // Assuming you're using this Toast lib
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const ProfileUpdate = ({navigation}) => {
-
+const dispatch=useDispatch()
   const {t,i18n} = useTranslation();
   const isRTL = i18n.language === 'ar';
-  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+  
   const [isLoading, setIsLoading] = useState(false);
   const selector = useSelector((data) => data.employeedetails);
+  console.log("ii",selector);
+  
+  
   function backto(params) {
     navigation.navigate("Profile")
   }
@@ -25,45 +29,22 @@ const ProfileUpdate = ({navigation}) => {
 
   const [profilePic, setProfilePic] = useState(profilePicFromStore || null);
 
-  // Helper: Upload file to S3 using PUT fetch
-  const uploadToS3 = async (file, presignedUrl) => {
-    try {
-      // Fetch file as blob
-      const fileResponse = await fetch(file.uri);
-      const blob = await fileResponse.blob();
-
-      // Upload to S3 with PUT
-      const uploadResponse = await fetch(presignedUrl, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': file.type,
-        },
-        body: blob,
-      });
-
-      if (!uploadResponse.ok) {
-        throw new Error(`S3 upload failed with status ${uploadResponse.status}`);
-      }
-
-      return true;
-    } catch (err) {
-      
-      throw err;
-    }
-  };
+ 
 const handleFilePick = useCallback(async () => {
   try {
+    // Ask for permission
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
       Alert.alert('Permission Denied', 'Permission to access media library is required!');
       return;
     }
 
+    // Open image picker
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      quality: 1,
-      base64: true, // Convert to base64
+      quality: 1, // full quality before manipulation
+      base64: false,
     });
 
     if (result?.canceled || !result.assets?.length) return;
@@ -71,31 +52,84 @@ const handleFilePick = useCallback(async () => {
     const image = result.assets[0];
     setIsLoading(true);
 
-    const myid = selector.length > 0 ? selector[0].id : null;
+    // Resize and compress
+    const manipulatedImage = await ImageManipulator.manipulateAsync(
+      image.uri,
+      [{ resize: { width: 600 } }], // resize to 600px width
+      { compress: 0.3, format: ImageManipulator.SaveFormat.JPEG, base64: true }
+    );
+
+    const base64Image = `data:image/jpeg;base64,${manipulatedImage.base64}`;
+    console.log('📷 Base64 Preview:', base64Image.slice(0, 100) + '...');
+
+    const myid = selector?.[0]?.id;
     if (!myid) throw new Error('User ID not found.');
+console.log(myid);
 
-const base64Data = `data:${image.mimeType || 'image/jpeg'};base64,${image.base64}`;
+    const existingDetails = selector?.[0];
+    if (!existingDetails) throw new Error('Employee data not available.');
 
-    console.log("📷 Base64 Image: ", base64Data.slice(0, 100), "...");
+    // Clean payload
+    const {
+      id,
+      profile_url,
+      update_time,
+      change_time,
+      area_details,
+      leave_group_details,
+      department_name,
+      department_code,
+      position_name,
+      position_code,
+      dependents,
+      payroll,
+      salary_template,
+      ssn,
+      user,
+      ...cleanedDetails
+    } = existingDetails;
 
-    const res = await ProfileServices.updateProfilePic(myid, {
-      profile_url: base64Data,
-    });
+    const updatedPayload = {
+  ...cleanedDetails,
+  profile_file: base64Image,
+  user: {
+    id: existingDetails.user,
+    first_name: existingDetails.first_name,
+    last_name: existingDetails.last_name,
+    email: existingDetails.email,
+  },
+  ...(payroll ? { payroll } : {}), // optional
+};
 
-    if (!res?.success) {
-      throw new Error('Failed to update profile image');
-    }
+    console.log("📦 Payload:", JSON.stringify(updatedPayload, null, 2));
 
-    setProfilePic(base64Data);
+   const res = await ProfileServices.putEmployeeFullDetails(myid, updatedPayload);
+console.log("myresponse", res);
 
-    Toast.show({
-      type: 'success',
-      text1: 'Profile Updated Successfully',
-      position: 'bottom',
-    });
+// ✅ Only proceed if success
+if (!res || (res?.success === false && res?.status !== 200)) {
+  throw new Error('Failed to update profile image');
+}
 
-  } catch (error) {
-    console.error("📛 Upload Error:", error);
+// ✅ Now safely use the result
+let mydata = res.profile_url;
+console.log(mydata);
+
+setProfilePic(base64Image);
+
+// ✅ Dispatch only if successful
+dispatch(myreducers.profiledetails({ profilePic: res.profile_url, gender }));
+
+Toast.show({
+  type: 'success',
+  text1: 'Profile Updated Successfully',
+  position: 'bottom',
+});
+  } 
+  catch (error) {
+    console.log('❌ Error (full):', JSON.stringify(error?.errorResponse || error, null, 2));
+    console.error('❌ Error Message:', error.message);
+
     Toast.show({
       type: 'error',
       text1: 'Upload Failed',
@@ -116,14 +150,17 @@ const base64Data = `data:${image.mimeType || 'image/jpeg'};base64,${image.base64
       <View style={styles.updateproinner}>
         {selector.map((data) => (
           <View key={data.id} style={styles.updatepro}>
-            <View style={styles.updatetop}>
-<TouchableOpacity onPress={backto}>
-              <Icon name="angle-left" size={30} color="white" />
-  
-  </TouchableOpacity>              <Text style={styles.modalText}>
-                  {t(tokens.nav.myProfile)}
-              </Text>
-            </View>
+        <View style={styles.updatetop}>
+  <TouchableOpacity onPress={backto} style={{ padding: 10 }}>
+    <Icon name="angle-left" size={30} color="white" />
+  </TouchableOpacity>
+  <View style={{ flex: 1, alignItems: 'center' }}>
+    <Text style={styles.modalText}>
+      {t(tokens.nav.myProfile)}
+    </Text>
+  </View>
+</View>
+
 
             <ScrollView
               style={{

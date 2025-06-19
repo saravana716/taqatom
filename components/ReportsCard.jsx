@@ -1,27 +1,18 @@
-import moment from 'moment';
-import React, {useCallback, useEffect, useState} from 'react';
-import {
-  Modal,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import {getPunchStateLabel} from '../utils/getPunchStateLabel';
-import {Dropdown} from 'react-native-element-dropdown';
-import {PUNCH_STATE_OPTIONS} from './PunchStateOptions';
-import {Toast} from 'react-native-toast-message/lib/src/Toast';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { useNavigation } from '@react-navigation/native';
 import get from 'lodash/get';
-import {useNavigation} from '@react-navigation/native';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import tokens from '@/locales/tokens';
+import {
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
+} from 'react-native';
 export default function ReportsCard({ reportsData }) {
   const navigation = useNavigation();
     const {t,i18n}=useTranslation()
       const isRTL = i18n.language === 'ar';
-      console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+      
   const [isExpanded, setIsExpanded] = useState(false);
   const toggleCardDetails = () => setIsExpanded(prev => !prev);
 

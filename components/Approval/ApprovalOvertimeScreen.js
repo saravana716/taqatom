@@ -1,35 +1,28 @@
-import { useEffect, useState } from 'react';
-import {
-  ActivityIndicator,
-  Modal,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import isEmpty from 'lodash/isEmpty';
-import tokens from '../../locales/tokens';
-import { useTranslation } from 'react-i18next';
-import { Dropdown } from 'react-native-element-dropdown';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { PUNCH_STATE_OPTIONS } from '../../components/PunchStateOptions';
-import { Toast } from 'react-native-toast-message/lib/src/Toast';
-import LeaveCard from '../../components/LeaveCard';
-import OvertimeCard from '../../components/OverTimeCard';
-import ProfileServices from '../../Services/API/ProfileServices';
-import ApprovalOvertimeCard from '../../components/ApprovalCards/ApprovalOvertimeCard';
 import moment from 'moment';
-import { formatErrorsToToastMessages } from '../../utils/error-format';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+    ActivityIndicator,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
+} from 'react-native';
+import { Toast } from 'react-native-toast-message/lib/src/Toast';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { useSelector } from 'react-redux';
+import ApprovalOvertimeCard from '../../components/ApprovalCards/ApprovalOvertimeCard';
+import tokens from '../../locales/tokens';
+import ProfileServices from '../../Services/API/ProfileServices';
+import { formatErrorsToToastMessages } from '../../utils/error-format';
 
 export default function ApprovalOvertimeScreen({ navigation }) {
   const selectorid = useSelector((data) => data.empid);
    const {t,i18n}=useTranslation()
     const isRTL = i18n.language === 'ar';
-    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+    
   const [modalVisible, setModalVisible] = useState(false);
   const [punchTimeDate, setPunchTimeDate] = useState(false);
   const [formatExpectDate, setFormatExpectDate] = useState(null);

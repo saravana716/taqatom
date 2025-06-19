@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
-  ActivityIndicator,
-  Modal,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Modal,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -15,25 +15,25 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import find from 'lodash/find';
 import get from 'lodash/get';
 import moment from 'moment';
+import { useTranslation } from 'react-i18next'; // Removed as per request
 import { Dropdown } from 'react-native-element-dropdown';
 import {
-  Menu,
-  MenuOption,
-  MenuOptions,
-  MenuProvider,
-  MenuTrigger,
+    Menu,
+    MenuOption,
+    MenuOptions,
+    MenuProvider,
+    MenuTrigger,
 } from 'react-native-popup-menu';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import ProfileServices from '../../Services/API/ProfileServices';
 import { dateTimeToShow, formatDateTime } from '../../utils/formatDateTime';
-import { useTranslation } from 'react-i18next'; // Removed as per request
 // import tokens from '../../locales/tokens'; // Removed as per request
-import { formatErrorsToToastMessages } from '../../utils/error-format';
 import tokens from '@/locales/tokens';
+import { formatErrorsToToastMessages } from '../../utils/error-format';
 export default function TrainingRequestDetails({navigation, route}) {
    const {t,i18n}=useTranslation()
     const isRTL = i18n.language === 'ar';
-    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+    
   const {employeeId, newItem, trainingList, payCodes, getPayCodeList} =
     route.params;
   // const {t}=useTranslation() // Removed as per request

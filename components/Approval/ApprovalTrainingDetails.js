@@ -13,12 +13,12 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+import tokens from '@/locales/tokens';
+import { useTranslation } from 'react-i18next';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import ProfileServices from '../../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../../utils/error-format';
 import { dateTimeToShow } from '../../utils/formatDateTime';
-import tokens from '@/locales/tokens';
-import { useTranslation } from 'react-i18next';
 export default function ApprovalTrainingDetails({ navigation, route }) {
     const { newItem, employeeId, componentId, getTrainingList } = route.params;
     const [isLoading, setIsLoading] = useState(false);
@@ -27,7 +27,7 @@ export default function ApprovalTrainingDetails({ navigation, route }) {
     };
      const {t,i18n}=useTranslation()
         const isRTL = i18n.language === 'ar';
-        console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+        
     const [approveConfirmVisible, setApproveConfirmVisible] = useState(false);
     const [rejectedConfirmVisible, setRejectedConfirmVisible] = useState(false);
     const [trainingData, setTrainingData] = useState([]);

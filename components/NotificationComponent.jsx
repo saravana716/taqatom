@@ -1,22 +1,21 @@
+import { useNavigation } from '@react-navigation/native';
+import get from 'lodash/get';
 import React, { useCallback, useState } from 'react';
 import {
     ActivityIndicator,
-    Image,
+    StyleSheet,
     Text,
     TouchableOpacity,
-    View,
-    StyleSheet
+    View
 } from 'react-native';
-import get from 'lodash/get';
+import { Toast } from 'react-native-toast-message/lib/src/Toast';
+import AntDesign from 'react-native-vector-icons/AntDesign'; // Using AntDesign for the close icon
+import ProfileServices from '../Services/API/ProfileServices';
+import { formatErrorsToToastMessages } from '../utils/error-format';
 import {
     convertUtcToLocalTime,
     dateTimeToShow,
 } from '../utils/formatDateTime';
-import { Toast } from 'react-native-toast-message/lib/src/Toast';
-import ProfileServices from '../Services/API/ProfileServices';
-import { formatErrorsToToastMessages } from '../utils/error-format';
-import { useNavigation } from '@react-navigation/native';
-import AntDesign from 'react-native-vector-icons/AntDesign'; // Using AntDesign for the close icon
 
 export default function NotificationComponent({
     status,
@@ -137,9 +136,9 @@ export default function NotificationComponent({
     }, [navigation, employeeFullDetails]);
 
     const navigateBasedOnLink = useCallback(link => {
-        console.log('linkkk', link);
+        
         const paths = link?.split('/')?.filter(Boolean);
-        console.log('pathspaths', paths);
+        
 
         if (paths?.includes('employeeApproval')) {
             if (paths?.includes('manualLog')) {
@@ -176,7 +175,7 @@ export default function NotificationComponent({
                 handlePayslipScreen();
             }
         } else {
-            console.warn('Unhandled link:', link);
+            
         }
     }, [
         handleManualLogScreen,

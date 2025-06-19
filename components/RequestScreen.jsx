@@ -1,14 +1,14 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import Icon from "react-native-vector-icons/FontAwesome";
 import tokens from '@/locales/tokens';
 import { useTranslation } from 'react-i18next';
+import Icon from "react-native-vector-icons/FontAwesome";
 export default function RequestScreen({navigation,
 
 }) {
     const {t,i18n}=useTranslation()
     const isRTL = i18n.language === 'ar';
-    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+    
     
   const handleBack = () => {
     navigation.navigate("Dashboard")

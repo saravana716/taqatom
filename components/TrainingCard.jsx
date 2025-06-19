@@ -1,18 +1,18 @@
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
 import React, { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     StyleSheet,
     Text,
     TouchableOpacity,
     View
 } from 'react-native';
-import { dateTimeToShow, formatDateTime } from '../utils/formatDateTime';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
+import tokens from '../locales/tokens';
 import ProfileServices from '../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../utils/error-format';
-import { useTranslation } from 'react-i18next';
-import tokens from '../locales/tokens';
+import { dateTimeToShow, formatDateTime } from '../utils/formatDateTime';
 export default function TrainingCard({
   newItem,
   componentId,
@@ -25,7 +25,7 @@ export default function TrainingCard({
     
     const {t,i18n}=useTranslation()
   const isRTL = i18n.language === 'ar';
-  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+  
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
   const [revokeConfirmVisible, setRevokeConfirmVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);

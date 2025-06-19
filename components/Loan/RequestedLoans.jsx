@@ -108,8 +108,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
     padding: 8,
-    paddingTop: 20,
-    paddingBottom: 80,
+    paddingTop: 0,
+    paddingBottom: 10,
     width: '100%',
   },
   innerWrapper: {
@@ -117,16 +117,17 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   cardBox: {
+    height:"100%",
     backgroundColor: 'white',
     padding: 16,
     borderRadius: 24,
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 20,
+    paddingBottom: 0,
   },
   loanList: {
-    paddingBottom: 40,
+    paddingBottom: 0,
   },
   loanItem: {
     paddingBottom: 16,

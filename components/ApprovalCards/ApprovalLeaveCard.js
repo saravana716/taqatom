@@ -1,13 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
 
+import { useTranslation } from "react-i18next";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { dateTimeToShow } from "../../utils/formatDateTime";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
+import tokens from "../../locales/tokens";
 import ProfileServices from "../../Services/API/ProfileServices";
 import { formatErrorsToToastMessages } from "../../utils/error-format";
-import { useTranslation } from "react-i18next";
-import tokens from "../../locales/tokens";
+import { dateTimeToShow } from "../../utils/formatDateTime";
 export default function ApprovalLeaveCard({
   newItem,
   employeeId,
@@ -18,7 +18,7 @@ export default function ApprovalLeaveCard({
   const [rejectedConfirmVisible, setRejectedConfirmVisible] = useState(false);
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === "ar";
-  console.log("yyyyyyyyyyyyyyyyyyyy", isRTL);
+  
   const handleFulldetails = () => {
     navigation.navigate("ApprovalLeaveDetails", {
       employeeId,

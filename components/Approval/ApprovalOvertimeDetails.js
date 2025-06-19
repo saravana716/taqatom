@@ -1,26 +1,26 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import {
-  ActivityIndicator,
-  Modal,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Modal,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import ProfileServices from '../../Services/API/ProfileServices';
-import {Toast} from 'react-native-toast-message/lib/src/Toast';
-import {dateTimeToShow} from '../../utils/formatDateTime';
-import get from 'lodash/get';
 import find from 'lodash/find';
+import get from 'lodash/get';
 import { useTranslation } from 'react-i18next';
+import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import tokens from '../../locales/tokens';
+import ProfileServices from '../../Services/API/ProfileServices';
+import { dateTimeToShow } from '../../utils/formatDateTime';
 // Removed: import { useTranslation } from 'react-i18next';
 // Removed: import tokens from '../../locales/tokens';
-import {formatErrorsToToastMessages} from '../../utils/error-format';
+import { formatErrorsToToastMessages } from '../../utils/error-format';
 
 export default function ApprovalOvertimeDetails({navigation, route}) {
   const {newItem, employeeId, getOvertimeList: getParentOvertimeList} =
@@ -29,7 +29,7 @@ export default function ApprovalOvertimeDetails({navigation, route}) {
   const [isLoading, setIsLoading] = useState(false);
     const {t,i18n}=useTranslation()
     const isRTL = i18n.language === 'ar';
-    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+    
   const [approveConfirmVisible, setApproveConfirmVisible] = useState(false);
   const [rejectedConfirmVisible, setRejectedConfirmVisible] = useState(false);
   const [OvertimeData, setOvertimeData] = useState([]);
@@ -71,7 +71,7 @@ export default function ApprovalOvertimeDetails({navigation, route}) {
       });
       setApproveReason('');
     } catch (error) {
-      console.log(error?.errorResponse, 'err');
+      
       setApproveConfirmVisible(false);
       formatErrorsToToastMessages(error);
     }
@@ -97,7 +97,7 @@ export default function ApprovalOvertimeDetails({navigation, route}) {
       });
       setRejectReason('');
     } catch (error) {
-      console.log(error?.errorResponse, 'err');
+      
       setRejectedConfirmVisible(false);
       formatErrorsToToastMessages(error);
     }
@@ -108,7 +108,7 @@ export default function ApprovalOvertimeDetails({navigation, route}) {
       const RecentActivities = await ProfileServices.getApprovalOvertimeData(
         employeeId,
       );
-      console.log('RecentActivities11', RecentActivities);
+      
       setOvertimeData(RecentActivities?.results);
     } catch (error) {
       formatErrorsToToastMessages(error);

@@ -1,7 +1,9 @@
 /* eslint-disable react-native/no-inline-styles */
+import tokens from '@/locales/tokens';
 import { useRoute } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Modal,
     ScrollView,
@@ -10,8 +12,6 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import tokens from '@/locales/tokens';
-import { useTranslation } from 'react-i18next';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useSelector } from 'react-redux';
@@ -28,7 +28,7 @@ const newItem=useSelector(function (data) {
 })
   const {t,i18n}=useTranslation()
   const isRTL = i18n.language === 'ar';
-  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+  
 const route = useRoute();
  const getResignationList = route.params?.getResignationList;
 

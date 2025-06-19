@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
 import tokens from "@/locales/tokens";
 import get from "lodash/get";
+import React, { useEffect, useState } from "react";
+import {
+    Image,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+} from "react-native";
 import { Calendar } from "react-native-calendars";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useSelector } from "react-redux";
@@ -20,7 +20,7 @@ import { useTranslation } from "react-i18next";
 const Holiday = ({ navigation }) => {
     const {t,i18n}=useTranslation()
     const isRTL = i18n.language === 'ar';
-    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+    
   const [holidayDetails, setHolidayDetails] = useState([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
 

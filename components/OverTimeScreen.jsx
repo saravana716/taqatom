@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import {
     ActivityIndicator,
     Modal,
@@ -9,9 +10,8 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-import {useTranslation} from 'react-i18next';
-import tokens from '../locales/tokens';
 import Icon from "react-native-vector-icons/FontAwesome";
+import tokens from '../locales/tokens';
 
 import DateTimePicker from "@react-native-community/datetimepicker";
 import isEmpty from "lodash/isEmpty";
@@ -30,7 +30,7 @@ export default function OvertimeScreen({ navigation }) {
     })
      const {t,i18n}=useTranslation()
   const isRTL = i18n.language === 'ar';
-  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+  
   const [modalVisible, setModalVisible] = useState(false);
   const [startDatePicker, setStartDatePicker] = useState(false);
   const [startTimePicker, setStartTimePicker] = useState(false);

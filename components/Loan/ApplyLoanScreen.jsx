@@ -1,17 +1,17 @@
+import tokens from "@/locales/tokens";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import round from "lodash/round";
 import moment from "moment";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import tokens from "@/locales/tokens";
 import {
-  Modal,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Modal,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -23,9 +23,9 @@ export default function ApplyLoanScreen({ navigation }) {
   const selectorid = useSelector(function (data) {
     return data.empid;
   });
-    const {t,i18n}=useTranslation()
-  const isRTL = i18n.language === 'ar';
-  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
+  
 
   const [date, setDate] = useState();
   const [endDate, setEndDate] = useState();
@@ -41,9 +41,9 @@ export default function ApplyLoanScreen({ navigation }) {
   const [endDateShow, setEndDateShow] = useState(false);
 
   function calculateEMIZeroInterest(loanAmount, repaymentPeriod) {
-     const {t,i18n}=useTranslation()
-      const isRTL = i18n.language === 'ar';
-      console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+    const { t, i18n } = useTranslation();
+    const isRTL = i18n.language === "ar";
+    
     const emi = Math.ceil(loanAmount / repaymentPeriod);
     const totalRepaymentAmount = loanAmount;
     return {
@@ -117,7 +117,6 @@ export default function ApplyLoanScreen({ navigation }) {
         });
       }
     } catch (error) {
-      
       formatErrorsToToastMessages(error);
     }
   };
@@ -127,26 +126,23 @@ export default function ApplyLoanScreen({ navigation }) {
     !isNaN(text) && setInterestAmount(text);
   const handleInterestMonthChange = (text) =>
     !isNaN(text) && setRepaymentTerm(text);
-function navigatepage(params) {
-  navigation.navigate("Loan")
-}
-function openCalculator(params) {
-  
-}
+  function navigatepage(params) {
+    navigation.navigate("Loan");
+  }
+  function openCalculator(params) {}
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-
-
         <TouchableOpacity onPress={() => navigation.goBack()}>
-        <Icon name="angle-left" size={35} color="#697ce3" />
-
+          <Icon name="angle-left" size={35} color="#697ce3" />
         </TouchableOpacity>
-     
+
         <Text style={styles.title}>{t(tokens.nav.applyLoan)}</Text>
-<TouchableOpacity  onPress={() => {
-              setConfirmVisible(true);
-            }}>
+        <TouchableOpacity
+          onPress={() => {
+            setConfirmVisible(true);
+          }}
+        >
           <Icon name="calculator" size={20} color="#697ce3" />
         </TouchableOpacity>
       </View>
@@ -169,9 +165,13 @@ function openCalculator(params) {
               style={styles.input}
               onPress={() => setFromDateShow(true)}
             >
-              <Text> {formatExpectDate ? formatExpectDate : t(tokens.common.expectedMonth)}</Text>
-          <Icon name="calendar-check-o" size={20} color="lightgray" />
-
+              <Text>
+                {" "}
+                {formatExpectDate
+                  ? formatExpectDate
+                  : t(tokens.common.expectedMonth)}
+              </Text>
+              <Icon name="calendar-check-o" size={20} color="lightgray" />
             </TouchableOpacity>
             {fromDateShow && (
               <DateTimePicker
@@ -185,9 +185,10 @@ function openCalculator(params) {
               style={styles.input}
               onPress={() => setEndDateShow(true)}
             >
-              <Text>{emiStartDate ? emiStartDate : t(tokens.common.emiStartsFrom)}</Text>
-          <Icon name="calendar-check-o" size={20} color="lightgray" />
-
+              <Text>
+                {emiStartDate ? emiStartDate : t(tokens.common.emiStartsFrom)}
+              </Text>
+              <Icon name="calendar-check-o" size={20} color="lightgray" />
             </TouchableOpacity>
             {endDateShow && (
               <DateTimePicker
@@ -199,7 +200,7 @@ function openCalculator(params) {
               />
             )}
             <TextInput
-              style={[styles.input, { height: 100 }]}
+              style={[styles.inputs, { height: 100, textAlign:"start"}]}
               placeholder={t(tokens.common.notes)}
               multiline
               numberOfLines={4}
@@ -208,7 +209,9 @@ function openCalculator(params) {
               style={styles.submitButton}
               onPress={handleSignIn}
             >
-              <Text style={styles.submitButtonText}>{t(tokens.nav.applyLoan)}</Text>
+              <Text style={styles.submitButtonText}>
+                {t(tokens.nav.applyLoan)}
+              </Text>
             </TouchableOpacity>
           </ScrollView>
         </View>
@@ -292,12 +295,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#F8F8FF",
   },
   headerContainer: {
-    width:"100%",
-    display:"flex",
+    width: "100%",
+    display: "flex",
     flexDirection: "row",
     padding: 20,
     justifyContent: "space-between",
-    alignItems: "center"
+    alignItems: "center",
   },
   title: {
     fontSize: 20,
@@ -320,8 +323,22 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingHorizontal: 16,
     marginBottom: 10,
-    display:"flex",
-    alignItems:"center",justifyContent:"space-between",flexDirection:"row"
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    flexDirection: "row",
+  },
+    inputs: {
+    height: 56,
+    borderRadius: 16,
+    borderColor: "#ccc",
+    borderWidth: 1,
+    paddingHorizontal: 16,
+    marginBottom: 10,
+    display: "flex",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    flexDirection: "row",
   },
   submitButton: {
     height: 48,
@@ -352,7 +369,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 10,
-    textAlign:"center"
+    textAlign: "center",
   },
   resultBox: {
     marginTop: 10,

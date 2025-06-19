@@ -1,7 +1,9 @@
+import tokens from '@/locales/tokens';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import isEmpty from 'lodash/isEmpty';
 import moment from 'moment';
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     ActivityIndicator,
     Modal,
@@ -21,12 +23,10 @@ import { PUNCH_STATE_OPTIONS } from '../../components/PunchStateOption';
 import ProfileServices from '../../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../../utils/error-format';
 import { dateTimeToShow, formatDateTime } from '../../utils/formatDateTime';
-import tokens from '@/locales/tokens';
-import { useTranslation } from 'react-i18next';
 export default function ManualLogScreen({navigation}) {
     const {t,i18n}=useTranslation()
     const isRTL = i18n.language === 'ar';
-    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+    
   const selectorid=useSelector(function (data) {
     return data.empid
   })

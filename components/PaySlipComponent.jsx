@@ -1,10 +1,9 @@
-import CheckBox from "@react-native-community/checkbox";
-import React, { useState } from "react";
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { useTranslation } from "react-i18next";
 import tokens from "@/locales/tokens";
+import { useNavigation } from "@react-navigation/native";
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Icon from 'react-native-vector-icons/FontAwesome';
 export default function PayslipComponent({
   newItem,
   employeeFullDetails,
@@ -12,9 +11,9 @@ export default function PayslipComponent({
 }) {
     const {t,i18n}=useTranslation()
     const isRTL = i18n.language === 'ar';
-    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+    
   const navigation = useNavigation();
-console.log("newwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww",newItem);
+
 
   function formatDate(dateString) {
     const date = new Date(dateString);

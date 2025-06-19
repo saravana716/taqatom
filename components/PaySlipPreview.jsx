@@ -1,22 +1,20 @@
+import tokens from "@/locales/tokens";
 import { useNavigation } from "@react-navigation/native";
-import { get } from 'lodash';
-import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
-import { Toast } from 'react-native-toast-message/lib/src/Toast';
+import { get } from 'lodash';
 import React from 'react';
+import { useTranslation } from "react-i18next";
 import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
+import { PieChart } from 'react-native-gifted-charts';
+import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ProfileServices from '../Services/API/ProfileServices';
-import { formatErrorsToToastMessages } from '../utils/error-format';
-import { useTranslation } from "react-i18next";
-import tokens from "@/locales/tokens";
-import { PieChart } from 'react-native-gifted-charts';
 
 export default function PayslipPreview({ route }) {
   const { t, i18n } = useTranslation();
@@ -59,7 +57,7 @@ export default function PayslipPreview({ route }) {
         });
       }
     } catch (error) {
-      console.error('Error downloading PDF: ', error.message);
+      
       Toast.show({
         type: 'error',
         text1: 'Failed to download payslip',

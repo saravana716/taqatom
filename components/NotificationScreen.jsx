@@ -9,8 +9,10 @@ import {
     View,
 } from "react-native";
 
+import tokens from "@/locales/tokens";
 import isEmpty from "lodash/isEmpty";
 import map from "lodash/map";
+import { useTranslation } from "react-i18next";
 import {
     Menu,
     MenuOption,
@@ -21,8 +23,6 @@ import {
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import Icon from "react-native-vector-icons/FontAwesome";
 import NotificationComponent from "../components/NotificationComponent";
-import { useTranslation } from "react-i18next";
-import tokens from "@/locales/tokens";
 import ProfileServices from "../Services/API/ProfileServices";
 import { formatErrorsToToastMessages } from "../utils/error-format";
 
@@ -43,7 +43,7 @@ export default function NotificationScreen({ navigation, route }) {
   } = route.params;
    const {t,i18n}=useTranslation()
      const isRTL = i18n.language === 'ar';
-     console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+     
   console.log('NotificationScreen Props:', {
     selectorid,
     setProfilePicUrl,

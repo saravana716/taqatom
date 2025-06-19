@@ -9,17 +9,17 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+import tokens from '@/locales/tokens';
 import isEmpty from 'lodash/isEmpty';
+import { useTranslation } from 'react-i18next';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import { useSelector } from 'react-redux';
 import ProfileServices from '../Services/API/ProfileServices';
 import RecentResignationComponent from '../components/RecentResignationComponent';
-import { useTranslation } from 'react-i18next';
-import tokens from '@/locales/tokens';
 export default function ResignationScreen({navigation}) {
     const {t,i18n}=useTranslation()
     const isRTL = i18n.language === 'ar';
-    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+    
     const employeeFullDetails=useSelector(function (data) {
         return data.employeeFullDetails
     })

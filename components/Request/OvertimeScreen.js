@@ -1,35 +1,31 @@
-import {useCallback, useEffect, useState} from 'react';
-import {
-  ActivityIndicator,
-  Modal,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import {useTranslation} from 'react-i18next';
-import tokens from '../../../locales/tokens';
-import {Navigation} from 'react-native-navigation';
-import isEmpty from 'lodash/isEmpty';
-import {Dropdown} from 'react-native-element-dropdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import {PUNCH_STATE_OPTIONS} from '../../../Components/Component/PunchStateOptions';
-import {Toast} from 'react-native-toast-message/lib/src/Toast';
-import LeaveCard from '../../../Components/Component/LeaveCard';
-import OvertimeCard from '../../../Components/Component/OvertimeCard';
-import ProfileServices from '../../../Services/API/ProfileServices';
+import isEmpty from 'lodash/isEmpty';
 import moment from 'moment';
-import {dateTimeToShow, formatDateTime} from '../../../utils/formatDateTime';
-import {useTranslation} from 'react-i18next';
+import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+    ActivityIndicator,
+    Modal,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from 'react-native';
+import { Dropdown } from 'react-native-element-dropdown';
+import { Navigation } from 'react-native-navigation';
+import { Toast } from 'react-native-toast-message/lib/src/Toast';
+import OvertimeCard from '../../../Components/Component/OvertimeCard';
 import tokens from '../../../locales/tokens';
+import ProfileServices from '../../../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../../../utils/error-format';
+import { dateTimeToShow, formatDateTime } from '../../../utils/formatDateTime';
 
 export default function OvertimeScreen({componentId, userId}) {
    const {t,i18n}=useTranslation()
   const isRTL = i18n.language === 'ar';
-  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+  
   const [modalVisible, setModalVisible] = useState(false);
   const [startDatePicker, setStartDatePicker] = useState(false);
   const [startTimePicker, setStartTimePicker] = useState(false);
@@ -153,10 +149,10 @@ export default function OvertimeScreen({componentId, userId}) {
         text1: 'Added Successfully',
         position: 'bottom',
       });
-      console.log('response', response);
+      
     } catch (error) {
       setIsLoading(false);
-      console.log(error?.errorResponse, error, 'ldldldl?.');
+      
 
      formatErrorsToToastMessages(error)
     }
@@ -167,7 +163,7 @@ export default function OvertimeScreen({componentId, userId}) {
       const RecentActivities = await ProfileServices.getOvertimeData(userId);
       setOvertimeData(RecentActivities?.results);
     } catch (error) {
-      console.log('ldldldl?.', error?.errorResponse, error);
+      
 
      formatErrorsToToastMessages(error)
     } finally {

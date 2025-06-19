@@ -1,21 +1,21 @@
+import tokens from '@/locales/tokens';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
-import tokens from '@/locales/tokens';
 export default function ApprovalScreen({ navigation, employeeId }) {
   const selectorid = useSelector(data => data.empid);
   
   const {t,i18n}=useTranslation()
     const isRTL = i18n.language === 'ar';
-    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+    
   const handleBack = () => {
     navigation.navigate('Dashboard');
   };

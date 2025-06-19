@@ -1,24 +1,24 @@
 // Converted from Tailwind CSS to standard StyleSheet
 // Removed all `t()` i18n translation calls and used string fallback
 
+import tokens from '@/locales/tokens';
 import chunk from 'lodash/chunk';
 import isEmpty from 'lodash/isEmpty';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
-  ActivityIndicator,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { PieChart } from 'react-native-gifted-charts';
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useSelector } from 'react-redux';
 import PaySlipComponent from '../components/PaySlipComponent';
 import ProfileServices from '../Services/API/ProfileServices';
-import tokens from '@/locales/tokens';
-import { useTranslation } from 'react-i18next';
 const renderDot = color => (
   <View style={{ height: 10, width: 10, borderRadius: 5, backgroundColor: color, marginRight: 10 }} />
 );
@@ -26,7 +26,7 @@ const renderDot = color => (
 export default function PaySlipScreen({ navigation }) {
     const {t,i18n}=useTranslation()
     const isRTL = i18n.language === 'ar';
-    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+    
   const employeeFullDetails = useSelector(data => data.employeeFullDetails);
   const [payrollHistory, setPayrollHistory] = useState([]);
   const [payrollData, setPayrollData] = useState([]);
@@ -51,7 +51,7 @@ export default function PaySlipScreen({ navigation }) {
       setIsLoading(false);
     }
   };
-console.log("history",payrollHistory);
+
 
   const getUserPayroll = async () => {
     setIsLoading(true);

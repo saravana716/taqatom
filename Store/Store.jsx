@@ -11,7 +11,8 @@ const myslice=createSlice({
         empid:"",
         expenseData:{},
         employeeFullDetails:{},
-        newItem:{}
+        newItem:{},
+        pic:""
     },
     reducers:{
         senddetails(store,action){
@@ -43,9 +44,17 @@ const myslice=createSlice({
         sendempDetails(store,action){
             store.employeeFullDetails=action.payload
         },
+        sendempDetails1(store,action){
+            store.employeedetails=action.payload
+        },
         sendNewItem(store,action){
             store.newItem=action.payload
         },
+        sendpic(store,action){
+            store.pic=action.payload
+            console.log("mydatapic",pic);
+            
+        }
        
     }
 })

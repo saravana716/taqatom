@@ -1,21 +1,21 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import {
-  ActivityIndicator,
-  Modal,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Modal,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 
 import { dateTimeToShow } from '../../utils/formatDateTime';
 
+import { useTranslation } from 'react-i18next'; // Removed as per request
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
+import tokens from '../../locales/tokens'; // Removed as per request
 import ProfileServices from '../../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../../utils/error-format';
-import { useTranslation } from 'react-i18next'; // Removed as per request
-import tokens from '../../locales/tokens'; // Removed as per request
 export default function ApprovalOvertimeCard({
   newItem,
   employeeId,
@@ -23,7 +23,7 @@ export default function ApprovalOvertimeCard({
 }) {
    const {t,i18n}=useTranslation()
       const isRTL = i18n.language === 'ar';
-      console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+      
   const navigation = useNavigation();
 
   const [isLoading, setIsLoading] = useState(false);

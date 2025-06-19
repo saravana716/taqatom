@@ -1,28 +1,14 @@
-import moment from 'moment';
-import React, {useCallback, useEffect, useState} from 'react';
-import { useNavigation } from '@react-navigation/native';
-import {
-  Modal,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  TextInput,
-} from 'react-native';
-import { dateTimeToShow, formatDateTime } from '../utils/formatDateTime';
-import {
-  Menu,
-  MenuOptions,
-  MenuOption,
-  MenuTrigger,
-  MenuProvider,
-} from 'react-native-popup-menu';
-import ProfileServices from '../Services/API/ProfileServices';
-import { Dropdown } from 'react-native-element-dropdown';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import tokens from '@/locales/tokens';
+import { useNavigation } from '@react-navigation/native';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
+} from 'react-native';
+import { dateTimeToShow } from '../utils/formatDateTime';
 export default function OverTimeCard({
   newItem,
   componentId,
@@ -34,7 +20,7 @@ export default function OverTimeCard({
   const navigation = useNavigation();
   const {t,i18n}=useTranslation()
   const isRTL = i18n.language === 'ar';
-  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+  
   const handleFulldetails = () => {
     navigation.navigate("OvertimeRequestDetails",{ employeeId,
           newItem,

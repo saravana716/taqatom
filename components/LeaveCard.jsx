@@ -1,30 +1,18 @@
-import moment from 'moment';
-import React, {useCallback, useState} from 'react';
-import {
-  ActivityIndicator,
-  Modal,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import {dateTimeToShow, formatDateTime} from '../utils/formatDateTime';
-import {
-  Menu,
-  MenuOptions,
-  MenuOption,
-  MenuTrigger,
-  MenuProvider,
-} from 'react-native-popup-menu';
-import {Dropdown} from 'react-native-element-dropdown';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import ProfileServices from '../Services/API/ProfileServices';
-import {Toast} from 'react-native-toast-message/lib/src/Toast';
-import {formatErrorsToToastMessages} from '../utils/error-format';
+import moment from 'moment';
+import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
+} from 'react-native';
+import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import tokens from '../locales/tokens';
+import ProfileServices from '../Services/API/ProfileServices';
+import { formatErrorsToToastMessages } from '../utils/error-format';
+import { dateTimeToShow, formatDateTime } from '../utils/formatDateTime';
 export default function LeaveCard({
   newItem,
   componentId,
@@ -34,7 +22,7 @@ export default function LeaveCard({
 }) {
     const {t,i18n}=useTranslation()
   const isRTL = i18n.language === 'ar';
-  console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+  
   
     const navigation=useNavigation()
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);

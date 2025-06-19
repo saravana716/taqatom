@@ -2,20 +2,20 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+import { useTranslation } from 'react-i18next';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
+import tokens from '../../locales/tokens';
 import ProfileServices from '../../Services/API/ProfileServices';
 import { formatErrorsToToastMessages } from '../../utils/error-format';
 import { dateTimeToShow } from '../../utils/formatDateTime';
 import { getPunchStateLabel } from '../../utils/getPunchStateLabel';
-import { useTranslation } from 'react-i18next';
-import tokens from '../../locales/tokens';
 export default function ApprovalManualCard({ newItem, employeeId, componentId, getManualLogList }) {
   const navigation = useNavigation();
   const [approveConfirmVisible, setApproveConfirmVisible] = useState(false);
   const [rejectedConfirmVisible, setRejectedConfirmVisible] = useState(false);
   const {t,i18n}=useTranslation()
     const isRTL = i18n.language === 'ar';
-    console.log("yyyyyyyyyyyyyyyyyyyy",isRTL);
+    
   const handleFulldetails = () => {
      navigation.navigate('ApprovalManualLogDetails', {
        employeeId,
