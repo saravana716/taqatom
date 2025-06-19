@@ -37,6 +37,8 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { useDispatch, useSelector } from "react-redux";
 import { AuthContext } from "./AuthContext";
 const Dashboard = () => {
+   const [profileUrl1, setProfileUrl1] = useState(null);
+
   const { i18n, t } = useTranslation();
 
   const navigation = useNavigation();
@@ -53,11 +55,13 @@ const Dashboard = () => {
   });
   
  
-  const userpic = useSelector((data) => data.employeedetails);
-   const profileUrl = userpic[0]?.profile_url;
-console.log('👤 Profile Image URL:', profileUrl);
-  
-console.log("gnfdkjnh",userpic);
+const userpic = useSelector((data) => data.employeedetails);
+
+useEffect(() => {
+  if (userpic && userpic.length > 0) {
+    setProfileUrl1(userpic[0]?.profile_url);
+  }
+}, [userpic]);
 
   const dispatch = useDispatch();
   const [workCode, setWorkCode] = useState();
@@ -901,14 +905,14 @@ console.log("gnfdkjnh",userpic);
           <View style={styles.left}>
             <View style={styles.leftcon}>
               <TouchableOpacity onPress={navigateprofile}>
-                <Image
-                 source={
-                   profileUrl
-                     ? { uri:profileUrl}
-                     : require("../assets/images/Assets/edit-profile.png")
-                 }
-                 style={styles.leftimg}
-               />
+                  <Image
+                  source={
+                    profileUrl1
+                      ? { uri: profileUrl1 }
+                      : require("../assets/images/Assets/edit-profile.png")
+                  }
+                  style={styles.leftimg}
+                />
               </TouchableOpacity>
               {UserDetails.map(function (data, index) {
                 return (

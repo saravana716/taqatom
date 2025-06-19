@@ -17,17 +17,17 @@ import { useDispatch, useSelector } from "react-redux";
 import ProfileServices from "../Services/API/ProfileServices";
 import { AuthContext } from "./AuthContext";
 const Profile = ({ navigation}) => {
-   
+   const [profileUrl1, setProfileUrl1] = useState(null);
     const selectorid = useSelector(function (data) {
     return data.empid;
   });
- 
-    const userpic = useSelector((data) => data.employeedetails);
-   const profileUrl = userpic[0]?.profile_url;
-console.log('👤 Profile Image URLuuu:', profileUrl);
-  
-console.log("gnfdkjnh",userpic);
-  console.log(userpic);
+ const userpic = useSelector((data) => data.employeedetails);
+
+useEffect(() => {
+  if (userpic && userpic.length > 0) {
+    setProfileUrl1(userpic[0]?.profile_url);
+  }
+}, [userpic]);
   const {t,i18n} = useTranslation();
   const isRTL = i18n.language === 'ar';
   
@@ -177,14 +177,14 @@ console.log("gnfdkjnh",userpic);
 
           <View style={styles.punch}>
             <View style={styles.pro}>
-          <Image
-                          source={
-                            profileUrl
-                              ? { uri:profileUrl}
-                              : require("../assets/images/Assets/edit-profile.png")
-                          }
-                          style={styles.leftimg}
-                        />
+        <Image
+  source={
+    profileUrl1
+      ? { uri: profileUrl1 }
+      : require("../assets/images/Assets/edit-profile.png")
+  }
+  style={styles.leftimg}
+/>
 
               {employeedetails.map(function (data,index) {
   return (
