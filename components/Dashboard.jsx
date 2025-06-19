@@ -62,6 +62,8 @@ useEffect(() => {
     setProfileUrl1(userpic[0]?.profile_url);
   }
 }, [userpic]);
+console.log("fsdgdg",ProfilePicUrl);
+console.log("fsdgjkbjkbkjdg",userpic);
 
   const dispatch = useDispatch();
   const [workCode, setWorkCode] = useState();
@@ -170,6 +172,8 @@ useEffect(() => {
       navigation.navigate("Profile", dataToSend);
     } catch (err) {}
   }
+  console.log(dataToSend);
+  
   async function movepage(event) {
     try {
       navigation.navigate(event);
@@ -576,6 +580,7 @@ useEffect(() => {
     setSubordinateName,
     token: tokenDetail,
   };
+  console.log("mydatasend",dataToSend);
   
 
   async function handleNotificationScreen() {

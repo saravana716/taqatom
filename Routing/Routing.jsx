@@ -58,6 +58,7 @@ import ApprovalLeaveDetails from "../components/Approval/ApprovalLeaveDetails";
 import ApprovalOvertimeDetails from "../components/Approval/ApprovalOvertimeDetails";
 import ApprovalTrainingDetails from "../components/Approval/ApprovalTrainingDetails";
 import PaySlipPreview from "../components/PaySlipPreview";
+import LoanRecoveryDetails from "../components/Loan/LoanRecoveryDetails";
 const Stack = createNativeStackNavigator();
 
 const Routing = () => {
@@ -122,6 +123,7 @@ const Routing = () => {
           <Stack.Screen name="ApprovalOvertimeDetails" component={ApprovalOvertimeDetails} />
           <Stack.Screen name="ApprovalTrainingDetails" component={ApprovalTrainingDetails} />
           <Stack.Screen name="PaySlipPreview" component={PaySlipPreview} />
+          <Stack.Screen name="LoanRecoverDetail" component={LoanRecoveryDetails} />
           
         </>
       ) : (

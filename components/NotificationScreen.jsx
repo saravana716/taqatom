@@ -41,6 +41,10 @@ export default function NotificationScreen({ navigation, route }) {
     setSubordinateName,
     token,
   } = route.params;
+  console.log("lllllllllllllllllllllllllllll");
+  
+  console.log(selectorid,setProfilePicUrl);
+  
    const {t,i18n}=useTranslation()
      const isRTL = i18n.language === 'ar';
      

@@ -18,10 +18,7 @@ export default function RunningLoans({ navigation }) {
   const { t } = useTranslation();
   const [loanDetails, setLoanDetails] = useState([]);
 
-  const handleBack = () => {
-    navigation.navigate('Loan');
-  };
-
+ 
   const getUserDetails = async () => {
     try {
       const allLoansList = await LoanServices.getRunningLoan(selectid);
@@ -36,23 +33,8 @@ export default function RunningLoans({ navigation }) {
   }, []);
 
   const handleLoanRecoveryScreen = newItem => {
-    Navigation.push(componentId, {
-      component: {
-        name: 'LoanRecoveryDetails',
-        passProps: {
-          newItem,
-          selectid,
-        },
-        options: {
-          animations: {
-            push: { enabled: false },
-            pop: { enabled: false },
-          },
-          topBar: { visible: false },
-          bottomTabs: { visible: false, drawBehind: true },
-        },
-      },
-    });
+    navigation.navigate("LoanRecoverDetail",{newItem})
+ 
   };
 
   return (

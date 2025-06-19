@@ -24,6 +24,7 @@ const selectorid=useSelector(function (data) {
     return data.empid
 })
 
+console.log("lkvbnlkv",selectorid);
 
 
   const handleApplyLoanScreen = (event) => {
@@ -62,6 +63,7 @@ const selectorid=useSelector(function (data) {
       
     }
   };
+console.log(loanAmount);
 
   useEffect(() => {
     getOutstandinBalance();
@@ -105,7 +107,7 @@ const selectorid=useSelector(function (data) {
                    {t(tokens.charts.outstandingPrincipleBalance)}
                 </Text>
                 <Text style={styles.cardValue}>
-                  SAR 0
+                  SAR {outstandinBalance?.total_outstanding_principal || 0}
                 </Text>
               </View>
             </View>
@@ -117,7 +119,10 @@ const selectorid=useSelector(function (data) {
                 <Text style={[styles.cardTitle, { textAlign: isRTL ? 'right' : 'left' }]}> {t(tokens.charts.totalEMI)}</Text>
                 <View style={styles.flexRowAlignEnd}>
                   <Text style={styles.cardValue}>
-                    SAR 0
+                     SAR{' '}
+                    {emiBalance?.total_emi_amount
+                      ? emiBalance?.total_emi_amount
+                      : '0'}
                   </Text>
                   <Text style={styles.cardSmallText}>
                     {t(tokens.messages.perMonth)}
@@ -131,7 +136,7 @@ const selectorid=useSelector(function (data) {
             <View style={[styles.card, styles.shadow]}>
               <View style={[styles.cardBorder, { borderLeftColor: '#DD8C12' }]}>
                 <Text style={[styles.cardTitle, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.charts.totalEMIPaid)}</Text>
-                <Text style={styles.cardValue}>SAR 0</Text>
+                <Text style={styles.cardValue}> SAR {emiPaid?.total_emi_paid}</Text>
               </View>
             </View>
           </View>
@@ -140,7 +145,10 @@ const selectorid=useSelector(function (data) {
             <View style={[styles.card, styles.shadow]}>
               <View style={[styles.cardBorder, { borderLeftColor: '#DD8C12' }]}>
                 <Text style={[styles.cardTitle, { textAlign: isRTL ? 'right' : 'left' }]}>{t(tokens.charts.totalLoanAmount)}</Text>
-                <Text style={styles.cardValue}>SAR 0</Text>
+                <Text style={styles.cardValue}>
+                  SAR {loanAmount?.total_loan_amount}
+
+                </Text>
               </View>
             </View>
           </View>
