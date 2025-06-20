@@ -1,24 +1,29 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useEffect, useState } from 'react';
 import uuid from 'react-native-uuid';
-import AuthService from '../Services/AuthService'; // Optional, only if you have validateSession
-import ObjectStorage from '../Services/ObjectStorageService'; // Adjust if path is different
+import AuthService from '../Services/AuthService'; // Optional
+import ObjectStorage from '../Services/ObjectStorageService'; // Adjust if needed
 import { setLogoutFunction } from '../utils/globalLogoutHandler';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isOrgSelected, setIsOrgSelected] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const checkAuth = async () => {
+    const checkAppState = async () => {
       try {
         const token = await AsyncStorage.getItem('token');
         const sessionId = await AsyncStorage.getItem('session_id');
+        const orgSelected = await AsyncStorage.getItem('org_selected');
+
+        if (orgSelected === 'true') {
+          setIsOrgSelected(true);
+        }
 
         if (token && sessionId) {
-          // Optional: Validate session with your backend
           if (AuthService?.validateSession) {
             const isValid = await AuthService.validateSession(token, sessionId);
             if (!isValid) {
@@ -26,36 +31,32 @@ export const AuthProvider = ({ children }) => {
               return;
             }
           }
-
           setIsAuthenticated(true);
         } else {
           setIsAuthenticated(false);
         }
       } catch (error) {
-        
         setIsAuthenticated(false);
+        setIsOrgSelected(false);
       } finally {
         setLoading(false);
       }
     };
 
-    checkAuth();
+    checkAppState();
   }, []);
 
   const login = async (token) => {
     try {
       await AsyncStorage.setItem('token', token);
 
-      // Generate a new session ID
       const sessionId = uuid.v4();
       await AsyncStorage.setItem('session_id', sessionId);
       await ObjectStorage.setItem('local_session_id', { sessionId });
 
-      setTimeout(() => {
-        setIsAuthenticated(true);
-      }, 2000);
+      setIsAuthenticated(true);
     } catch (error) {
-      
+      console.error("Login error:", error);
     }
   };
 
@@ -67,7 +68,25 @@ export const AuthProvider = ({ children }) => {
       await ObjectStorage.setItem('local_session_id', {});
       setIsAuthenticated(false);
     } catch (error) {
-      
+      console.error("Logout error:", error);
+    }
+  };
+
+  const markOrgSelected = async () => {
+    try {
+      await AsyncStorage.setItem('org_selected', 'true');
+      setIsOrgSelected(true);
+    } catch (error) {
+      console.error("Error saving org selection:", error);
+    }
+  };
+
+  const clearOrgSelection = async () => {
+    try {
+      await AsyncStorage.removeItem('org_selected');
+      setIsOrgSelected(false);
+    } catch (error) {
+      console.error("Error clearing org selection:", error);
     }
   };
 
@@ -76,7 +95,17 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, loading }}>
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        isOrgSelected,
+        login,
+        logout,
+        loading,
+        markOrgSelected,
+        clearOrgSelection,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

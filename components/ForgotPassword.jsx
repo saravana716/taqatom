@@ -84,7 +84,7 @@ AsyncStorage.setItem("email",forgot)
   return (
     <View style={styles.maincontainer}>
       <View style={styles.imageContainer}>
-        <Image source={require('../assets/images/Assets/login-pic.png')} />
+        <Image source={require('../assets/images/Assets/login-pic.png')} style={styles.ims} />
       </View>
       <View style={styles.Content}>
         <Text style={styles.contentText}>Forgot Password</Text>
@@ -127,6 +127,11 @@ const styles = StyleSheet.create({
     height: '30%',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+    ims:{
+    width:"100%",
+    height:"100%",
+    objectFit:"cover"
   },
   Content: {
     flex: 1,

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   Image,
   StyleSheet,
@@ -10,10 +10,12 @@ import {
 } from 'react-native';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import AuthService from '../Services/AuthService';
+import { AuthContext } from '../components/AuthContext';
 
 const SwitchOrganization = ({ navigation }) => {
   const [organizationName, setOrganizationName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { markOrgSelected } = useContext(AuthContext);
 
   const submitDemo = async () => {
     if (!organizationName.trim()) {
@@ -26,32 +28,35 @@ const SwitchOrganization = ({ navigation }) => {
       return;
     }
 
-    setIsLoading(true); // Start loader
+    setIsLoading(true);
 
     try {
-      // Simulate API call or AsyncStorage/domain update
+      // Save the organization name (e.g., to API or domain logic)
       await AuthService.setDomainName(organizationName);
+
+      // Mark organization as selected in context & AsyncStorage
+      await markOrgSelected();
 
       Toast.show({
         type: 'success',
-        text1: 'Organization Name saved successfully',
+        text1: 'Organization saved successfully',
         position: 'bottom',
-        visibilityTime: 2000,
+        visibilityTime: 1500,
       });
 
       setTimeout(() => {
-        navigation.navigate('Login');
+        navigation.replace('Login');
       }, 1500);
     } catch (error) {
       Toast.show({
         type: 'error',
-        text1: 'Error',
-        text2: 'Something went wrong. Please try again.',
+        text1: 'Something went wrong',
+        text2: 'Please try again later.',
         position: 'bottom',
         visibilityTime: 2000,
       });
     } finally {
-      setIsLoading(false); // Stop loader
+      setIsLoading(false);
     }
   };
 
@@ -134,7 +139,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   disabledBtn: {
-    backgroundColor: '#A9D0F5', // Change color when loading
+    backgroundColor: '#A9D0F5',
   },
   btnText: {
     fontSize: 20,

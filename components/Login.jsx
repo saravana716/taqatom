@@ -127,7 +127,7 @@ console.log("myrespone",response);
     <>
       <View style={styles.maincontainer}>
         <View style={styles.imageContainer}>
-          <Image source={require("../assets/images/Assets/login-pic.png")} />
+          <Image source={require("../assets/images/Assets/login-pic.png")} style={styles.ims} />
         </View>
         <View style={styles.Content}>
           <Text style={styles.contentText}>Welcome Back!</Text>
@@ -218,6 +218,11 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "20%",
     display: "flex",
+  },
+  ims:{
+    width:"100%",
+    height:"100%",
+    objectFit:"cover"
   },
   Content: {
     width: "100%",

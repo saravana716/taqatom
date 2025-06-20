@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useContext } from 'react';
 import { AuthContext } from '../components/AuthContext';
 
+// Import all screens
 import ApprovedExpenseScreen from "../components/ApprovedExpenseScreen";
 import ClockActivityComponent from "../components/ClockActivityComponent";
 import Dashboard from "../components/Dashboard";
@@ -59,17 +60,29 @@ import ApprovalOvertimeDetails from "../components/Approval/ApprovalOvertimeDeta
 import ApprovalTrainingDetails from "../components/Approval/ApprovalTrainingDetails";
 import PaySlipPreview from "../components/PaySlipPreview";
 import LoanRecoveryDetails from "../components/Loan/LoanRecoveryDetails";
+
 const Stack = createNativeStackNavigator();
 
 const Routing = () => {
-  const { isAuthenticated, loading } = useContext(AuthContext);
+  const { isAuthenticated, isOrgSelected, loading } = useContext(AuthContext);
 
-
-  if (loading) return null; // Optional: you can return a splash screen here
+  if (loading) return null; // Can be replaced with splash screen
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {isAuthenticated ? (
+      {!isOrgSelected ? (
+        // Show organization switch screen first time
+        <Stack.Screen name="Organization" component={SwitchOrganization} />
+      ) : !isAuthenticated ? (
+        // Login flow
+        <>
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+          <Stack.Screen name="OtpVerification" component={OtpVerification} />
+          <Stack.Screen name="Organization" component={SwitchOrganization} />
+        </>
+      ) : (
+        // Authenticated app screens
         <>
           <Stack.Screen name="Dashboard" component={Dashboard} />
           <Stack.Screen name="Holiday" component={Holiday} />
@@ -124,15 +137,6 @@ const Routing = () => {
           <Stack.Screen name="ApprovalTrainingDetails" component={ApprovalTrainingDetails} />
           <Stack.Screen name="PaySlipPreview" component={PaySlipPreview} />
           <Stack.Screen name="LoanRecoverDetail" component={LoanRecoveryDetails} />
-          
-        </>
-      ) : (
-        <>
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="Organization" component={SwitchOrganization} />
-          <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
-          <Stack.Screen name="OtpVerification" component={OtpVerification} />
-
         </>
       )}
     </Stack.Navigator>
